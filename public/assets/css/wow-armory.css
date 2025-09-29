@@ -1,0 +1,143 @@
+/* WoW Style Armory Page */
+.armory-main {
+    min-height: calc(100vh - 200px);
+    background: url('/img/backgrounds/bg-home.webp') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Warcraft', sans-serif;
+    color: #fff;
+    padding: 2rem 0;
+    display: flex;
+}
+
+.armory-container {
+    max-width: 1300px;
+    margin: 0 auto;
+    padding: 20px;
+    color: #ffd700;
+    font-family: Warcraft, sans-serif;
+    position: relative;
+    box-sizing: border-box;
+    flex: 1;
+}
+
+.armory-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 3rem;
+}
+
+.armory-title {
+    color: #ffd100;
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 30px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+    font-family: Warcraft, sans-serif;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.armory-card {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    text-decoration: none;
+    color: white;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.armory-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+    background: rgba(139, 69, 19, 0.5);
+}
+
+.card-icon {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.card-icon img {
+    width: 64px;
+    height: 64px;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.card-description {
+    color: #ccc;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.stat-card {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.stat-label {
+    color: #ccc;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+@media (max-width: 768px) {
+    .armory-card {
+        padding: 1.5rem;
+    }
+    
+    .card-icon img {
+        width: 48px;
+        height: 48px;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+    
+    .armory-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .stat-number {
+        font-size: 2rem;
+    }
+}

@@ -1,0 +1,78 @@
+.server-status {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 15px;
+    color: white;
+    font-family: 'Arial', sans-serif;
+}
+
+.server-status h2 {
+    color: #ffd700;
+    text-align: center;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.server-status ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 15px;
+}
+
+.server-status li {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #444;
+    text-align: center;
+}
+
+.server-status li > strong:not(.server-stats-title) {
+    color: #ffd700;
+    font-size: 1.1rem;
+}
+
+.server-status li .server-stats-title {
+    color: #21e431ff;
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+}
+
+.server-status .online {
+    color: #4CAF50;
+    font-weight: bold;
+}
+
+.server-status .offline {
+    color: #F44336;
+    font-weight: bold;
+}
+
+.server-status .players {
+    color: #2196F3;
+}
+
+.server-status .uptime {
+    color: #FF9800;
+}
+
+.server-status .realm-ip {
+    color: #9C27B0;
+    font-size: 0.9rem;
+}
+
+.server-status img {
+    border-radius: 4px;
+    margin-bottom: 5px;
+}
+
+.server-stats-title {
+    color: #21e431ff;
+    display: block;
+    margin-bottom: 0.5rem;
+}

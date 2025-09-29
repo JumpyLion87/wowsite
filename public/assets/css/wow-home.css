@@ -1,0 +1,331 @@
+/* WoW Style Home Page */
+body.home {
+    background: url('/img/backgrounds/bg-home.webp') no-repeat center center fixed;
+    background-size: cover;
+    font-family: 'Cinzel', sans-serif;
+    color: #fff;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.home-container {
+    max-width: 1260px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 2rem 1.5rem; /* Adequate padding for fixed widgets */
+    color: #ffd700;
+    font-family: 'Cinzel', sans-serif;
+    position: relative;
+    box-sizing: border-box;
+}
+
+/* Hero Section */
+.hero-section {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.9) 0%, rgba(45, 45, 45, 0.9) 50%, rgba(26, 26, 26, 0.9) 100%);
+    border: 3px solid #8b4513;
+    border-radius: 10px;
+    padding: 3rem 2rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.4);
+}
+
+.hero-title {
+    font-size: 3rem;
+    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.9);
+    margin-bottom: 1rem;
+    color: #ffd700;
+}
+
+.hero-subtitle {
+    font-size: 1.5rem;
+    color: #ccc;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.hero-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.hero-button {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    color: #ffd700;
+    border: 2px solid #ffd700;
+    padding: 1rem 2rem;
+    font-size: 1.2rem;
+    border-radius: 5px;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.3);
+}
+
+.hero-button:hover {
+    background: linear-gradient(135deg, #a0522d 0%, #8b4513 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+/* Features Grid */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.feature-card {
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #ffd700;
+    border-radius: 8px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.2);
+}
+
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.feature-icon {
+    font-size: 3rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+}
+
+.feature-title {
+    font-size: 1.5rem;
+    color: #ffd700;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.feature-description {
+    color: #ccc;
+    font-size: 1rem;
+}
+
+/* News Section */
+.news-section {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+}
+
+.section-title {
+    font-size: 2rem;
+    color: #ffd700;
+    text-align: center;
+    margin-bottom: 2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+.news-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.news-item {
+    background: rgba(139, 69, 19, 0.3);
+    border: 1px solid #ffd700;
+    border-radius: 5px;
+    padding: 1rem;
+    transition: all 0.3s ease;
+}
+
+.news-item:hover {
+    background: rgba(139, 69, 19, 0.5);
+    transform: translateY(-2px);
+}
+
+.news-item a {
+    text-decoration: none;
+    color: inherit;
+}
+
+.news-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+}
+
+.news-title {
+    font-size: 1.2rem;
+    color: #ffd700;
+    margin-bottom: 0.5rem;
+}
+
+.news-date {
+    color: #ccc;
+    font-size: 0.9rem;
+}
+
+/* Discord Widget - Fixed on Left with WoW Style */
+.discord-widget {
+    position: fixed;
+    top: 160px; /* Below header */
+    left: 15px;
+    width: 280px;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 45, 45, 0.95) 100%);
+    border: 2px solid #ffd700; /* WoW brown border */
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 0 15px rgba(235, 238, 47, 0.6);
+}
+
+.discord-widget iframe {
+    width: 100%;
+    height: 400px;
+    border: none;
+}
+
+/* Server Status Widget - Fixed on Right with WoW Style */
+.server-status-widget {
+    position: fixed;
+    top: 160px; /* Below header */
+    right: 15px;
+    width: 280px;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 45, 45, 0.95) 100%);
+    border: 2px solid #ffd700; /* WoW gold border */
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+    z-index: 1000;
+    box-shadow: 0 0 15px rgba(235, 238, 47, 0.6);
+}
+
+.server-status-title {
+    color: #00f7ff;
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 0 10px rgba(0, 247, 255, 0.8);
+}
+
+.server-list {
+    list-style: none;
+    padding: 0;
+}
+
+.server-item {
+    background: rgba(20, 20, 30, 0.8);
+    border: 1px solid #ff00ff;
+    border-radius: 5px;
+    padding: 1rem;
+    margin-bottom: 0.5rem;
+    transition: all 0.3s ease;
+}
+
+.server-item:hover {
+    box-shadow: 0 0 10px rgba(0, 247, 255, 0.6);
+}
+
+.server-name {
+    color: #ff00ff;
+    font-weight: bold;
+}
+
+.server-status-online {
+    color: #00ff00;
+}
+
+.server-status-offline {
+    color: #ff0000;
+}
+
+/* Bug Tracker Section */
+.bugtracker-section {
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #ffd700;
+    border-radius: 10px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.bugtracker-content {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+.bugtracker-content p {
+    color: #ccc;
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .home-container {
+        padding: 2rem 1rem 2rem 320px; /* Adjust for smaller screens */
+    }
+    
+    .discord-widget {
+        width: 280px;
+        left: 10px;
+    }
+    
+    .server-status-widget {
+        width: 280px;
+        right: 10px;
+    }
+}
+
+@media (max-width: 992px) {
+    .home-container {
+        padding: 2rem 1rem; /* Remove side padding on tablets */
+    }
+    
+    .discord-widget,
+    .server-status-widget {
+        position: static;
+        width: 100%;
+        max-width: 400px;
+        margin: 1rem auto;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: 2rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+    }
+
+    .hero-buttons {
+        flex-direction: column;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .news-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .discord-widget,
+    .server-status-widget {
+        max-width: 100%;
+        margin: 1rem 0;
+    }
+    
+    .discord-widget iframe {
+        height: 300px;
+    }
+}

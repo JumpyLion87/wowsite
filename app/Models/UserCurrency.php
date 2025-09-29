@@ -1,0 +1,83 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+
+class UserCurrency extends Model
+{
+    use HasFactory;
+
+    protected $connection = 'mysql';
+    protected $table = 'user_currencies';
+    protected $primaryKey = 'account_id';
+
+    public $incrementing = false;
+    public $timestamps = false;
+
+    protected $fillable = [
+        'account_id',
+        'points',
+        'tokens',
+        'avatar',
+        'role',
+    ];
+
+    /**
+     * Get user currency by account ID
+     */
+    public static function getByAccountId($accountId)
+    {
+        return static::where('account_id', $accountId)->first();
+    }
+
+    /**
+     * Get user points
+     */
+    public static function getPoints($accountId)
+    {
+        $currency = static::getByAccountId($accountId);
+        return $currency ? $currency->points : 0;
+    }
+
+    /**
+     * Get user tokens
+     */
+    public static function getTokens($accountId)
+    {
+        $currency = static::getByAccountId($accountId);
+        return $currency ? $currency->tokens : 0;
+    }
+
+    /**
+     * Get user avatar
+     */
+    public static function getAvatar($accountId)
+    {
+        $currency = static::getByAccountId($accountId);
+        if ($currency && $currency->avatar) {
+            // Check if avatar exists in profile_avatars table
+            $avatarExists = DB::connection('mysql')
+                ->table('profile_avatars')
+                ->where('filename', $currency->avatar)
+                ->where('active', 1)
+                ->exists();
+            
+            if ($avatarExists) {
+                return $currency->avatar;
+            }
+        }
+        return 'user.jpg'; // Default avatar
+    }
+
+    /**
+     * Get user role
+     */
+    public static function getRole($accountId)
+    {
+        $currency = static::getByAccountId($accountId);
+        return $currency ? $currency->role : 'player';
+    }
+}

@@ -1,0 +1,187 @@
+
+/* WoW Style Footer */
+.wow-footer {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 50%, #1a1a1a 100%);
+    border-top: 2px solid #8b4513;
+    padding: 1rem 0;
+    color: #ffd700;
+    font-family: 'Warcraft', sans-serif;
+    position: relative;
+    z-index: 100;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.footer-container {
+    max-width: auto;
+    margin: 0 auto;
+    padding: 0 1.5rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    align-items: center;
+}
+
+.footer-logo-section {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: flex-start;
+}
+
+.footer-logo {   
+    padding: 0.5rem;
+    transition: transform 0.3s ease;
+}
+
+.footer-logo:hover {
+    transform: scale(1.05);
+}
+
+.footer-logo img {
+    height: 40px;
+    width: auto;
+}
+
+.copyright {
+    font-size: 0.9rem;
+    text-align: left;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    margin: 0;
+}
+
+.footer-links-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.footer-title {
+    color: #ffd700;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.footer-links li a {
+    color: #ffd700;
+    text-decoration: none;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid transparent;
+    border-radius: 3px;
+    background: rgba(139, 69, 19, 0.3);
+    transition: all 0.3s ease;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    display: block;
+    text-align: center;
+    font-size: 0.9rem;
+}
+
+.footer-links li a:hover {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    border-color: #ffd700;
+    color: #fff;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 10px rgba(255, 215, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.footer-social-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.social-links {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border: 2px solid #8b4513;
+    border-radius: 8px;
+    background: rgba(139, 69, 19, 0.4);
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-link:hover {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    border-color: #ffd700;
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.4);
+}
+
+.social-link i {
+    font-size: 1.5rem;
+    color: #ffd700;
+    transition: all 0.3s ease;
+}
+
+.social-link:hover i {
+    color: #ffffff;
+    transform: scale(1.1);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .footer-container {
+        grid-template-columns: 1fr 1fr;
+        gap: 1.5rem;
+    }
+    
+    .footer-logo-section {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-container {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+        padding: 0 1rem;
+    }
+    
+    .footer-logo-section {
+        grid-column: 1;
+    }
+    
+    .footer-logo img {
+        height: 50px;
+    }
+    
+    .social-links {
+        gap: 0.5rem;
+    }
+    
+    .social-link {
+        width: 45px;
+        height: 45px;
+    }
+    
+    .social-icon {
+        width: 25px;
+        height: 25px;
+    }
+}

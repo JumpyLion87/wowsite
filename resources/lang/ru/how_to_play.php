@@ -1,0 +1,25 @@
+<?php
+
+return [
+    'how_to_play_title' => 'Как играть',
+    'step_1_title' => 'Шаг 1: Создайте аккаунт',
+    'step_1_desc' => 'Зарегистрируйте бесплатный аккаунт на нашем сайте:',
+    'create_account' => 'Создать аккаунт',
+    'create_account_alt' => 'Создать аккаунт',
+    'step_2_title' => 'Шаг 2: Скачайте игру',
+    'step_2_desc' => 'Вам нужен World of Warcraft: Wrath of the Lich King (3.3.5a). Выберите предпочтительный способ загрузки:',
+    'direct_download' => 'Прямая загрузка',
+    'torrent_download' => 'Торрент',
+    'download_note' => 'Прямые загрузки быстрее для большинства пользователей, в то время как торренты могут быть надежнее при медленном соединении.',
+    'download_game_alt' => 'Скачать игру',
+    'step_3_title' => 'Шаг 3: Настройте Realmlist',
+    'step_3_desc_1' => 'Откройте папку World of Warcraft, перейдите в <code><strong>Data/ruRU</strong></code> или <code><strong>Data/enUS</strong></code> и найдите файл <code>realmlist.wtf</code>.',
+    'step_3_desc_2' => 'Откройте его в Блокноте и замените все содержимое на:',
+    'step_3_desc_3' => 'Сохраните файл и закройте его.',
+    'edit_realmlist_alt' => 'Редактировать Realmlist',
+    'step_4_title' => 'Шаг 4: Начните играть!',
+    'step_4_desc_1' => 'Запустите <code>Wow.exe</code> (не Launcher.exe) и войдите, используя свои учетные данные.',
+    'step_4_desc_2' => 'Наслаждайтесь приключением на нашем сервере!',
+    'launch_wow_alt' => 'Запустить WoW',
+    'copied_success' => 'Скопировано в буфер обмена!',
+];
