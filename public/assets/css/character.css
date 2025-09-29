@@ -1,31 +1,3 @@
-/* Character Page Styles - WoW Theme */
-body.character {
-    background: url('/img/backgrounds/bg-character.jpg') no-repeat center center fixed;
-    background-size: cover;
-    margin: 0;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    font-family: 'Cinzel', sans-serif;
-    color: #fff;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-html, body {
-    width: 100%;
-    overflow-x: hidden;
-    margin: 0;
-    font-family: 'Cinzel', sans-serif;
-    color: #fff;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-}
-
 main {
     flex: 1;
     width: 100%;
@@ -77,9 +49,6 @@ main {
     margin: 20px 0;
     position: relative;
     overflow: hidden;
-    border: 2px solid #ffd700;
-    border-radius: 8px;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
 }
 
 .character-image canvas {
@@ -378,7 +347,7 @@ main {
     width: 40px;
     height: 40px;
     background: rgba(0, 0, 0, 0.5);
-    border: 2px solid #ffd700;
+    border: 1px solid #ffd700;
     border-radius: 6px;
     margin-right: 15px;
     display: flex;

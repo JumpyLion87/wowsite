@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Character extends Model
 {
@@ -22,10 +24,10 @@ class Character extends Model
         'totaltime', 'leveltime', 'rest_bonus', 'logout_time', 'is_logout_resting',
         'rest_bonus', 'resettalents_cost', 'resettalents_time', 'trans_x', 'trans_y',
         'trans_z', 'trans_o', 'transguid', 'extra_flags', 'stable_slots', 'at_login',
-        'zone', 'death_expire_time', 'taxi_path', 'totalKills', 'todayKills',
-        'yesterdayKills', 'chosenTitle', 'watchedFaction', 'drunk', 'health',
-        'power1', 'power2', 'power3', 'power4', 'power5', 'power6', 'power7',
-        'latency', 'talentGroupsCount', 'activeTalentGroup', 'lootSpecId',
+        'zone', 'death_expire_time', 'taxi_path', 'arena_points', 'totalHonorPoints',
+        'totalKills', 'todayKills','yesterdayKills', 'chosenTitle', 'watchedFaction', 
+        'drunk', 'health', 'power1', 'power2', 'power3', 'power4', 'power5', 'power6',
+        'power7', 'latency', 'talentGroupsCount', 'activeTalentGroup', 'lootSpecId',
         'exploredZones', 'equipmentCache', 'ammoId', 'knownTitles', 'actionBars',
         'grantableLevels', 'deleteInfos_Account', 'deleteInfos_Name', 'deleteDate'
     ];
@@ -162,5 +164,216 @@ class Character extends Model
         }
         
         return 'unknown';
+    }
+
+    // Get total number of online characters
+    public function getOnlineCharactersCount()
+    {
+        try {
+            return self::where('online', 1)->count();
+        }
+        catch (Exception $e) {
+            Log::error('Error getting online characters count: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+    // Get total number of characters
+    public function getTotalCharacters()
+    {
+        try {
+            return self::count();
+        }
+        catch (\Exception $e) {
+            Log::error('Error getting total characters: ' . $e->getMessage());
+            return 0;
+        }
+    }
+
+
+    // Get characters by level distribution
+
+    public function getLevelDistribution()
+    {
+        try {
+            return self::select('level', DB::raw('COUNT(*) as count'))
+               ->groupBy('level')
+               ->orderBy('level', 'desc')
+                ->get();
+        } catch (\Exception $e) {
+           Log::error("Error getting level distribution: " . $e->getMessage());
+           return collect();
+        }
+    }
+
+    /**
+     * Get characters by class distribution
+     */
+    public function getClassDistribution()
+    {
+        try {
+            return self::select('class', DB::raw('COUNT(*) as count'))
+                ->groupBy('class')
+                ->orderBy('count', 'desc')
+                ->get();
+        } catch (\Exception $e) {
+            Log::error("Error getting class distribution: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * Get characters by race distribution
+     */
+    public function getRaceDistribution()
+    {
+        try {
+            return self::select('race', DB::raw('COUNT(*) as count'))
+                ->groupBy('race')
+                ->orderBy('count', 'desc')
+                ->get();
+        } catch (\Exception $e) {
+            Log::error("Error getting race distribution: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+     /**
+    * Get recently created characters
+     */
+    public function getRecentlyCreated($limit = 10)
+    {
+        try {
+            return self::orderBy('created_at', 'desc')
+                ->limit($limit)
+                ->get(['name', 'race', 'class', 'level', 'created_at']);
+        } catch (\Exception $e) {
+            Log::error("Error getting recently created characters: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * Get online characters with details
+     */
+    public function getOnlinePlayers()
+    {
+        try {
+            return self::where('online', 1)
+                ->orderBy('name')
+                ->get(['name', 'race', 'class', 'level', 'zone']);
+        } catch (\Exception $e) {
+            Log::error("Error getting online players: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * Get characters by account ID
+     */
+    public function getCharactersByAccount($accountId)
+    {
+        try {
+            return self::where('account', $accountId)
+                ->orderBy('name')
+                ->get(['guid', 'name', 'race', 'class', 'gender', 'level', 'online']);
+        } catch (\Exception $e) {
+            Log::error("Error getting characters by account: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * Get character by GUID
+     */
+    public function getCharacterById($characterId)
+    {
+        try {
+            return self::find($characterId);
+        } catch (\Exception $e) {
+            Log::error("Error getting character by ID: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get character by name
+     */
+    public function getCharacterByName($characterName)
+    {
+        try {
+            return self::where('name', $characterName)->first();
+        } catch (\Exception $e) {
+            Log::error("Error getting character by name: " . $e->getMessage());
+            return null;
+        }
+    }
+
+    /**
+     * Get top characters by level
+     */
+    public function getTopCharactersByLevel($limit = 10)
+    {
+        try {
+            return self::orderBy('level', 'desc')
+                ->orderBy('name', 'asc')
+                ->limit($limit)
+                ->get(['name', 'race', 'class', 'level']);
+        } catch (\Exception $e) {
+            Log::error("Error getting top characters by level: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * Get faction distribution (Alliance/Horde)
+     */
+    public function getFactionDistribution()
+    {
+        try {
+            return self::selectRaw("
+                CASE 
+                    WHEN race IN (1, 3, 4, 7, 11, 22, 25, 29) THEN 'Alliance'
+                    WHEN race IN (2, 5, 6, 8, 9, 10, 26) THEN 'Horde'
+                    ELSE 'Neutral'
+                END as faction,
+                COUNT(*) as count
+            ")
+            ->groupBy('faction')
+            ->orderBy('count', 'desc')
+            ->get();
+        } catch (\Exception $e) {
+            Log::error("Error getting faction distribution: " . $e->getMessage());
+            return collect();
+        }
+    }
+
+    /**
+     * Get level statistics by ranges
+     */
+    public function getLevelStatistics()
+    {
+        try {
+            return self::selectRaw("
+                CASE 
+                    WHEN level BETWEEN 1 AND 10 THEN '1-10'
+                    WHEN level BETWEEN 11 AND 20 THEN '11-20'
+                    WHEN level BETWEEN 21 AND 30 THEN '21-30'
+                    WHEN level BETWEEN 31 AND 40 THEN '31-40'
+                    WHEN level BETWEEN 41 AND 50 THEN '41-50'
+                    WHEN level BETWEEN 51 AND 60 THEN '51-60'
+                    WHEN level BETWEEN 61 AND 70 THEN '61-70'
+                    WHEN level BETWEEN 71 AND 80 THEN '71-80'
+                    ELSE '80+'
+                END as level_range,
+                COUNT(*) as count
+            ")
+            ->groupBy('level_range')
+            ->orderBy('level_range')
+            ->get();
+        } catch (\Exception $e) {
+            Log::error("Error getting level statistics: " . $e->getMessage());
+            return collect();
+        }
     }
 }

@@ -8,26 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log('Tooltip element created:', tooltip);
     console.log('Tooltip element in DOM:', document.querySelector('.item-tooltip'));
-    
-    // Test tooltip visibility
-    setTimeout(() => {
-        console.log('Testing tooltip visibility...');
-        tooltip.innerHTML = '<div class="item-tooltip-content"><div>Test Tooltip</div></div>';
-        tooltip.style.display = 'block';
-        tooltip.style.visibility = 'visible';
-        tooltip.style.opacity = '1';
-        tooltip.style.left = '100px';
-        tooltip.style.top = '100px';
-        console.log('Test tooltip should be visible now');
-        
-        setTimeout(() => {
-            tooltip.style.display = 'none';
-            tooltip.style.visibility = 'hidden';
-            tooltip.style.opacity = '0';
-            console.log('Test tooltip hidden');
-        }, 2000);
-    }, 1000);
-
+       
     // Use event delegation for better performance and dynamic content handling
     document.addEventListener('mouseenter', (e) => {
         const slot = e.target.closest('.slot.has-item');
