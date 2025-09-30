@@ -118,6 +118,24 @@ return [
     'wow_realmlist' => env('WOW_REALMLIST', '127.0.0.1'),
 
     /*
+    |-------------------------------------------------------------
+    |-------------------------------------------------------------
+    | Failed Login Attempts
+    |-------------------------------------------------------------
+    |
+    |
+    |
+    */
+
+
+    'max_login_attempts' => env('AUTH_MAX_LOGIN_ATTEMPTS', 5),
+    'lockout_duration' => env('AUTH_LOCKOUT_DURATION', 15),
+
+    'recaptcha_site_key' => env('RECAPTCHA_SITE_KEY'),
+    'recaptcha_secret_key' => env('RECAPTCHA_SECRET_KEY'),
+
+
+    /*
     |--------------------------------------------------------------------------
     | Maintenance Mode Driver
     |--------------------------------------------------------------------------

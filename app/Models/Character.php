@@ -107,6 +107,18 @@ class Character extends Model
     }
 
     /**
+     * Функция для PvP teams
+     */
+    public function getFormattedType(): string
+    {
+        return match ($this->type) {
+            2 => '2v2',
+            3 => '3v3',
+            default => '5v5',
+        };
+    }
+
+    /**
      * Get arena teams
      */
     public function arenaTeams()

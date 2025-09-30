@@ -1,0 +1,133 @@
+.account-container {
+    padding: 2rem 0 4rem;
+    color: #e2d3b7;
+}
+
+.account-hero {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.account-subtitle {
+    color: #e2d3b7;
+}
+
+.account-title {
+    color: #ffd700;
+    font-family: 'Cinzel', sans-serif;
+}
+
+.account-card {
+    border-radius: 12px;
+    border: 2px solid #8b4513;
+    background: linear-gradient(135deg, rgba(26,26,26,0.95) 0%, rgba(45,45,45,0.95) 100%);
+    color: #e2d3b7;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+
+.account-profile-pic {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #d4af37;
+}
+
+.btn-account {
+    background: linear-gradient(135deg, #d4af37 0%, #b88900 100%);
+    border: 1px solid #8b6f1a;
+    color: #1a1a1a;
+    font-weight: 700;
+}
+
+.account-tabs .nav-link {
+    color: #ffd700;
+    border: 2px solid rgba(139,69,19,0.5);
+    background: rgba(139,69,19,0.25);
+    margin: 0 0.25rem;
+}
+
+.account-tabs .nav-link.active {
+    background: linear-gradient(135deg, #8b4513 0%, #a0522d 100%);
+    border-color: #ffd700;
+    color: #fff;
+}
+
+/* Ensure tab content visibility without Bootstrap JS/CSS (scoped) */
+.account-container .tab-content { position: relative; }
+.account-container .tab-pane { display: none !important; }
+.account-container .tab-pane.show.active { display: block !important; }
+
+.card.account-card .card-body { padding: 1.25rem; }
+
+/* Overview grid adjustments */
+.overview-grid .card.account-card { height: 100%; }
+.overview-grid .card.account-card + .card.account-card { margin-top: 1rem; }
+
+/* Table: table-responsive account-table */
+.table-responsive.account-table {
+    background: rgba(0, 0, 0, 0.6);
+    border: 2px solid #8b4513;
+    border-radius: 8px;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+    overflow: hidden;
+}
+
+.table-responsive.account-table table {
+    margin-bottom: 0;
+    color: #e2d3b7;
+}
+
+.table-responsive.account-table thead th {
+    background: rgba(240, 165, 0, 0.15);
+    color: #ffd700;
+    border-bottom: 2px solid #8b4513;
+    font-weight: 700;
+}
+
+.table-responsive.account-table tbody td {
+    border-color: rgba(139, 69, 19, 0.5) !important;
+}
+
+.table-responsive.account-table tbody tr:hover {
+    background: rgba(139, 69, 19, 0.15);
+}
+
+/* Avatar gallery */
+.account-gallery {
+    margin: 15px 0;
+}
+
+.account-gallery img {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    border: 2px solid #444;
+    cursor: pointer;
+    object-fit: cover;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.account-gallery img:hover {
+    transform: scale(1.06);
+    border-color: #d4af37;
+    box-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+}
+
+.account-gallery img.selected {
+    border-color: #ffd700;
+    box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+}
+
+.account-gallery span {
+    display: block;
+    margin-top: 6px;
+    color: #ccc;
+    font-size: 12px;
+}
+
+.account-gold {
+    color: #ffd700;
+}
+
+

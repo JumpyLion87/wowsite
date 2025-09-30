@@ -1,0 +1,61 @@
+.login-container {
+    min-height: calc(100vh - 200px);
+    font-family: 'Cinzel', sans-serif;
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.card.login-card {
+    max-width: 420px;
+    width: 100%;
+    border-radius: 12px;
+    border: 2px solid #8b4513;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 45, 45, 0.95) 100%);
+    color: #e2d3b7;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+
+.login-title {
+    color: #ffd700;
+    letter-spacing: 0.5px;
+}
+
+.card.login-card .card-body {
+    padding: 1.75rem;
+}
+
+.card.login-card .card-footer {
+    background: transparent;
+    border-top: 1px solid rgba(139, 69, 19, 0.4);
+}
+
+.form-control:focus {
+    background-color: rgba(20, 20, 20, 0.95);
+    color: #fff;
+    border-color: #d4af37;
+    box-shadow: 0 0 0 0.2rem rgba(212, 175, 55, 0.25);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #b88900 100%);
+    border: 1px solid #8b6f1a;
+    color: #1a1a1a;
+    font-weight: 700;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(212, 175, 55, 0.35);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+}
+
+.g-recaptcha {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: center;
+}

@@ -5,12 +5,13 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\NewsController;
-use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ArmoryController;
 use App\Http\Controllers\CharacterController;
 use App\Http\Controllers\OnlinePlayersController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\HowToPlayController;
+use App\Http\Controllers\AccountController;
 
 // Главная страница
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -20,9 +21,17 @@ Route::get('/register', function () {
     return view('auth.register');
 })->name('register');
 
-Route::get('/login', function () {
-    return view('auth.login');
-})->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::post('/login', [LoginController::class, 'login']);
+Route::middleware('auth')->group(function () {
+    Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
+    // Account
+    Route::get('/account', [AccountController::class, 'index'])->name('account');
+    Route::post('/account/email', [AccountController::class, 'updateEmail'])->name('account.email');
+    Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password');
+    Route::post('/account/avatar', [AccountController::class, 'changeAvatar'])->name('account.avatar');
+    Route::post('/account/teleport', [AccountController::class, 'teleportCharacter'])->name('account.teleport');
+});
 
 Route::get('/download', function () {
     return view('download');

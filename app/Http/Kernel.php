@@ -66,5 +66,6 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'localization' => \App\Http\Middleware\Localization::class, // Алиас для middleware локализации
+        'activated' => \App\Http\Middleware\CheckAccountActivation::class, // Алиас для middleware проверки активации
     ];
 }

@@ -52,15 +52,15 @@
             </div>
 
             <!-- Tab Navigation -->
-            <div class="tab-nav">
+            <div class="character-tab-nav">
                 <button data-tab="stats-tab" class="active">{{ __('character.tab_stats') }}</button>
                 <button data-tab="talents-tab">{{ __('character.tab_talents') }}</button>
                 <button data-tab="pvp-tab">{{ __('character.tab_pvp') }}</button>
             </div>
 
             <!-- Tab Contents -->
-            <div id="stats-tab" class="tab-content active">
-                @if($stats)
+            <div id="stats-tab" class="character-tab-content active">
+                @if(isset($stats))
                     <div class="stats-container">
                         <!-- Base Stats -->
                         <div class="stats-category">
@@ -119,16 +119,16 @@
                 @endif
             </div>
 
-            <div id="talents-tab" class="tab-content">
+            <div id="talents-tab" class="character-tab-content">
                 <div class="alert alert-info">{{ __('character.talents_coming_soon') }}</div>
             </div>
 
-            <div id="pvp-tab" class="tab-content">
+            <div id="pvp-tab" class="character-tab-content">
                 @if($pvpTeams && count($pvpTeams) > 0)
                     @foreach($pvpTeams as $team)
                         <div class="pvp-team-item">
                             <div class="pvp-team">
-                                {{ $team->name }} ({{ $team->type == 2 ? '2v2' : ($team->type == 3 ? '3v3' : '5v5') }}, {{ __('character.pvp_rating') }}: {{ $team->rating }})
+                                {{ $team->name }} ({{$team->getFormattedType() }}, {{ __('character.pvp_rating') }}: {{ $team->rating }})
                             </div>
                             <div class="pvp-members">
                                 <ul>
@@ -159,11 +159,11 @@
 <script src="{{ asset('assets/js/character.js') }}"></script>
 <script>
     // Tab functionality
-    document.querySelectorAll('.tab-nav button').forEach(button => {
+    document.querySelectorAll('.character- tab-nav button').forEach(button => {
         button.addEventListener('click', () => {
             // Remove active class from all buttons and content
-            document.querySelectorAll('.tab-nav button').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.querySelectorAll('.character-tab-nav button').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.character-tab-content').forEach(content => content.classList.remove('active'));
             
             // Add active class to clicked button and corresponding content
             button.classList.add('active');

@@ -66,28 +66,30 @@
                                     <span class="email">{{ \App\Models\User::getAuthEmail(auth()->id()) }}</span>
                                     <div class="dropdown-currency">
                                         <span class="points">
-                                            <i class="fas fa-coins"></i> {{ __('points') }}: {{ \App\Models\User::getPoints(auth()->id()) }}
+                                            <i class="fas fa-coins"></i> {{ __('nav.points') }}: {{ \App\Models\User::getPoints(auth()->id()) }}
                                         </span>
                                         <span class="tokens">
-                                            <i class="fas fa-gem"></i> {{ __('tokens') }}: {{ \App\Models\User::getTokens(auth()->id()) }}
+                                            <i class="fas fa-gem"></i> {{ __('nav.tokens') }}: {{ \App\Models\User::getTokens(auth()->id()) }}
                                         </span>
                                     </div>
                                 </div>
                             </div>
                             <div class="dropdown-divider"></div>
                             <a href="{{ route('account') }}" class="dropdown-item">
-                                <i class="fas fa-user-circle"></i> {{ __('account_settings') }}
+                                <i class="fas fa-user-circle"></i> {{ __('nav.account_settings') }}
                             </a>
                             @if(\App\Models\User::isAdmin(auth()->id()))
-                                <a href="{{ route('admin.dashboard') }}" class="dropdown-item admin-panel">
-                                    <i class="fas fa-cogs"></i> {{ __('admin_panel') }}
-                                </a>
+                                @if (Route::has('admin.dashboard'))
+                                    <a href="{{ route('admin.dashboard') }}" class="dropdown-item admin-panel">
+                                        <i class="fas fa-cogs"></i> {{ __('nav.admin_panel') }}
+                                    </a>
+                                @endif
                             @endif
                             <div class="dropdown-divider"></div>
                             <form method="POST" action="{{ route('logout') }}" class="dropdown-item-form">
                                 @csrf
                                 <button type="submit" class="dropdown-item logout">
-                                    <i class="fas fa-sign-out-alt"></i> {{ __('logout') }}
+                                    <i class="fas fa-sign-out-alt"></i> {{ __('nav.logout') }}
                                 </button>
                             </form>
                         </div>
