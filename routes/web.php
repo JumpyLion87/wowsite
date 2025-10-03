@@ -12,6 +12,7 @@ use App\Http\Controllers\OnlinePlayersController;
 use App\Http\Controllers\ShopController;
 use App\Http\Controllers\HowToPlayController;
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\AdminController;
 
 // Главная страница
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -85,3 +86,18 @@ Route::get('/stream', function () {
 Route::fallback(function () {
     return redirect()->route('home');
 });
+
+Route::middleware(['auth'])->group(function () {
+    Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
+         ->name('admin.dashboard');
+});
+
+
+Route::post('/account/sessions/destroy', [AccountController::class, 'destroySessions'])
+    ->name('account.sessions.destroy');
+
+
+Route::get('/vote/generate', [VoteController::class, 'generateToken'])->name('vote.generate');
+
+// Проверка голоса после возврата с mmotop
+Route::get('/vote/verify', [VoteController::class, 'verifyVote'])->name('vote.verify');

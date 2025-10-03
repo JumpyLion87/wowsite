@@ -2,11 +2,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 use App\Models\User;
+use Illuminate\Support\Facades\Http;
 
 class AccountController extends Controller
 {
@@ -29,11 +31,25 @@ class AccountController extends Controller
         // Персонажи (пример: таблица characters в mysql_char)
         $characters = DB::connection('mysql_char')
             ->table('characters')
-            ->select('guid','name','race','class','gender','level','money','online')
-            ->where('account', $user->id)
+            ->leftJoin('guild_member', 'characters.guid', '=', 'guild_member.guid')
+            ->leftJoin('guild', 'guild_member.guildid', '=', 'guild.guildid')
+            ->select(
+                'characters.guid',
+                'characters.name',
+                'characters.race',
+                'characters.class',
+                'characters.gender',
+                'characters.level',
+                'characters.money',
+                'characters.online',
+                'characters.class',
+                'guild.name as guild_name'
+            )
+            ->where('characters.account', $user->id)
             ->orderBy('level', 'desc')
             ->get();
 
+        
         // Быстрые статы по персонажам
         $totalCharacters = $characters->count();
         $highestLevel = $characters->max('level') ?? 0;
@@ -83,6 +99,25 @@ class AccountController extends Controller
                 $teleportCooldowns[(int) $row->character_guid] = (int) $row->teleport_timestamp;
             }
         }
+        
+        $lastVote = DB::table('votes')
+            ->where('user_id', $user->id)
+            ->orderBy('voted_at', 'desc')
+            ->first();
+
+        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 12);
+        $remainingTime = null;
+
+        if ($lastVote) {
+            $nextVoteTime = Carbon::parse($lastVote->voted_at)->addHours($cooldownHours);
+            if (now() < $nextVoteTime) {
+                $remainingTime = $nextVoteTime->diffForHumans(now(), true); // Пример: "через 5 часов"
+            }
+        }
+
+        $this->checkVoteAutomatically($user);
+
+        $activeSessions = $this->getActiveSessions($user->id);
 
         return view('account.index', [
             'accountInfo' => $accountInfo,
@@ -98,7 +133,11 @@ class AccountController extends Controller
             'highestLevel' => $highestLevel,
             'onlineCount' => $onlineCount,
             'totalGold' => $totalGold,
+            'activeSessions' => $activeSessions,
+            'remainingVoteTime' => $remainingTime ?? null,
         ]);
+
+        
     }
 
     public function updateEmail(Request $request)
@@ -159,8 +198,12 @@ class AccountController extends Controller
         $accountId = Auth::id();
 
         // Проверяем принадлежность персонажа
-        $character = DB::connection('mysql_char')->table('characters')
-            ->where('guid', $guid)->where('account', $accountId)->first();
+        $character = DB::connection('mysql_char')
+            ->table('characters')
+            ->where('guid', $guid)
+            ->where('account', $accountId)
+            ->first();
+
         if (!$character) {
             throw ValidationException::withMessages(['guid' => __('Invalid character')]);
         }
@@ -169,8 +212,123 @@ class AccountController extends Controller
         // Выполнить телепорт: реализация зависит от ядра/сервера. Заглушка:
         // DB::connection('mysql_char')->statement('CALL teleport_character(?, ?)', [$guid, $destination]);
 
-        return back()->with('message', __('Character teleported!'));
+        return back()->with('message', __('Character teleported successfully!'));
     }
+
+    /**
+     * Получить активные сессии пользователя
+     */
+    protected function getActiveSessions($accountId)
+    {
+        return DB::connection('mysql')
+            ->table('user_sessions')
+            ->select('device_type', 'ip_address', 'last_active')
+            ->where('account_id', $accountId)
+            ->where('active', 1)
+            ->get();
+    }
+
+    /**
+     * Деактивация сессии
+     */
+    public function destroySessions(Request $request)
+    {
+        $accountId = Auth::id();
+
+        DB::connection('mysql')
+            ->table('user_sessions')
+            ->where('account_id', $accountId)
+            ->where('active', 1)
+            ->where('session_id', '!=', $request->session()->getId())
+            ->update(['active' => 0]);
+
+        return back()->with('message', __('All sessions have been terminated.'));
+    }
+
+
+    /**
+     * Получить разрешённые IP-адреса пользователя
+     */
+    protected function getAllowedIPs($accountId)
+    {
+        return DB::connection('mysql')
+            ->table('user_ip_restrictions')
+            ->select('ip_address')
+            ->where('account_id', $accountId)
+            ->pluck('ip_address')
+            ->toArray();
+    }
+
+    private function checkVoteAutomatically($user)
+    {
+        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 12);
+        $rewardPoints = env('VOTE_REWARD_POINTS', 100);
+        $mmotopUrl = env('MMOTOP_VOTE_URL');
+
+        // Проверка кулдауна
+        $lastVote = DB::table('votes')
+            ->where('user_id', $user->id)
+            ->orderBy('voted_at', 'desc')
+            ->first();
+
+        if ($lastVote && Carbon::parse($lastVote->voted_at)->addHours($cooldownHours) > now()) {
+            return; // Кулдаун еще не истёк
+        }
+
+        // Запрос к mmotop
+        $response = Http::get($mmotopUrl);
+
+        if (!$response->successful()) {
+            return; // Не удалось получить данные
+        }
+
+        $content = $response->body();
+        $accountId = $user->account_id;
+
+        // Поиск голоса по account_id
+        $lines = explode("\n", $content);
+        $found = false;
+
+        foreach ($lines as $line) {
+            $parts = array_map('trim', explode("\t", $line));
+            if (!empty($parts[0]) && $parts[0] == $accountId) {
+                $found = true;
+                break;
+            }
+
+            // Проверка по username (с учетом регистра)
+            if (!empty($parts[3]) && strcasecmp($parts[3], $user->username) === 0) {
+                $found = true;
+                break;
+            }
+            
+        }
+
+        if (!$found) {
+            return; // Голос не найден
+        }
+
+        // Начисление очков и запись голоса
+        DB::transaction(function () use ($user, $rewardPoints) {
+            DB::connection('mysql')->table('user_currencies')
+                ->where('account_id', $user->id)
+                ->update([
+                    'points' => DB::raw("points + $rewardPoints"),
+                    'last_vote_time' => now()
+                ]);
+
+            DB::table('votes')->insert([
+                'user_id' => $user->id,
+                'voted_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        });
+
+         // ✅ Установка сообщения в сессии
+        session()->flash('vote_success', __('vote.success', ['points' => $rewardPoints]));
+    }
+
 }
 
 

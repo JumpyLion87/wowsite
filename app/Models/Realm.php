@@ -32,22 +32,22 @@ class Realm extends Model
     public function getRealmlist()
     {
         $realms = self::all();
-        $realmlist = [];
+        $serverStatus = [];
 
         foreach ($realms as $realm) {
-            $realmlist[] = [
+            $status = $this->checkRealmStatus($realm);
+            $serverStatus[] = array_merge( [
                 'id' => $realm->id,
-                'name' => $realm->name,
+                'name' => $realm->name ?? 'Unknown Realm',
                 'address' => $realm->address,
                 'port' => $realm->port,
-                'icon' => $realm->icon,
-                'logo' => $this->getRealmLogo($realm->icon),
+                'icon' => $realm->icon,               
                 'timezone' => $realm->timezone,
-                'population' => $realm->population
-            ];
+                'population' => $realm->population,
+            ], $status);
         }
 
-        return $realmlist;
+        return ['realmlist' => $serverStatus];
     }
 
     /**
@@ -164,17 +164,5 @@ class Realm extends Model
         return implode(', ', $parts);
     }
 
-    /**
-     * Get realm logo based on icon type
-     */
-    private function getRealmLogo($icon)
-    {
-        $logos = [
-            0 => '/img/logos/realm1_logo.webp',
-            1 => '/img/logos/realm2_logo.webp',
-            2 => '/img/logos/realm1_logo.webp',
-        ];
-
-        return $logos[$icon] ?? '/img/logos/realm1_logo.webp';
-    }
+ 
 }

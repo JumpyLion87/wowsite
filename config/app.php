@@ -67,6 +67,9 @@ return [
 
     'timezone' => 'UTC',
 
+
+  
+
     /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
@@ -147,6 +150,13 @@ return [
     | Supported drivers: "file", "cache"
     |
     */
+    
+    // ...
+    'mmotop_vote_url' => env('MMOTOP_VOTE_URL'),
+    'mmotop_api_token' => env('MMOTOP_API_TOKEN'),
+    'vote_cooldown_hours' => env('VOTE_COOLDOWN_HOURS', 12),
+    'vote_reward_points' => env('VOTE_REWARD_POINTS', 1),
+
 
     'maintenance' => [
         'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
