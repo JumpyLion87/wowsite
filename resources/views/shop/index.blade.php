@@ -138,6 +138,7 @@
                             @if ($item->isInStock())
                                 <button class="buy-button" 
                                         data-item-id="{{ $item->item_id }}"
+                                        data-item-category="{{ $item->category }}"
                                         data-point-cost="{{ $item->point_cost }}"
                                         data-token-cost="{{ $item->token_cost }}"
                                         data-item-name="{{ $item->name }}">
@@ -186,7 +187,23 @@
                                          data-name="{{ $character->name }}"
                                          data-level="{{ $character->level }}">
                                         <div class="d-flex align-items-center">
-                                            <img src="{{ asset('assets/images/races/' . $character->race . '_' . $character->gender . '.jpg') }}" 
+                                            @php
+                                                $raceNames = [
+                                                    1 => 'human',
+                                                    2 => 'orc', 
+                                                    3 => 'dwarf',
+                                                    4 => 'nightelf',
+                                                    5 => 'undead',
+                                                    6 => 'tauren',
+                                                    7 => 'gnome',
+                                                    8 => 'troll',
+                                                    10 => 'bloodelf',
+                                                    11 => 'draenei'
+                                                ];
+                                                $raceName = $raceNames[$character->race] ?? 'human';
+                                                $gender = $character->gender == 0 ? 'male' : 'female';
+                                            @endphp
+                                            <img src="{{ asset('img/accountimg/race/' . $gender . '/' . $raceName . '.png') }}" 
                                                  alt="{{ $character->name }}" 
                                                  class="me-2" 
                                                  style="width: 24px; height: 24px; border-radius: 50%;">
@@ -197,6 +214,56 @@
                                         </div>
                                     </div>
                                 @endforeach
+                            </div>
+                        </div>
+                        
+                        <!-- Service Options Form (hidden by default) -->
+                        <div id="serviceOptions" class="mt-3" style="display: none;">
+                            <h5 class="text-warning">{{ __('shop.service_options') }}</h5>
+                            
+                            <!-- Name Change -->
+                            <div id="nameChangeOption" class="mb-3" style="display: none;">
+                                <label for="serviceName" class="form-label text-light">{{ __('shop.new_name') }}</label>
+                                <input type="text" class="form-control" id="serviceName" name="service_name" 
+                                       placeholder="{{ __('shop.enter_new_name') }}" maxlength="100">
+                            </div>
+                            
+                            <!-- Race Change -->
+                            <div id="raceChangeOption" class="mb-3" style="display: none;">
+                                <label for="serviceRace" class="form-label text-light">{{ __('shop.new_race') }}</label>
+                                <select class="form-select" id="serviceRace" name="service_race">
+                                    <option value="">{{ __('shop.select_race') }}</option>
+                                    <option value="1">{{ __('shop.race_human') }}</option>
+                                    <option value="2">{{ __('shop.race_orc') }}</option>
+                                    <option value="3">{{ __('shop.race_dwarf') }}</option>
+                                    <option value="4">{{ __('shop.race_nightelf') }}</option>
+                                    <option value="5">{{ __('shop.race_undead') }}</option>
+                                    <option value="6">{{ __('shop.race_tauren') }}</option>
+                                    <option value="7">{{ __('shop.race_gnome') }}</option>
+                                    <option value="8">{{ __('shop.race_troll') }}</option>
+                                    <option value="10">{{ __('shop.race_bloodelf') }}</option>
+                                    <option value="11">{{ __('shop.race_draenei') }}</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Gender Change -->
+                            <div id="genderChangeOption" class="mb-3" style="display: none;">
+                                <label for="serviceGender" class="form-label text-light">{{ __('shop.new_gender') }}</label>
+                                <select class="form-select" id="serviceGender" name="service_gender">
+                                    <option value="">{{ __('shop.select_gender') }}</option>
+                                    <option value="0">{{ __('shop.gender_male') }}</option>
+                                    <option value="1">{{ __('shop.gender_female') }}</option>
+                                </select>
+                            </div>
+                            
+                            <!-- Faction Change -->
+                            <div id="factionChangeOption" class="mb-3" style="display: none;">
+                                <label for="serviceFaction" class="form-label text-light">{{ __('shop.new_faction') }}</label>
+                                <select class="form-select" id="serviceFaction" name="service_faction">
+                                    <option value="">{{ __('shop.select_faction') }}</option>
+                                    <option value="1">{{ __('shop.faction_alliance') }}</option>
+                                    <option value="2">{{ __('shop.faction_horde') }}</option>
+                                </select>
                             </div>
                         </div>
                         
@@ -215,6 +282,17 @@
         </div>
     @endif
 @endauth
+
+<!-- Hidden Purchase Form -->
+<form id="purchaseForm" method="POST" action="{{ route('shop.buy') }}" style="display: none;">
+    @csrf
+    <input type="hidden" name="item_id" id="purchaseItemId">
+    <input type="hidden" name="character_guid" id="purchaseCharacterGuid">
+    <input type="hidden" name="service_name" id="purchaseServiceName">
+    <input type="hidden" name="service_race" id="purchaseServiceRace">
+    <input type="hidden" name="service_gender" id="purchaseServiceGender">
+    <input type="hidden" name="service_faction" id="purchaseServiceFaction">
+</form>
 @endsection
 
 <script>
@@ -248,6 +326,205 @@ function filterByCategory(category) {
 
 // Test function availability
 console.log('filterByCategory function available:', typeof filterByCategory);
+
+// Buy button functionality - global scope
+function initializeBuyButtons() {
+    console.log('Initializing buy buttons...');
+    
+    const buyButtons = document.querySelectorAll('.buy-button[data-item-id]');
+    const characterModal = document.getElementById('characterModal');
+    const characterOptions = document.querySelectorAll('.character-option');
+    const confirmPurchaseBtn = document.getElementById('confirmPurchase');
+    
+    console.log('Buy buttons found:', buyButtons.length);
+    console.log('Character modal found:', characterModal ? 'Yes' : 'No');
+    console.log('Character options found:', characterOptions.length);
+    console.log('Confirm purchase button found:', confirmPurchaseBtn ? 'Yes' : 'No');
+    
+    let selectedItem = null;
+    let selectedCharacter = null;
+    
+    buyButtons.forEach((button, index) => {
+        console.log(`Buy button ${index}:`, button);
+        button.addEventListener('click', function() {
+            console.log('Buy button clicked!', this);
+            selectedItem = {
+                id: this.dataset.itemId,
+                name: this.dataset.itemName,
+                pointCost: this.dataset.pointCost,
+                tokenCost: this.dataset.tokenCost
+            };
+            console.log('Selected item:', selectedItem);
+            
+            if (characterModal) {
+                console.log('Opening character modal...');
+                
+                // Check if this is a service item
+                const itemCategory = this.dataset.itemCategory;
+                const isService = itemCategory === 'Service';
+                
+                // Show/hide service options based on item type
+                const serviceOptions = document.getElementById('serviceOptions');
+                const nameChangeOption = document.getElementById('nameChangeOption');
+                const raceChangeOption = document.getElementById('raceChangeOption');
+                const genderChangeOption = document.getElementById('genderChangeOption');
+                const factionChangeOption = document.getElementById('factionChangeOption');
+                
+                if (isService) {
+                    // Show service options
+                    if (serviceOptions) serviceOptions.style.display = 'block';
+                    
+                    // Show specific options based on item name
+                    const itemName = this.dataset.itemName.toLowerCase();
+                    if (itemName.includes('name') || itemName.includes('rename')) {
+                        if (nameChangeOption) nameChangeOption.style.display = 'block';
+                    }
+                    if (itemName.includes('race')) {
+                        if (raceChangeOption) raceChangeOption.style.display = 'block';
+                    }
+                    if (itemName.includes('gender')) {
+                        if (genderChangeOption) genderChangeOption.style.display = 'block';
+                    }
+                    if (itemName.includes('faction')) {
+                        if (factionChangeOption) factionChangeOption.style.display = 'block';
+                    }
+                } else {
+                    // Hide service options for non-service items
+                    if (serviceOptions) serviceOptions.style.display = 'none';
+                    if (nameChangeOption) nameChangeOption.style.display = 'none';
+                    if (raceChangeOption) raceChangeOption.style.display = 'none';
+                    if (genderChangeOption) genderChangeOption.style.display = 'none';
+                    if (factionChangeOption) factionChangeOption.style.display = 'none';
+                }
+                
+                console.log('Bootstrap available:', typeof bootstrap);
+                if (typeof bootstrap !== 'undefined') {
+                    const modal = new bootstrap.Modal(characterModal);
+                    modal.show();
+                } else {
+                    console.log('Bootstrap not available, using jQuery modal');
+                    $(characterModal).modal('show');
+                }
+            } else {
+                console.log('No character modal found');
+                alert('{{ __("shop.no_characters") }}');
+            }
+        });
+    });
+    
+    // Character selection
+    characterOptions.forEach((option, index) => {
+        console.log(`Character option ${index}:`, option);
+        option.addEventListener('click', function() {
+            console.log('Character option clicked:', this);
+            if (this.classList.contains('online')) {
+                console.log('Character is online, cannot select');
+                return;
+            }
+            
+            characterOptions.forEach(opt => opt.classList.remove('selected'));
+            this.classList.add('selected');
+            
+            selectedCharacter = {
+                guid: this.dataset.guid,
+                name: this.dataset.name,
+                level: this.dataset.level
+            };
+            console.log('Selected character:', selectedCharacter);
+            
+            if (confirmPurchaseBtn) {
+                confirmPurchaseBtn.disabled = false;
+                console.log('Confirm purchase button enabled');
+            }
+        });
+    });
+    
+    // Confirm purchase
+    if (confirmPurchaseBtn) {
+        confirmPurchaseBtn.addEventListener('click', function() {
+            console.log('Confirm purchase clicked!');
+            console.log('Selected item:', selectedItem);
+            console.log('Selected character:', selectedCharacter);
+            
+            if (!selectedItem || !selectedCharacter) {
+                console.log('Missing item or character selection');
+                return;
+            }
+            
+            console.log('Creating purchase form...');
+            const form = document.createElement('form');
+            form.method = 'POST';
+            form.action = '{{ route("shop.buy") }}';
+            
+            const csrfToken = document.createElement('input');
+            csrfToken.type = 'hidden';
+            csrfToken.name = '_token';
+            csrfToken.value = '{{ csrf_token() }}';
+            form.appendChild(csrfToken);
+            
+            const itemId = document.createElement('input');
+            itemId.type = 'hidden';
+            itemId.name = 'item_id';
+            itemId.value = selectedItem.id;
+            form.appendChild(itemId);
+            
+            const characterGuid = document.createElement('input');
+            characterGuid.type = 'hidden';
+            characterGuid.name = 'character_guid';
+            characterGuid.value = selectedCharacter.guid;
+            form.appendChild(characterGuid);
+            
+            // Add service data if available
+            const serviceName = document.getElementById('serviceName');
+            if (serviceName && serviceName.value) {
+                const serviceNameInput = document.createElement('input');
+                serviceNameInput.type = 'hidden';
+                serviceNameInput.name = 'service_name';
+                serviceNameInput.value = serviceName.value;
+                form.appendChild(serviceNameInput);
+            }
+            
+            const serviceRace = document.getElementById('serviceRace');
+            if (serviceRace && serviceRace.value) {
+                const serviceRaceInput = document.createElement('input');
+                serviceRaceInput.type = 'hidden';
+                serviceRaceInput.name = 'service_race';
+                serviceRaceInput.value = serviceRace.value;
+                form.appendChild(serviceRaceInput);
+            }
+            
+            const serviceGender = document.getElementById('serviceGender');
+            if (serviceGender && serviceGender.value) {
+                const serviceGenderInput = document.createElement('input');
+                serviceGenderInput.type = 'hidden';
+                serviceGenderInput.name = 'service_gender';
+                serviceGenderInput.value = serviceGender.value;
+                form.appendChild(serviceGenderInput);
+            }
+            
+            const serviceFaction = document.getElementById('serviceFaction');
+            if (serviceFaction && serviceFaction.value) {
+                const serviceFactionInput = document.createElement('input');
+                serviceFactionInput.type = 'hidden';
+                serviceFactionInput.name = 'service_faction';
+                serviceFactionInput.value = serviceFaction.value;
+                form.appendChild(serviceFactionInput);
+            }
+            
+            console.log('Submitting form...');
+            document.body.appendChild(form);
+            form.submit();
+        });
+    } else {
+        console.log('Confirm purchase button not found!');
+    }
+}
+
+// Initialize buy buttons when DOM is ready
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, initializing buy buttons...');
+    initializeBuyButtons();
+});
 </script>
 
 @section('scripts')
@@ -323,22 +600,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const characterOptions = document.querySelectorAll('.character-option');
     const confirmPurchaseBtn = document.getElementById('confirmPurchase');
     
+    console.log('Buy buttons found:', buyButtons.length);
+    console.log('Character modal found:', characterModal ? 'Yes' : 'No');
+    console.log('Character options found:', characterOptions.length);
+    console.log('Confirm purchase button found:', confirmPurchaseBtn ? 'Yes' : 'No');
+    
     let selectedItem = null;
     let selectedCharacter = null;
     
-    buyButtons.forEach(button => {
+    buyButtons.forEach((button, index) => {
+        console.log(`Buy button ${index}:`, button);
         button.addEventListener('click', function() {
+            console.log('Buy button clicked!', this);
             selectedItem = {
                 id: this.dataset.itemId,
                 name: this.dataset.itemName,
                 pointCost: this.dataset.pointCost,
                 tokenCost: this.dataset.tokenCost
             };
+            console.log('Selected item:', selectedItem);
             
             if (characterModal) {
+                console.log('Opening character modal...');
                 const modal = new bootstrap.Modal(characterModal);
                 modal.show();
             } else {
+                console.log('No character modal found');
                 // No characters available
                 alert('{{ __("shop.no_characters") }}');
             }
@@ -346,9 +633,14 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Character selection
-    characterOptions.forEach(option => {
+    characterOptions.forEach((option, index) => {
+        console.log(`Character option ${index}:`, option);
         option.addEventListener('click', function() {
-            if (this.classList.contains('online')) return;
+            console.log('Character option clicked:', this);
+            if (this.classList.contains('online')) {
+                console.log('Character is online, cannot select');
+                return;
+            }
             
             characterOptions.forEach(opt => opt.classList.remove('selected'));
             this.classList.add('selected');
@@ -358,16 +650,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 name: this.dataset.name,
                 level: this.dataset.level
             };
+            console.log('Selected character:', selectedCharacter);
             
             confirmPurchaseBtn.disabled = false;
+            console.log('Confirm purchase button enabled');
         });
     });
     
     // Confirm purchase
     if (confirmPurchaseBtn) {
         confirmPurchaseBtn.addEventListener('click', function() {
-            if (!selectedItem || !selectedCharacter) return;
+            console.log('Confirm purchase clicked!');
+            console.log('Selected item:', selectedItem);
+            console.log('Selected character:', selectedCharacter);
             
+            if (!selectedItem || !selectedCharacter) {
+                console.log('Missing item or character selection');
+                return;
+            }
+            
+            console.log('Creating purchase form...');
             // Create form and submit
             const form = document.createElement('form');
             form.method = 'POST';
@@ -394,8 +696,57 @@ document.addEventListener('DOMContentLoaded', function() {
             characterGuid.value = selectedCharacter.guid;
             form.appendChild(characterGuid);
             
+            console.log('Submitting form...');
             document.body.appendChild(form);
             form.submit();
+        });
+    } else {
+        console.log('Confirm purchase button not found!');
+    }
+    
+    // Reset form when modal is hidden
+    const characterModal = document.getElementById('characterModal');
+    if (characterModal) {
+        characterModal.addEventListener('hidden.bs.modal', function() {
+            console.log('Modal hidden, resetting form...');
+            
+            // Reset service options
+            const serviceOptions = document.getElementById('serviceOptions');
+            if (serviceOptions) serviceOptions.style.display = 'none';
+            
+            // Reset all service fields
+            const nameChangeOption = document.getElementById('nameChangeOption');
+            const raceChangeOption = document.getElementById('raceChangeOption');
+            const genderChangeOption = document.getElementById('genderChangeOption');
+            const factionChangeOption = document.getElementById('factionChangeOption');
+            
+            if (nameChangeOption) nameChangeOption.style.display = 'none';
+            if (raceChangeOption) raceChangeOption.style.display = 'none';
+            if (genderChangeOption) genderChangeOption.style.display = 'none';
+            if (factionChangeOption) factionChangeOption.style.display = 'none';
+            
+            // Clear form values
+            const serviceName = document.getElementById('serviceName');
+            const serviceRace = document.getElementById('serviceRace');
+            const serviceGender = document.getElementById('serviceGender');
+            const serviceFaction = document.getElementById('serviceFaction');
+            
+            if (serviceName) serviceName.value = '';
+            if (serviceRace) serviceRace.value = '';
+            if (serviceGender) serviceGender.value = '';
+            if (serviceFaction) serviceFaction.value = '';
+            
+            // Reset character selection
+            const characterOptions = document.querySelectorAll('.character-option');
+            characterOptions.forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            // Disable confirm button
+            const confirmPurchaseBtn = document.getElementById('confirmPurchase');
+            if (confirmPurchaseBtn) {
+                confirmPurchaseBtn.disabled = true;
+            }
         });
     }
 });

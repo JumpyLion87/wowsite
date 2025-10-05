@@ -29,7 +29,11 @@ class ShopItem extends Model
         'gold_amount',
         'level_boost',
         'at_login_flags',
-        'is_item'
+        'is_item',
+        'race_change',
+        'name_change',
+        'gender_change',
+        'faction_change'
     ];
 
     protected $casts = [

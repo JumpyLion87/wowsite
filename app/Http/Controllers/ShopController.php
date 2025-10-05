@@ -96,7 +96,11 @@ class ShopController extends Controller
     {
         $request->validate([
             'item_id' => 'required|integer|exists:shop_items,item_id',
-            'character_guid' => 'required|integer|exists:characters,guid'
+            'character_guid' => 'required|integer',
+            'service_race' => 'nullable|integer',
+            'service_name' => 'nullable|string|max:100',
+            'service_gender' => 'nullable|integer|in:0,1',
+            'service_faction' => 'nullable|integer|in:1,2'
         ]);
 
         if (!Auth::check()) {
@@ -105,12 +109,21 @@ class ShopController extends Controller
 
         $itemId = $request->input('item_id');
         $characterGuid = $request->input('character_guid');
+        
+        // Собираем данные услуг
+        $serviceData = [
+            'race' => $request->input('service_race'),
+            'name' => $request->input('service_name'),
+            'gender' => $request->input('service_gender'),
+            'faction' => $request->input('service_faction')
+        ];
 
         try {
             $result = $this->shopService->processPurchase(
                 Auth::id(),
                 $itemId,
-                $characterGuid
+                $characterGuid,
+                $serviceData
             );
 
             if ($result['success']) {

@@ -18,6 +18,37 @@ return [
     'login_required' => 'Login required',
     'purchase_success' => 'Purchase completed successfully!',
     'purchase_error' => 'Purchase error',
+    
+    // Service options
+    'service_options' => 'Service Options',
+    'new_name' => 'New Name',
+    'enter_new_name' => 'Enter new character name',
+    'new_race' => 'New Race',
+    'select_race' => 'Select Race',
+    'new_gender' => 'New Gender',
+    'select_gender' => 'Select Gender',
+    'new_faction' => 'New Faction',
+    'select_faction' => 'Select Faction',
+    
+    // Races
+    'race_human' => 'Human',
+    'race_orc' => 'Orc',
+    'race_dwarf' => 'Dwarf',
+    'race_nightelf' => 'Night Elf',
+    'race_undead' => 'Undead',
+    'race_tauren' => 'Tauren',
+    'race_gnome' => 'Gnome',
+    'race_troll' => 'Troll',
+    'race_bloodelf' => 'Blood Elf',
+    'race_draenei' => 'Draenei',
+    
+    // Genders
+    'gender_male' => 'Male',
+    'gender_female' => 'Female',
+    
+    // Factions
+    'faction_alliance' => 'Alliance',
+    'faction_horde' => 'Horde',
     'purchase_history' => 'Purchase History',
     'no_purchases' => 'You have no purchases yet',
     'select_character' => 'Select Character',

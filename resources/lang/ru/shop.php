@@ -18,6 +18,37 @@ return [
     'login_required' => 'Необходимо войти в систему',
     'purchase_success' => 'Покупка успешно завершена!',
     'purchase_error' => 'Ошибка при покупке',
+    
+    // Service options
+    'service_options' => 'Параметры услуги',
+    'new_name' => 'Новое имя',
+    'enter_new_name' => 'Введите новое имя персонажа',
+    'new_race' => 'Новая раса',
+    'select_race' => 'Выберите расу',
+    'new_gender' => 'Новый пол',
+    'select_gender' => 'Выберите пол',
+    'new_faction' => 'Новая фракция',
+    'select_faction' => 'Выберите фракцию',
+    
+    // Races
+    'race_human' => 'Человек',
+    'race_orc' => 'Орк',
+    'race_dwarf' => 'Дворф',
+    'race_nightelf' => 'Ночной эльф',
+    'race_undead' => 'Нежить',
+    'race_tauren' => 'Таурен',
+    'race_gnome' => 'Гном',
+    'race_troll' => 'Тролль',
+    'race_bloodelf' => 'Эльф крови',
+    'race_draenei' => 'Дреней',
+    
+    // Genders
+    'gender_male' => 'Мужской',
+    'gender_female' => 'Женский',
+    
+    // Factions
+    'faction_alliance' => 'Альянс',
+    'faction_horde' => 'Орда',
     'purchase_history' => 'История покупок',
     'no_purchases' => 'У вас пока нет покупок',
     'select_character' => 'Выберите персонажа',
