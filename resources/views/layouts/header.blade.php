@@ -168,6 +168,8 @@
     const langToggle = document.getElementById('langSelected');
     const langOptions = document.getElementById('langOptions');
 
+    console.log('Language elements found:', { langToggle, langOptions }); // Отладочная информация
+
     if (langToggle && langOptions) {
         langToggle.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -189,6 +191,8 @@
             option.addEventListener('click', function (e) {
                 e.stopPropagation();
                 const lang = this.getAttribute('data-value');
+                
+                console.log('Language selected:', lang); // Отладочная информация
                 
                 // Redirect to language switch route
                 window.location.href = "/language/" + lang;

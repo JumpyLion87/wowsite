@@ -94,9 +94,11 @@
 /* Statistics Grid */
 .stats-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 25px;
     margin-bottom: 30px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .stat-card {
@@ -105,6 +107,10 @@
     border-radius: 8px;
     border: 2px solid #ffd700;
     box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
 }
 
 .stat-title {
@@ -121,8 +127,11 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 0;
+    padding: 10px 0;
     border-bottom: 1px solid #8b4513;
+    margin-bottom: 5px;
+    flex-shrink: 0;
+    width: 100%;
 }
 
 .stat-item:last-child {
@@ -131,12 +140,103 @@
 
 .stat-item span:first-child {
     color: #ccc;
+    flex: 1;
+    text-align: left;
 }
 
 .stat-item span.text-warning {
     color: #ffd700;
     font-weight: bold;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    flex-shrink: 0;
+    text-align: right;
+    min-width: 30px;
+}
+
+/* Статистические элементы внутри карточки */
+.stat-card .stat-items-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+    max-height: 300px;
+    width: 100%;
+    padding: 0;
+}
+
+.stat-card .stat-items-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.stat-card .stat-items-container::-webkit-scrollbar-track {
+    background: rgba(139, 69, 19, 0.3);
+    border-radius: 3px;
+}
+
+.stat-card .stat-items-container::-webkit-scrollbar-thumb {
+    background: #8b4513;
+    border-radius: 3px;
+}
+
+.stat-card .stat-items-container::-webkit-scrollbar-thumb:hover {
+    background: #a0522d;
+}
+
+/* Адаптивные стили */
+@media (max-width: 768px) {
+    .stats-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+    
+    .stat-card {
+        min-height: 180px;
+        padding: 15px;
+    }
+    
+    .stat-title {
+        font-size: 1.1rem;
+        margin-bottom: 10px;
+    }
+    
+    .stat-item {
+        padding: 8px 0;
+        font-size: 0.9rem;
+    }
+    
+    .header-section {
+        flex-direction: column;
+        gap: 15px;
+        text-align: center;
+    }
+    
+    .realm-title {
+        font-size: 2rem;
+    }
+    
+    .online-count {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .online-container {
+        padding: 10px;
+    }
+    
+    .stat-card {
+        padding: 12px;
+        min-height: 160px;
+    }
+    
+    .stat-title {
+        font-size: 1rem;
+    }
+    
+    .stat-item {
+        padding: 6px 0;
+        font-size: 0.85rem;
+    }
 }
 
 /* Players Table */

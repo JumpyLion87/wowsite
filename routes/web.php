@@ -16,23 +16,23 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\VoteController;
 
 // Главная страница
-Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/', [HomeController::class, 'index'])->name('home')->middleware(\App\Http\Middleware\Localization::class);
 
 // Authentication routes
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware(\App\Http\Middleware\Localization::class);
 Route::post('/login', [LoginController::class, 'login']);
 
 // Registration routes
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register')->middleware(\App\Http\Middleware\Localization::class);
 Route::post('/register', [RegisterController::class, 'register']);
 
 // Activation routes
-Route::get('/activate', [App\Http\Controllers\ActivationController::class, 'showActivationForm'])->name('activate');
-Route::get('/activate/confirm', [App\Http\Controllers\ActivationController::class, 'activate'])->name('activate.confirm');
+Route::get('/activate', [App\Http\Controllers\ActivationController::class, 'showActivationForm'])->name('activate')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/activate/confirm', [App\Http\Controllers\ActivationController::class, 'activate'])->name('activate.confirm')->middleware(\App\Http\Middleware\Localization::class);
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     // Account
-    Route::get('/account', [AccountController::class, 'index'])->name('account');
+    Route::get('/account', [AccountController::class, 'index'])->name('account')->middleware(\App\Http\Middleware\Localization::class);
     Route::post('/account/email', [AccountController::class, 'updateEmail'])->name('account.email');
     Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password');
     Route::post('/account/avatar', [AccountController::class, 'changeAvatar'])->name('account.avatar');
@@ -49,54 +49,61 @@ Route::get('/download', function () {
 })->name('download');
 
 // Маршруты для новостей
-Route::get('/news', [NewsController::class, 'index'])->name('news.index');
-Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show');
+Route::get('/news', [NewsController::class, 'index'])->name('news.index')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show')->middleware(\App\Http\Middleware\Localization::class);
 
 // Дополнительные маршруты для WoW сайта
-Route::get('/armory', [ArmoryController::class, 'index'])->name('armory');
-Route::get('/armory/arena-2v2', [ArmoryController::class, 'arena2v2'])->name('armory.arena-2v2');
-Route::get('/armory/arena-3v3', [ArmoryController::class, 'arena3v3'])->name('armory.arena-3v3');
-Route::get('/armory/arena-5v5', [ArmoryController::class, 'arena5v5'])->name('armory.arena-5v5');
-Route::get('/armory/solo-pvp', [ArmoryController::class, 'soloPvp'])->name('armory.solo-pvp');
-Route::get('/armory/arenateam', [ArmoryController::class, 'arenateam'])->name('armory.arenateam');
+Route::get('/armory', [ArmoryController::class, 'index'])->name('armory')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/armory/arena-2v2', [ArmoryController::class, 'arena2v2'])->name('armory.arena-2v2')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/armory/arena-3v3', [ArmoryController::class, 'arena3v3'])->name('armory.arena-3v3')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/armory/arena-5v5', [ArmoryController::class, 'arena5v5'])->name('armory.arena-5v5')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/armory/solo-pvp', [ArmoryController::class, 'soloPvp'])->name('armory.solo-pvp')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/armory/arenateam', [ArmoryController::class, 'arenateam'])->name('armory.arenateam')->middleware(\App\Http\Middleware\Localization::class);
 
 // Character routes
-Route::get('/character', [CharacterController::class, 'show'])->name('character.show');
-Route::get('/character/guid/{guid}', [CharacterController::class, 'byGuid'])->name('character.show.guid');
-Route::get('/character/{name}', [CharacterController::class, 'showByName'])->name('character.show.name');
+Route::get('/character', [CharacterController::class, 'show'])->name('character.show')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/character/guid/{guid}', [CharacterController::class, 'byGuid'])->name('character.show.guid')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/character/{name}', [CharacterController::class, 'showByName'])->name('character.show.name')->middleware(\App\Http\Middleware\Localization::class);
 
 
 // Shop routes
-Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
-Route::get('/shop/item/{id}', [ShopController::class, 'show'])->name('shop.show');
-Route::post('/shop/buy', [ShopController::class, 'buy'])->name('shop.buy');
-Route::get('/shop/history', [ShopController::class, 'history'])->name('shop.history');
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/shop/item/{id}', [ShopController::class, 'show'])->name('shop.show')->middleware(\App\Http\Middleware\Localization::class);
+Route::post('/shop/buy', [ShopController::class, 'buy'])->name('shop.buy')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/shop/history', [ShopController::class, 'history'])->name('shop.history')->middleware(\App\Http\Middleware\Localization::class);
 
 // AJAX routes for shop
-Route::get('/shop/api/items', [ShopController::class, 'getItemsByCategory'])->name('shop.api.items');
-Route::get('/shop/api/check-availability', [ShopController::class, 'checkAvailability'])->name('shop.api.check-availability');
+Route::get('/shop/api/items', [ShopController::class, 'getItemsByCategory'])->name('shop.api.items')->middleware(\App\Http\Middleware\Localization::class);
+Route::get('/shop/api/check-availability', [ShopController::class, 'checkAvailability'])->name('shop.api.check-availability')->middleware(\App\Http\Middleware\Localization::class);
 
-Route::get('/how-to-play', [HowToPlayController::class, 'index'])->name('how-to-play');
+Route::get('/how-to-play', [HowToPlayController::class, 'index'])->name('how-to-play')->middleware(\App\Http\Middleware\Localization::class);
 
 // Маршрут для смены языка
 Route::get('/language/{locale}', function ($locale) {
+    \Log::info('Language switch requested:', ['locale' => $locale, 'current_locale' => app()->getLocale()]);
+    
     if (in_array($locale, ['en', 'ru'])) {
+        // Устанавливаем локаль
+        app()->setLocale($locale);
+        \Log::info('Locale set to:', ['new_locale' => app()->getLocale()]);
+        
+        // Возвращаемся обратно с cookie
         return redirect()->back()->withCookie(cookie('locale', $locale, 60 * 24 * 30)); // 30 дней
     }
     return redirect()->back();
 })->name('language.switch');
 
 // Online players page
-Route::get('/online-players', [OnlinePlayersController::class, 'index'])->name('online-players');
+Route::get('/online-players', [OnlinePlayersController::class, 'index'])->name('online-players')->middleware(\App\Http\Middleware\Localization::class);
 
 // Статические страницы
 Route::get('/bugtracker', function () {
     return view('bugtracker');
-})->name('bugtracker');
+})->name('bugtracker')->middleware(\App\Http\Middleware\Localization::class);
 
 Route::get('/stream', function () {
     return view('stream');
-})->name('stream');
+})->name('stream')->middleware(\App\Http\Middleware\Localization::class);
 
 // Fallback для несуществующих маршрутов
 Route::fallback(function () {

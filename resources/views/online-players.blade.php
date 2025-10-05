@@ -24,76 +24,82 @@
         <!-- Class Distribution -->
         <div class="stat-card">
             <h3 class="stat-title">{{ __('online_players.class_distribution') }}</h3>
-            @php
-                $display_class_stats = $class_stats;
-                arsort($display_class_stats);
-            @endphp
-            @foreach ($display_class_stats as $class_id => $count)
+            <div class="stat-items-container">
                 @php
-                    $class_name = \App\Http\Controllers\OnlinePlayersController::getClassNames()[$class_id] ?? 'Unknown';
-                    $class_css = \App\Http\Controllers\OnlinePlayersController::getClassCssClasses()[$class_id] ?? '';
+                    $display_class_stats = $class_stats;
+                    arsort($display_class_stats);
                 @endphp
-                <div class="stat-item">
-                    <span class="{{ $class_css }}">{{ $class_name }}</span>
-                    <span class="text-warning">{{ $count }}</span>
-                </div>
-            @endforeach
+                @foreach ($display_class_stats as $class_id => $count)
+                    @php
+                        $class_name = \App\Http\Controllers\OnlinePlayersController::getClassNames()[$class_id] ?? 'Unknown';
+                        $class_css = \App\Http\Controllers\OnlinePlayersController::getClassCssClasses()[$class_id] ?? '';
+                    @endphp
+                    <div class="stat-item">
+                        <span class="{{ $class_css }}">{{ $class_name }}</span>
+                        <span class="text-warning">{{ $count }}</span>
+                    </div>
+                @endforeach
+            </div>
         </div>
         
         <!-- Race Distribution -->
         <div class="stat-card">
             <h3 class="stat-title">{{ __('online_players.race_distribution') }}</h3>
-            @php
-                $display_race_stats = $race_stats;
-                arsort($display_race_stats);
-            @endphp
-            @foreach ($display_race_stats as $race_id => $count)
+            <div class="stat-items-container">
                 @php
-                    $race_name = \App\Http\Controllers\OnlinePlayersController::getRaceNames()[$race_id] ?? 'Unknown';
-                    $race_css = \App\Http\Controllers\OnlinePlayersController::getRaceCssClasses()[$race_id] ?? '';
+                    $display_race_stats = $race_stats;
+                    arsort($display_race_stats);
                 @endphp
-                <div class="stat-item">
-                    <span class="{{ $race_css }}">{{ $race_name }}</span>
-                    <span class="text-warning">{{ $count }}</span>
-                </div>
-            @endforeach
+                @foreach ($display_race_stats as $race_id => $count)
+                    @php
+                        $race_name = \App\Http\Controllers\OnlinePlayersController::getRaceNames()[$race_id] ?? 'Unknown';
+                        $race_css = \App\Http\Controllers\OnlinePlayersController::getRaceCssClasses()[$race_id] ?? '';
+                    @endphp
+                    <div class="stat-item">
+                        <span class="{{ $race_css }}">{{ $race_name }}</span>
+                        <span class="text-warning">{{ $count }}</span>
+                    </div>
+                @endforeach
+            </div>
         </div>
         
         <!-- Level Range -->
         <div class="stat-card">
             <h3 class="stat-title">{{ __('online_players.level_range') }}</h3>
-            @php
-                $level_ranges = [
-                    'level_range_1_10' => 0,
-                    'level_range_11_20' => 0,
-                    'level_range_21_30' => 0,
-                    'level_range_31_40' => 0,
-                    'level_range_41_50' => 0,
-                    'level_range_51_60' => 0,
-                    'level_range_61_70' => 0,
-                    'level_range_71_80' => 0
-                ];
-                
-                foreach ($online_players as $player) {
-                    $level = $player->level;
-                    if ($level <= 10) $level_ranges['level_range_1_10']++;
-                    elseif ($level <= 20) $level_ranges['level_range_11_20']++;
-                    elseif ($level <= 30) $level_ranges['level_range_21_30']++;
-                    elseif ($level <= 40) $level_ranges['level_range_31_40']++;
-                    elseif ($level <= 50) $level_ranges['level_range_41_50']++;
-                    elseif ($level <= 60) $level_ranges['level_range_51_60']++;
-                    elseif ($level <= 70) $level_ranges['level_range_61_70']++;
-                    else $level_ranges['level_range_71_80']++;
-                }
-            @endphp
-            @foreach ($level_ranges as $range_key => $count)
-                @if ($count > 0)
-                    <div class="stat-item">
-                        <span>{{ __('online_players.' . $range_key) }}</span>
-                        <span class="text-warning">{{ $count }}</span>
-                    </div>
-                @endif
-            @endforeach
+            <div class="stat-items-container">
+                @php
+                    $level_ranges = [
+                        'level_range_1_10' => 0,
+                        'level_range_11_20' => 0,
+                        'level_range_21_30' => 0,
+                        'level_range_31_40' => 0,
+                        'level_range_41_50' => 0,
+                        'level_range_51_60' => 0,
+                        'level_range_61_70' => 0,
+                        'level_range_71_80' => 0
+                    ];
+                    
+                    foreach ($online_players as $player) {
+                        $level = $player->level;
+                        if ($level <= 10) $level_ranges['level_range_1_10']++;
+                        elseif ($level <= 20) $level_ranges['level_range_11_20']++;
+                        elseif ($level <= 30) $level_ranges['level_range_21_30']++;
+                        elseif ($level <= 40) $level_ranges['level_range_31_40']++;
+                        elseif ($level <= 50) $level_ranges['level_range_41_50']++;
+                        elseif ($level <= 60) $level_ranges['level_range_51_60']++;
+                        elseif ($level <= 70) $level_ranges['level_range_61_70']++;
+                        else $level_ranges['level_range_71_80']++;
+                    }
+                @endphp
+                @foreach ($level_ranges as $range_key => $count)
+                    @if ($count > 0)
+                        <div class="stat-item">
+                            <span>{{ __('online_players.' . $range_key) }}</span>
+                            <span class="text-warning">{{ $count }}</span>
+                        </div>
+                    @endif
+                @endforeach
+            </div>
         </div>
     </div>
     
