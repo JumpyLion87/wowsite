@@ -2,31 +2,115 @@
 
 @section('content')
 <div class="dashboard-container">
-    <!-- Верхняя панель: Быстрая статистика -->
-    <div class="card quick-stats">
-        <div class="card-header">{{ __('admin_dashboard.quick_stats_header') }}</div>
-        <div class="card-body">
-            <ul>
-                <li><span class="stat-label">{{ __('admin_dashboard.total_website_users') }}:</span> <span class="stat-value">{{ $totalUsers }}</span></li>
-                <li><span class="stat-label">{{ __('admin_dashboard.total_ingame_accounts') }}:</span> <span class="stat-value">{{ $totalAccounts }}</span></li>
-                <li><span class="stat-label">{{ __('admin_dashboard.total_characters') }}:</span> <span class="stat-value">{{ $totalChars }}</span></li>
-                <li><span class="stat-label">{{ __('admin_dashboard.active_bans') }}:</span> <span class="stat-value">{{ $totalBans }}</span></li>
-            </ul>
+    <!-- Заголовок админки -->
+    <div class="admin-header">
+        <div class="admin-title-section">
+            <h1 class="admin-title">
+                <i class="fas fa-tachometer-alt me-3"></i>
+                {{ __('admin_dashboard.title') }}
+            </h1>
+            <p class="admin-subtitle">{{ __('admin_dashboard.welcome_message') }}</p>
+        </div>
+        <div class="admin-actions">
+            <a href="{{ route('admin.settings') }}" class="btn btn-settings">
+                <i class="fas fa-cogs me-2"></i>
+                {{ __('admin_dashboard.settings') }}
+            </a>
         </div>
     </div>
 
-    <!-- Нижний блок: Админы и бани (в две колонки) -->
-    <div class="grid-container">
-        <!-- Левая колонка: Админы и модераторы -->
-        <div class="grid-item">
-            <div class="card recent-staff">
-                <div class="card-header">{{ __('admin_dashboard.recent_staff_header') }}</div>
+    <!-- Статистические карточки -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $totalUsers }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.total_website_users') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $totalAccounts }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.total_ingame_accounts') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-ninja"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $totalChars }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.total_characters') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-ban"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $totalBans }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.active_bans') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент в две колонки -->
+    <div class="dashboard-content">
+        <!-- Левая колонка: Персонал -->
+        <div class="content-column">
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-user-tie me-2"></i>
+                        {{ __('admin_dashboard.recent_staff_header') }}
+                    </h3>
+                    <div class="card-actions">
+                        <button class="btn btn-sm btn-refresh" onclick="location.reload()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body">
+                    <!-- Форма поиска -->
                     <form class="search-form" method="GET" action="{{ route('admin.dashboard') }}">
-                        <!-- поля формы -->
+                        <div class="search-row">
+                            <div class="search-group">
+                                <input type="text" name="search_username" class="form-control" 
+                                       placeholder="{{ __('admin_dashboard.search_username') }}" 
+                                       value="{{ $searchUsername }}">
+                            </div>
+                            <div class="search-group">
+                                <input type="text" name="search_email" class="form-control" 
+                                       placeholder="{{ __('admin_dashboard.search_email') }}" 
+                                       value="{{ $searchEmail }}">
+                            </div>
+                            <div class="search-group">
+                                <select name="role_filter" class="form-select">
+                                    <option value="">{{ __('admin_dashboard.all_roles') }}</option>
+                                    <option value="admin" {{ $roleFilter == 'admin' ? 'selected' : '' }}>Admin</option>
+                                    <option value="moderator" {{ $roleFilter == 'moderator' ? 'selected' : '' }}>Moderator</option>
+                                </select>
+                            </div>
+                            <div class="search-group">
+                                <button type="submit" class="btn btn-search">
+                                    <i class="fas fa-search me-1"></i>
+                                    {{ __('admin_dashboard.search') }}
+                                </button>
+                            </div>
+                        </div>
                     </form>
-                    <div class="table-wrapper">
-                        <table class="table table-striped">
+                    
+                    <!-- Таблица персонала -->
+                    <div class="table-container">
+                        <table class="data-table">
                             <thead>
                                 <tr>
                                     <th>{{ __('admin_dashboard.table_username') }}</th>
@@ -35,23 +119,43 @@
                                     <th>{{ __('admin_dashboard.table_tokens') }}</th>
                                     <th>{{ __('admin_dashboard.table_role') }}</th>
                                     <th>{{ __('admin_dashboard.table_online') }}</th>
-                                    <th>{{ __('admin_dashboard.table_ban_status') }}</th>
                                     <th>{{ __('admin_dashboard.table_last_updated') }}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($users as $user)
+                                @forelse ($users as $user)
                                     <tr>
-                                        <td>{{ $user->username }}</td>
-                                        <td>{{ $user->email ?? __('admin_dashboard.email_not_set') }}</td>
-                                        <td>{{ $user->points }}</td>
-                                        <td>{{ $user->tokens }}</td>
-                                        <td><span class="status-{{ $user->role }}">{{ ucfirst(__($user->role)) }}</span></td>
-                                        <td>@onlineStatus($user->online)</td>
-                                        <td>@accountStatus(['isLocked' => $user->locked, 'banInfo' => $user->banInfo ?? []])</td>
-                                        <td>{{ $user->last_updated ? \Carbon\Carbon::parse($user->last_updated)->format('M j, Y H:i') : __('admin_dashboard.never') }}</td>
+                                        <td class="username-cell">
+                                            <div class="user-info">
+                                                <span class="username">{{ $user->username }}</span>
+                                            </div>
+                                        </td>
+                                        <td class="email-cell">{{ $user->email ?? __('admin_dashboard.email_not_set') }}</td>
+                                        <td class="points-cell">{{ number_format($user->points ?? 0) }}</td>
+                                        <td class="tokens-cell">{{ number_format($user->tokens ?? 0) }}</td>
+                                        <td class="role-cell">
+                                            <span class="role-badge role-{{ $user->role }}">
+                                                {{ ucfirst(__($user->role)) }}
+                                            </span>
+                                        </td>
+                                        <td class="online-cell">
+                                            <span class="online-status {{ isset($user->online) && $user->online ? 'online' : 'offline' }}">
+                                                <i class="fas fa-circle"></i>
+                                                {{ isset($user->online) && $user->online ? __('admin_dashboard.online') : __('admin_dashboard.offline') }}
+                                            </span>
+                                        </td>
+                                        <td class="date-cell">
+                                            {{ $user->last_updated ? \Carbon\Carbon::parse($user->last_updated)->format('M j, Y H:i') : __('admin_dashboard.never') }}
+                                        </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="7" class="text-center no-data">
+                                            <i class="fas fa-users fa-2x mb-2"></i>
+                                            <p>{{ __('admin_dashboard.no_staff_found') }}</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>
@@ -60,15 +164,24 @@
         </div>
 
         <!-- Правая колонка: Бани -->
-        <div class="grid-item">
-            <div class="card recent-bans">
-                <div class="card-header">{{ __('admin_dashboard.recent_bans_header') }}</div>
+        <div class="content-column">
+            <div class="content-card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        <i class="fas fa-ban me-2"></i>
+                        {{ __('admin_dashboard.recent_bans_header') }}
+                    </h3>
+                    <div class="card-actions">
+                        <button class="btn btn-sm btn-refresh" onclick="location.reload()">
+                            <i class="fas fa-sync-alt"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="card-body">
-                    <div class="table-wrapper">
-                        <table class="table table-striped">
+                    <div class="table-container">
+                        <table class="data-table">
                             <thead>
                                 <tr>
-                                    <th>{{ __('admin_dashboard.table_account_id') }}</th>
                                     <th>{{ __('admin_dashboard.table_username') }}</th>
                                     <th>{{ __('admin_dashboard.table_ban_reason') }}</th>
                                     <th>{{ __('admin_dashboard.table_ban_date') }}</th>
@@ -77,18 +190,38 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($bans as $ban)
+                                @forelse ($bans as $ban)
                                     <tr>
-                                        <td>{{ $ban->id }}</td>
-                                        <td>{{ $ban->username }}</td>
-                                        <td>{{ $ban->banreason ?? __('admin_dashboard.no_reason_provided') }}</td>
-                                        <td>{{ $ban->bandate ? \Carbon\Carbon::parse($ban->bandate)->format('M j, Y H:i') : __('admin_dashboard.na') }}</td>
-                                        <td>{{ $ban->unbandate ? \Carbon\Carbon::parse($ban->unbandate)->format('M j, Y H:i') : __('admin_dashboard.permanent') }}</td>
-                                        <td>
-                                            <a href="/admin/users#user-{{ $ban->id }}" class="btn">{{ __('admin_dashboard.manage_button') }}</a>
+                                        <td class="username-cell">
+                                            <div class="user-info">
+                                                <span class="username">{{ $ban->username }}</span>
+                                                <small class="user-id">ID: {{ $ban->id }}</small>
+                                            </div>
+                                        </td>
+                                        <td class="reason-cell">
+                                            <span class="ban-reason">{{ $ban->banreason ?? __('admin_dashboard.no_reason_provided') }}</span>
+                                        </td>
+                                        <td class="date-cell">
+                                            {{ $ban->bandate ? \Carbon\Carbon::parse($ban->bandate)->format('M j, Y H:i') : __('admin_dashboard.na') }}
+                                        </td>
+                                        <td class="date-cell">
+                                            {{ $ban->unbandate ? \Carbon\Carbon::parse($ban->unbandate)->format('M j, Y H:i') : __('admin_dashboard.permanent') }}
+                                        </td>
+                                        <td class="action-cell">
+                                            <a href="/admin/users#user-{{ $ban->id }}" class="btn btn-manage">
+                                                <i class="fas fa-cog me-1"></i>
+                                                {{ __('admin_dashboard.manage_button') }}
+                                            </a>
                                         </td>
                                     </tr>
-                                @endforeach
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="text-center no-data">
+                                            <i class="fas fa-shield-alt fa-2x mb-2"></i>
+                                            <p>{{ __('admin_dashboard.no_bans_found') }}</p>
+                                        </td>
+                                    </tr>
+                                @endforelse
                             </tbody>
                         </table>
                     </div>

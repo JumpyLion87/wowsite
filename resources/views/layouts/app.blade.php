@@ -26,6 +26,7 @@
     <link rel="stylesheet" href="{{ asset('assets/css/vote-notification.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/wow-classes.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/shop.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/admin-dashboard.css') }}">
     
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">

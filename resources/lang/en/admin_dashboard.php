@@ -1,6 +1,17 @@
 <?php
 
 return [
+    'title' => 'Administrator Dashboard',
+    'settings' => 'Settings',
+    'welcome_message' => 'Welcome to the server management panel',
+    'search_username' => 'Search by username',
+    'search_email' => 'Search by email',
+    'all_roles' => 'All roles',
+    'search' => 'Search',
+    'online' => 'Online',
+    'offline' => 'Offline',
+    'no_staff_found' => 'No staff found',
+    'no_bans_found' => 'No bans found',
     'server_status_header' => 'Server Status',
     'quick_stats_header' => 'Quick Stats',
     'total_website_users' => 'Total Website Users',

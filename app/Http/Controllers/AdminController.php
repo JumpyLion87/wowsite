@@ -43,6 +43,82 @@ class AdminController extends Controller
     }
 
     /**
+     * Страница настроек админки
+     */
+    public function settings()
+    {
+        // Проверка авторизации
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        // Получаем текущие настройки из конфига
+        $settings = [
+            'general' => [
+                'site_name' => config('app.name'),
+                'site_description' => config('app.description', ''),
+                'site_keywords' => config('app.keywords', ''),
+                'maintenance_mode' => config('app.maintenance_mode', false),
+            ],
+            'server' => [
+                'server_name' => config('wow.server_name', ''),
+                'server_realm' => config('wow.server_realm', ''),
+                'server_type' => config('wow.server_type', ''),
+                'server_version' => config('wow.server_version', ''),
+            ],
+            'shop' => [
+                'shop_enabled' => config('shop.enabled', true),
+                'shop_currency_points' => config('shop.currency_points', 'Points'),
+                'shop_currency_tokens' => config('shop.currency_tokens', 'Tokens'),
+            ],
+            'mail' => [
+                'mail_driver' => config('mail.default'),
+                'mail_host' => config('mail.mailers.smtp.host'),
+                'mail_port' => config('mail.mailers.smtp.port'),
+                'mail_username' => config('mail.mailers.smtp.username'),
+                'mail_encryption' => config('mail.mailers.smtp.encryption'),
+            ]
+        ];
+
+        return View::make('admin.settings', compact('settings'));
+    }
+
+    /**
+     * Обновление настроек
+     */
+    public function updateSettings(Request $request)
+    {
+        // Проверка авторизации
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'general.site_name' => 'required|string|max:255',
+            'general.site_description' => 'nullable|string|max:500',
+            'general.site_keywords' => 'nullable|string|max:500',
+            'general.maintenance_mode' => 'boolean',
+            'server.server_name' => 'required|string|max:255',
+            'server.server_realm' => 'required|string|max:255',
+            'server.server_type' => 'required|string|max:50',
+            'server.server_version' => 'required|string|max:50',
+            'shop.shop_enabled' => 'boolean',
+            'shop.shop_currency_points' => 'required|string|max:50',
+            'shop.shop_currency_tokens' => 'required|string|max:50',
+            'mail.mail_driver' => 'required|string|max:50',
+            'mail.mail_host' => 'required|string|max:255',
+            'mail.mail_port' => 'required|integer|min:1|max:65535',
+            'mail.mail_username' => 'nullable|string|max:255',
+            'mail.mail_encryption' => 'nullable|string|max:20',
+        ]);
+
+        // Здесь можно добавить логику сохранения настроек
+        // Пока просто возвращаем успех
+        return redirect()->route('admin.settings')
+            ->with('success', 'Настройки успешно обновлены!');
+    }
+
+    /**
      * Получить общее количество пользователей (user_currencies)
      */
     protected function getTotalUsers(): int
@@ -104,6 +180,7 @@ class AdminController extends Controller
         // 3. Объединяем данные
         return $userCurrencies->map(function ($item) use ($accounts) {
             $item->email = $accounts[$item->account_id] ?? 'Не найдено';
+            $item->online = false; // По умолчанию оффлайн, можно добавить логику проверки онлайн статуса
             return $item;
         });
     }

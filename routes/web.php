@@ -106,6 +106,10 @@ Route::fallback(function () {
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
          ->name('admin.dashboard');
+    Route::get('/admin/settings', [AdminController::class, 'settings'])
+         ->name('admin.settings');
+    Route::post('/admin/settings', [AdminController::class, 'updateSettings'])
+         ->name('admin.settings.update');
 });
 
 
