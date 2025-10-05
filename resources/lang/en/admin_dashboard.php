@@ -38,4 +38,16 @@ return [
     'no_reason_provided' => 'No reason provided',
     'na' => 'N/A',
     'permanent' => 'Permanent',
+    
+    // New translations
+    'online_players' => 'Online Players',
+    'today_purchases' => 'Today\'s Purchases',
+    'today_revenue' => 'Today\'s Revenue',
+    'server_status' => 'Server Status',
+    'server_online' => 'Server Online',
+    'server_offline' => 'Server Offline',
+    'players_online' => 'Players Online',
+    'uptime' => 'Uptime',
+    'recent_purchases' => 'Recent Purchases',
+    'no_recent_purchases' => 'No recent purchases',
 ];

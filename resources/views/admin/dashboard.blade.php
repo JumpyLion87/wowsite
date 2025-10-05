@@ -60,6 +60,104 @@
                 <p class="stat-label">{{ __('admin_dashboard.active_bans') }}</p>
             </div>
         </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-circle text-success"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $onlineUsers }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.online_players') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $dailyStats['new_purchases'] }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.today_purchases') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-dollar-sign"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ number_format($dailyStats['total_revenue'], 0) }}</h3>
+                <p class="stat-label">{{ __('admin_dashboard.today_revenue') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Дополнительная информация -->
+    <div class="info-cards">
+        <!-- Статус сервера -->
+        <div class="info-card">
+            <h3 class="info-title">
+                <i class="fas fa-server me-2"></i>
+                {{ __('admin_dashboard.server_status') }}
+            </h3>
+            <div class="server-status">
+                <div class="status-indicator {{ $serverStatus['online'] ? 'online' : 'offline' }}">
+                    <span class="status-dot"></span>
+                    <i class="fas fa-server me-2"></i>
+                    {{ $serverStatus['online'] ? __('admin_dashboard.server_online') : __('admin_dashboard.server_offline') }}
+                </div>
+                <div class="status-details">
+                    <div class="status-item">
+                        <i class="fas fa-users text-info me-2"></i>
+                        <span class="status-label">{{ __('admin_dashboard.players_online') }}:</span>
+                        <span class="status-value">{{ $serverStatus['players'] ?? 0 }}</span>
+                    </div>
+                    <div class="status-item">
+                        <i class="fas fa-clock text-warning me-2"></i>
+                        <span class="status-label">{{ __('admin_dashboard.uptime') }}:</span>
+                        <span class="status-value">{{ $serverStatus['uptime'] ?? 'Unknown' }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Последние покупки -->
+        <div class="info-card">
+            <h3 class="info-title">
+                <i class="fas fa-shopping-bag me-2"></i>
+                {{ __('admin_dashboard.recent_purchases') }}
+            </h3>
+            <div class="purchases-list">
+                @if($recentPurchases->count() > 0)
+                    @foreach($recentPurchases->take(5) as $purchase)
+                        <div class="purchase-item">
+                            <div class="purchase-info">
+                                <div class="purchase-item-header">
+                                    <i class="fas fa-shopping-bag text-primary me-2"></i>
+                                    <span class="item-name">{{ $purchase->item_name }}</span>
+                                </div>
+                                <div class="purchase-user">
+                                    <i class="fas fa-user text-muted me-1"></i>
+                                    <span class="purchase-email">{{ $purchase->email }}</span>
+                                </div>
+                            </div>
+                            <div class="purchase-meta">
+                                <div class="purchase-price">
+                                    <i class="fas fa-coins text-warning me-1"></i>
+                                    <span>{{ number_format($purchase->point_cost + $purchase->token_cost, 0) }}</span>
+                                </div>
+                                <div class="purchase-date">
+                                    <i class="fas fa-clock text-muted me-1"></i>
+                                    <span>{{ \Carbon\Carbon::parse($purchase->purchase_date)->format('H:i') }}</span>
+                                </div>
+                            </div>
+                        </div>
+                    @endforeach
+                @else
+                    <p class="no-data">{{ __('admin_dashboard.no_recent_purchases') }}</p>
+                @endif
+            </div>
+        </div>
     </div>
 
     <!-- Основной контент в две колонки -->

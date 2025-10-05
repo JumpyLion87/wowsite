@@ -22,8 +22,13 @@ class AdminController extends Controller
         $totalAccounts = $this->getTotalAccounts();
         $totalChars = $this->getTotalChars();
         $totalBans = $this->getTotalBans();
-
         
+        // Дополнительная статистика
+        $onlineUsers = $this->getOnlineUsers();
+        $recentPurchases = $this->getRecentPurchases();
+        $serverStatus = $this->getServerStatus();
+        $dailyStats = $this->getDailyStats();
+
         // Обработка фильтров
         $searchUsername = $request->input('search_username', '');
         $searchEmail = $request->input('search_email', '');
@@ -38,6 +43,7 @@ class AdminController extends Controller
         // Передача данных в шаблон
         return View::make('admin.dashboard', compact(
             'totalUsers', 'totalAccounts', 'totalChars', 'totalBans',
+            'onlineUsers', 'recentPurchases', 'serverStatus', 'dailyStats',
             'users', 'bans', 'searchUsername', 'searchEmail', 'roleFilter'
         ));
     }
@@ -150,6 +156,113 @@ class AdminController extends Controller
         return DB::connection('mysql_auth')->table('account_banned')
             ->where('active', 1)
             ->count();
+    }
+
+    /**
+     * Получить количество онлайн пользователей
+     */
+    protected function getOnlineUsers(): int
+    {
+        return DB::connection('mysql_char')->table('characters')
+            ->where('online', 1)
+            ->count();
+    }
+
+    /**
+     * Получить последние покупки
+     */
+    protected function getRecentPurchases()
+    {
+        return DB::connection('mysql')->table('purchases')
+            ->join('shop_items', 'purchases.item_id', '=', 'shop_items.item_id')
+            ->join('user_currencies', 'purchases.account_id', '=', 'user_currencies.account_id')
+            ->select('purchases.*', 'shop_items.name as item_name', 'user_currencies.email')
+            ->orderBy('purchases.purchase_date', 'desc')
+            ->limit(10)
+            ->get();
+    }
+
+    /**
+     * Получить статус сервера
+     */
+    protected function getServerStatus()
+    {
+        try {
+            // Получаем количество онлайн игроков напрямую из базы
+            $onlinePlayers = DB::connection('mysql_char')->table('characters')
+                ->where('online', 1)
+                ->count();
+            
+            // Получаем время работы сервера (время последнего входа игрока)
+            $lastLogin = DB::connection('mysql_char')->table('characters')
+                ->where('online', 1)
+                ->max('totaltime');
+            
+            $uptime = 'Unknown';
+            if ($lastLogin) {
+                $uptime = $this->formatUptime($lastLogin);
+            }
+            
+            return [
+                'online' => $onlinePlayers > 0,
+                'players' => $onlinePlayers,
+                'uptime' => $uptime
+            ];
+        } catch (\Exception $e) {
+            \Log::error('Server status error: ' . $e->getMessage());
+            
+            return [
+                'online' => false,
+                'players' => 0,
+                'uptime' => 'Unknown'
+            ];
+        }
+    }
+    
+    /**
+     * Форматировать время работы сервера
+     */
+    private function formatUptime($seconds)
+    {
+        if (!$seconds) return 'Unknown';
+        
+        $days = floor($seconds / 86400);
+        $hours = floor(($seconds % 86400) / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        
+        $result = [];
+        
+        if ($days > 0) {
+            $result[] = $days . 'd';
+        }
+        if ($hours > 0) {
+            $result[] = $hours . 'h';
+        }
+        if ($minutes > 0) {
+            $result[] = $minutes . 'm';
+        }
+        
+        return empty($result) ? '0m' : implode(' ', $result);
+    }
+
+    /**
+     * Получить дневную статистику
+     */
+    protected function getDailyStats()
+    {
+        $today = now()->format('Y-m-d');
+        
+        return [
+            'new_users' => DB::connection('mysql_auth')->table('account')
+                ->whereDate('joindate', $today)
+                ->count(),
+            'new_purchases' => DB::connection('mysql')->table('purchases')
+                ->whereDate('purchase_date', $today)
+                ->count(),
+            'total_revenue' => DB::connection('mysql')->table('purchases')
+                ->whereDate('purchase_date', $today)
+                ->sum(DB::raw('point_cost + token_cost')),
+        ];
     }
 
     /**

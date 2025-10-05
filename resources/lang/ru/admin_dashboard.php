@@ -38,4 +38,16 @@ return [
     'no_reason_provided' => 'Причина не указана',
     'na' => 'Н/Д',
     'permanent' => 'Постоянный',
+    
+    // Новые переводы
+    'online_players' => 'Игроки онлайн',
+    'today_purchases' => 'Покупки сегодня',
+    'today_revenue' => 'Доход сегодня',
+    'server_status' => 'Статус сервера',
+    'server_online' => 'Сервер онлайн',
+    'server_offline' => 'Сервер оффлайн',
+    'players_online' => 'Игроков онлайн',
+    'uptime' => 'Время работы',
+    'recent_purchases' => 'Последние покупки',
+    'no_recent_purchases' => 'Нет недавних покупок',
 ];
