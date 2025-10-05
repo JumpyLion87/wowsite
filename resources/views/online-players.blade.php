@@ -160,14 +160,10 @@
                                 <span class="level-badge">{{ $player->level }}</span>
                             </td>
                             <td>
-                                @if ($player->guild && $player->guild->name)
-                                    <span class="text-info">{{ $player->guild->name }}</span>
-                                @else
-                                    <span class="text-muted">{{ __('online_players.no_guild') }}</span>
-                                @endif
+                                <span class="text-muted">{{ __('online_players.no_guild') }}</span>
                             </td>
                             <td>
-                                <small>{{ \App\Http\Controllers\OnlinePlayersController::getZoneNames()[$player->map] ?? __('online_players.zone_unknown') }}</small>
+                                <small>{{ \App\Http\Controllers\OnlinePlayersController::getZoneNames()[$player->zone] ?? __('online_players.zone_unknown') }}</small>
                             </td>
                         </tr>
                     @endforeach
@@ -183,20 +179,36 @@
 </div>
 @endsection
 
-@section('scripts')
+@push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        console.log('Online players page loaded');
+        
         // Refresh button functionality
         const refreshButton = document.getElementById('refreshButton');
+        console.log('Refresh button found:', refreshButton);
+        
         if (refreshButton) {
-            refreshButton.addEventListener('click', function() {
+            refreshButton.addEventListener('click', function(e) {
+                e.preventDefault();
+                console.log('Refresh button clicked');
+                
+                // Disable button and add animation
+                this.disabled = true;
                 this.classList.add('refreshing');
+                
+                // Change button text
+                const originalText = this.innerHTML;
+                this.innerHTML = '<i class="fas fa-sync-alt"></i> {{ __("online_players.refreshing") }}';
+                
                 // Add slight delay to show animation before reload
                 setTimeout(() => {
                     window.location.reload();
-                }, 300);
+                }, 500);
             });
+        } else {
+            console.error('Refresh button not found!');
         }
     });
 </script>
-@endsection
+@endpush

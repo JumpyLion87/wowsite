@@ -8,6 +8,7 @@ return [
     // Page content
     'online_players_count' => 'Players Online:',
     'refresh' => 'Refresh',
+    'refreshing' => 'Refreshing...',
     'class_distribution' => 'Class Distribution',
     'race_distribution' => 'Race Distribution',
     'level_range' => 'Level Range',
@@ -58,9 +59,28 @@ return [
     'race_draenei' => 'Draenei',
     'race_worgen' => 'Worgen',
     
-    // Zone names
+    // Zone names (WotLK 3.3.5)
     'zone_eastern_kingdoms' => 'Eastern Kingdoms',
     'zone_kalimdor' => 'Kalimdor',
+    'zone_elwynn_forest' => 'Elwynn Forest',
+    'zone_durotar' => 'Durotar',
+    'zone_azshara' => 'Azshara',
+    'zone_westfall' => 'Westfall',
+    'zone_tirisfal_glades' => 'Tirisfal Glades',
+    'zone_mulgore' => 'Mulgore',
+    'zone_hillsbrad_foothills' => 'Hillsbrad Foothills',
     'zone_outland' => 'Outland',
     'zone_northrend' => 'Northrend',
+    'zone_scarlet_monastery' => 'Scarlet Monastery',
+    'zone_undercity' => 'Undercity',
+    'zone_stormwind' => 'Stormwind',
+    'zone_orgrimmar' => 'Orgrimmar',
+    'zone_thunder_bluff' => 'Thunder Bluff',
+    'zone_darnassus' => 'Darnassus',
+    'zone_eversong_woods' => 'Eversong Woods',
+    'zone_hellfire_peninsula' => 'Hellfire Peninsula',
+    'zone_zangarmarsh' => 'Zangarmarsh',
+    'zone_blades_edge_mountains' => 'Blade\'s Edge Mountains',
+    'zone_shattrath' => 'Shattrath',
+    'zone_icecrown' => 'Icecrown',
 ];

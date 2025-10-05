@@ -145,8 +145,27 @@ class OnlinePlayersController extends Controller
         return [
             0 => __('online_players.zone_eastern_kingdoms'),
             1 => __('online_players.zone_kalimdor'),
+            12 => __('online_players.zone_elwynn_forest'),
+            14 => __('online_players.zone_durotar'),
+            17 => __('online_players.zone_azshara'),
+            40 => __('online_players.zone_westfall'),
+            85 => __('online_players.zone_tirisfal_glades'),
+            215 => __('online_players.zone_mulgore'),
+            267 => __('online_players.zone_hillsbrad_foothills'),
             530 => __('online_players.zone_outland'),
-            571 => __('online_players.zone_northrend')
+            571 => __('online_players.zone_northrend'),
+            796 => __('online_players.zone_scarlet_monastery'),
+            1497 => __('online_players.zone_undercity'),
+            1519 => __('online_players.zone_stormwind'),
+            1637 => __('online_players.zone_orgrimmar'),
+            1638 => __('online_players.zone_thunder_bluff'),
+            1657 => __('online_players.zone_darnassus'),
+            3430 => __('online_players.zone_eversong_woods'),
+            3483 => __('online_players.zone_hellfire_peninsula'),
+            3521 => __('online_players.zone_zangarmarsh'),
+            3524 => __('online_players.zone_blades_edge_mountains'),
+            3703 => __('online_players.zone_shattrath'),
+            4298 => __('online_players.zone_icecrown'),
         ];
     }
 

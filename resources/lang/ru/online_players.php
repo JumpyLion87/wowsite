@@ -8,6 +8,7 @@ return [
     // Page content
     'online_players_count' => 'Игроков онлайн:',
     'refresh' => 'Обновить',
+    'refreshing' => 'Обновление...',
     'class_distribution' => 'Распределение классов',
     'race_distribution' => 'Распределение рас',
     'level_range' => 'Диапазон уровней',
@@ -58,9 +59,28 @@ return [
     'race_draenei' => 'Дреней',
     'race_worgen' => 'Ворген',
     
-    // Zone names
+    // Zone names (WotLK 3.3.5)
     'zone_eastern_kingdoms' => 'Восточные королевства',
     'zone_kalimdor' => 'Калимдор',
+    'zone_elwynn_forest' => 'Элвиннский лес',
+    'zone_durotar' => 'Дуротар',
+    'zone_azshara' => 'Азшара',
+    'zone_westfall' => 'Западный Край',
+    'zone_tirisfal_glades' => 'Тирисфальские леса',
+    'zone_mulgore' => 'Мулгор',
+    'zone_hillsbrad_foothills' => 'Предгорья Хилсбрада',
     'zone_outland' => 'Запределье',
     'zone_northrend' => 'Нордскол',
+    'zone_scarlet_monastery' => 'Монастырь Алого ордена',
+    'zone_undercity' => 'Подгород',
+    'zone_stormwind' => 'Штормград',
+    'zone_orgrimmar' => 'Оргриммар',
+    'zone_thunder_bluff' => 'Громовой Утес',
+    'zone_darnassus' => 'Дарнас',
+    'zone_eversong_woods' => 'Лес Вечной Песни',
+    'zone_hellfire_peninsula' => 'Полуостров Адского Пламени',
+    'zone_zangarmarsh' => 'Зангартопь',
+    'zone_blades_edge_mountains' => 'Острогорье',
+    'zone_shattrath' => 'Шаттрат',
+    'zone_icecrown' => 'Ледяная Корона',
 ];

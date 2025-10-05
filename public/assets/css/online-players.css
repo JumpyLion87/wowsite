@@ -78,8 +78,12 @@
 }
 
 .refresh-btn.refreshing {
-    animation: spin 1s infinite linear;
     pointer-events: none;
+    opacity: 0.8;
+}
+
+.refresh-btn.refreshing i {
+    animation: spin 1s infinite linear;
 }
 
 @keyframes spin {

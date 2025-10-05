@@ -209,6 +209,7 @@ class Character extends Model
     {
         try {
             return self::select('level', DB::raw('COUNT(*) as count'))
+               ->where('online', 1)
                ->groupBy('level')
                ->orderBy('level', 'desc')
                 ->get();
@@ -225,6 +226,7 @@ class Character extends Model
     {
         try {
             return self::select('class', DB::raw('COUNT(*) as count'))
+                ->where('online', 1)
                 ->groupBy('class')
                 ->orderBy('count', 'desc')
                 ->get();
@@ -241,6 +243,7 @@ class Character extends Model
     {
         try {
             return self::select('race', DB::raw('COUNT(*) as count'))
+                ->where('online', 1)
                 ->groupBy('race')
                 ->orderBy('count', 'desc')
                 ->get();
@@ -273,7 +276,7 @@ class Character extends Model
         try {
             return self::where('online', 1)
                 ->orderBy('name')
-                ->get(['name', 'race', 'class', 'level', 'zone']);
+                ->get(['guid', 'name', 'race', 'class', 'level', 'zone']);
         } catch (\Exception $e) {
             Log::error("Error getting online players: " . $e->getMessage());
             return collect();
