@@ -6,88 +6,97 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Str;
 use Carbon\Carbon;
+use App\Models\User;
+use App\Services\VoteCheckService;
 
 class VoteController extends Controller
 {
-    public function submitVote(Request $request)
+    protected $voteCheckService;
+
+    public function __construct(VoteCheckService $voteCheckService)
+    {
+        $this->voteCheckService = $voteCheckService;
+    }
+
+    /**
+     * Перенаправление на страницу голосования MMOTOP
+     */
+    public function redirectToVote(Request $request)
     {
         $user = Auth::user();
-        $cooldownHours = env('VOTE_COOLDOWN_HOURS', 12);
-        $rewardPoints = env('VOTE_REWARD_POINTS', 100);
+        $mmotopUrl = env('MMOTOP_SERVER_URL', 'https://wow.mmotop.ru/servers/37477/votes/new');
 
-        // Проверка наличия токена
-        $token = $request->input('token');
-        if (!$token) {
-            return back()->withErrors(__('vote.missing_token'));
+        // Логируем попытку голосования
+        DB::connection('mysql')->table('website_activity_log')->insert([
+            'account_id' => $user->id,
+            'action' => 'vote_redirect',
+            'timestamp' => time(), // UNIX timestamp
+            'details' => 'Переход на страницу голосования MMOTOP',
+        ]);
+
+        // Перенаправляем на MMOTOP
+        return redirect($mmotopUrl);
+    }
+
+    /**
+     * Проверить голос пользователя (AJAX)
+     */
+    public function checkVote(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
         }
 
-        // Проверка уникальности токена
-        if (DB::table('votes')->where('token', $token)->exists()) {
-            return back()->withErrors(__('vote.token_already_used'));
+        $user = Auth::user();
+        $result = $this->voteCheckService->checkUserVote($user);
+
+        return response()->json($result);
+    }
+
+    /**
+     * Получить информацию о голосовании
+     */
+    public function getVoteInfo(Request $request)
+    {
+        if (!Auth::check()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Unauthorized'
+            ], 401);
         }
 
-        // Проверка кулдауна
+        $user = Auth::user();
+        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 24);
+
+        // Последний голос
         $lastVote = DB::table('votes')
             ->where('user_id', $user->id)
             ->orderBy('voted_at', 'desc')
             ->first();
 
-        if ($lastVote && Carbon::parse($lastVote->voted_at)->addHours($cooldownHours) > now()) {
-            return back()->withErrors(__('vote.cooldown_error', ['hours' => $cooldownHours]));
-        }
+        $canVote = true;
+        $remainingTime = null;
 
-        // Проверка токена через запрос к mmotop
-        $token = $request->input('token');
-        $mmotopUrl = env('MMOTOP_VOTE_URL') . $token . '.txt?' . env('MMOTOP_API_TOKEN');
-        $response = Http::get($mmotopUrl);
-
-        if ($response->successful()) {
-            $content = $response->body();
-            if (str_contains($content, 'OK')) {
-                // Начисление очков и запись голоса
-                DB::connection('mysql')->transaction(function () use ($user, $rewardPoints, $token) {
-                    DB::connection('mysql')->table('user_currencies')
-                        ->where('account_id', $user->id)
-                        ->update([
-                            'points' => DB::raw("points + $rewardPoints"),
-                            'last_vote_time' => now()
-                        ]);
-
-                    DB::table('votes')->insert([
-                        'user_id' => $user->id,
-                        'token' => $token,
-                        'voted_at' => now(),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ]);
-                });
-
-                return back()->with('message', __('vote.success', ['points' => $rewardPoints]));
-            } else {
-                return back()->withErrors(__('vote.invalid_token'));
+        if ($lastVote) {
+            $nextVoteTime = Carbon::parse($lastVote->voted_at)->addHours($cooldownHours);
+            if (now() < $nextVoteTime) {
+                $canVote = false;
+                $remainingTime = $nextVoteTime->diffForHumans(now(), true);
             }
-        } else {
-            return back()->withErrors(__('vote.failed_to_verify'));
         }
-    }
 
-    public function generateToken(Request $request)
-    {
-        $user = Auth::user();
-
-        // Генерация уникального токена
-        $token = Str::random(32);
-
-        // Сохранение токена в БД (временная таблица pending_votes)
-        DB::table('pending_votes')->insert([
-            'user_id' => $user->id,
-            'token' => $token,
-            'created_at' => now(),
-            'expires_at' => now()->addMinutes(60), // Токен действует 60 минут
+        return response()->json([
+            'success' => true,
+            'can_vote' => $canVote,
+            'remaining_time' => $remainingTime,
+            'last_vote' => $lastVote ? Carbon::parse($lastVote->voted_at)->format('d.m.Y H:i') : null,
+            'reward_points' => env('VOTE_REWARD_POINTS', 100),
+            'cooldown_hours' => $cooldownHours
         ]);
-
-        // Перенаправление на сайт голосования
-        return redirect(env('MMOTOP_SERVER_URL') . '?token=' . $token);
     }
 }

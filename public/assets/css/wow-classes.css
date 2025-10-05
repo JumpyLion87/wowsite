@@ -1,0 +1,86 @@
+/* WoW Class Colors */
+
+.class-warrior {
+    color: #C79C6E !important;
+    font-weight: 600;
+}
+
+.class-paladin {
+    color: #F58CBA !important;
+    font-weight: 600;
+}
+
+.class-hunter {
+    color: #ABD473 !important;
+    font-weight: 600;
+}
+
+.class-rogue {
+    color: #FFF569 !important;
+    font-weight: 600;
+}
+
+.class-priest {
+    color: #FFFFFF !important;
+    font-weight: 600;
+}
+
+.class-death-knight {
+    color: #C41F3B !important;
+    font-weight: 600;
+}
+
+.class-shaman {
+    color: #0070DE !important;
+    font-weight: 600;
+}
+
+.class-mage {
+    color: #69CCF0 !important;
+    font-weight: 600;
+}
+
+.class-warlock {
+    color: #9482C9 !important;
+    font-weight: 600;
+}
+
+.class-druid {
+    color: #FF7D0A !important;
+    font-weight: 600;
+}
+
+/* Hover effects for class colors */
+.class-warrior:hover,
+.class-paladin:hover,
+.class-hunter:hover,
+.class-rogue:hover,
+.class-priest:hover,
+.class-death-knight:hover,
+.class-shaman:hover,
+.class-mage:hover,
+.class-warlock:hover,
+.class-druid:hover {
+    text-shadow: 0 0 10px currentColor;
+    transition: text-shadow 0.3s ease;
+}
+
+/* Race colors (optional) */
+.race-alliance {
+    color: #0078FF !important;
+}
+
+.race-horde {
+    color: #B30000 !important;
+}
+
+/* Guild name styling */
+.guild-name {
+    color: #00FF96;
+    font-style: italic;
+}
+
+.no-guild {
+    color: #888;
+    font-style: italic;
+}

@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::table('votes', function (Blueprint $table) {
+            $table->string('mmotop_vote_id', 20)->nullable()->after('user_id')->unique()->comment('Уникальный ID голоса от MMOTOP');
+            $table->index('mmotop_vote_id');
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::table('votes', function (Blueprint $table) {
+            $table->dropIndex(['mmotop_vote_id']);
+            $table->dropColumn('mmotop_vote_id');
+        });
+    }
+};

@@ -1,0 +1,213 @@
+/**
+ * Стили для системы уведомлений о голосовании
+ */
+
+.vote-notifications-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    pointer-events: none;
+}
+
+.vote-notification {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 2px solid #d4af37;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 15px;
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3),
+                0 0 20px rgba(212, 175, 55, 0.2);
+    pointer-events: all;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.vote-notification::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(212, 175, 55, 0.1) 50%, 
+        transparent 100%);
+    animation: shimmer 2s infinite;
+    pointer-events: none;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+.vote-notification-success {
+    border-color: #d4af37;
+}
+
+.vote-notification-info {
+    border-color: #4a9eff;
+}
+
+.vote-notification-warning {
+    border-color: #ffa500;
+}
+
+.vote-notification-error {
+    border-color: #ff4444;
+}
+
+.vote-notification-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    font-weight: bold;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+    color: #1a1a2e;
+    box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4);
+}
+
+.vote-notification-success .vote-notification-icon {
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+}
+
+.vote-notification-info .vote-notification-icon {
+    background: linear-gradient(135deg, #4a9eff 0%, #6bb6ff 100%);
+}
+
+.vote-notification-content {
+    flex: 1;
+    color: #ffffff;
+}
+
+.vote-notification-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #d4af37;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.vote-notification-message {
+    font-size: 14px;
+    line-height: 1.5;
+    color: #e0e0e0;
+    margin-bottom: 8px;
+}
+
+.vote-notification-points {
+    display: inline-block;
+    background: linear-gradient(135deg, #d4af37 0%, #f4d03f 100%);
+    color: #1a1a2e;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.4);
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
+.vote-notification-close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: #d4af37;
+    font-size: 24px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    opacity: 0.6;
+}
+
+.vote-notification-close:hover {
+    opacity: 1;
+    transform: rotate(90deg);
+    color: #fff;
+}
+
+/* Анимации */
+.vote-notification-enter {
+    opacity: 0;
+    transform: translateX(400px);
+}
+
+.vote-notification-show {
+    opacity: 1;
+    transform: translateX(0);
+    transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+.vote-notification-exit {
+    opacity: 0;
+    transform: translateX(400px) scale(0.8);
+    transition: all 0.3s ease;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .vote-notifications-container {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+    }
+
+    .vote-notification {
+        padding: 15px;
+    }
+
+    .vote-notification-icon {
+        width: 35px;
+        height: 35px;
+        font-size: 20px;
+    }
+
+    .vote-notification-title {
+        font-size: 16px;
+    }
+
+    .vote-notification-message {
+        font-size: 13px;
+    }
+}
+
+/* Эффект свечения для успешного голоса */
+.vote-notification-success {
+    animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3),
+                    0 0 20px rgba(212, 175, 55, 0.2);
+    }
+    50% {
+        box-shadow: 0 10px 40px rgba(212, 175, 55, 0.5),
+                    0 0 30px rgba(212, 175, 55, 0.4);
+    }
+}

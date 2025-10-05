@@ -21,9 +21,14 @@
     <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/account.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/character.css') }}?v={{ time() }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/vote-notification.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/wow-classes.css') }}">
     
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @auth
+    <meta name="user-authenticated" content="true">
+    @endauth
 </head>
 <body class="home">
     <!-- Header will be included here -->
@@ -44,6 +49,19 @@
     <script src="{{ asset('assets/js/wow-header.js') }}" defer></script>
     <script src="{{ asset('assets/js/home.js') }}" defer></script>
     <script src="{{ asset('assets/js/character.js') }}?v={{ time() }}" defer></script>
+    @auth
+    <script src="{{ asset('assets/js/vote-notification.js') }}" defer></script>
+    @endauth
+    
+    @if(session('vote_notification'))
+    <div data-vote-notification 
+         data-notification-type="{{ session('vote_notification.type') }}"
+         data-notification-message="{{ session('vote_notification.message') }}"
+         data-notification-points="{{ session('vote_notification.points') ?? 0 }}"
+         style="display: none;">
+    </div>
+    @endif
+    
     @stack('scripts')
 </body>
 </html>

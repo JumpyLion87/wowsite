@@ -19,10 +19,13 @@ class UserCurrency extends Model
 
     protected $fillable = [
         'account_id',
+        'username',
+        'email',
         'points',
         'tokens',
         'avatar',
         'role',
+        'last_password_change',
     ];
 
     /**

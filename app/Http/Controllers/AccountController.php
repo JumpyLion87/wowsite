@@ -42,6 +42,8 @@ class AccountController extends Controller
                 'characters.level',
                 'characters.money',
                 'characters.online',
+                'characters.totaltime',
+                'characters.totalKills',
                 'characters.class',
                 'guild.name as guild_name'
             )
@@ -55,6 +57,17 @@ class AccountController extends Controller
         $highestLevel = $characters->max('level') ?? 0;
         $onlineCount = $characters->where('online', 1)->count();
         $totalGold = $characters->sum('money');
+        
+        // Расширенная статистика
+        $totalPlaytime = $characters->sum('totaltime'); // в секундах
+        $totalKills = $characters->sum('totalKills');
+        $avgLevel = $characters->avg('level');
+        
+        // Топ персонажи
+        $topCharacterByLevel = $characters->sortByDesc('level')->first();
+        $topCharacterByGold = $characters->sortByDesc('money')->first();
+        $topCharacterByPlaytime = $characters->sortByDesc('totaltime')->first();
+        $topCharacterByKills = $characters->sortByDesc('totalKills')->first();
 
         // Валюта и аватар (из site БД, через UserCurrency хелперы)
         $points = User::getPoints($user->id);
@@ -118,6 +131,12 @@ class AccountController extends Controller
         $this->checkVoteAutomatically($user);
 
         $activeSessions = $this->getActiveSessions($user->id);
+        
+        // Получаем дату последней смены пароля
+        $userCurrency = \App\Models\UserCurrency::where('account_id', $user->id)->first();
+        $lastPasswordChange = $userCurrency && $userCurrency->last_password_change 
+            ? $userCurrency->last_password_change 
+            : $accountInfo['joindate'];
 
         return view('account.index', [
             'accountInfo' => $accountInfo,
@@ -134,7 +153,17 @@ class AccountController extends Controller
             'onlineCount' => $onlineCount,
             'totalGold' => $totalGold,
             'activeSessions' => $activeSessions,
+            'lastPasswordChange' => $lastPasswordChange,
             'remainingVoteTime' => $remainingTime ?? null,
+            // Расширенная статистика
+            'totalPlaytime' => $totalPlaytime,
+            'totalKills' => $totalKills,
+            'avgLevel' => round($avgLevel, 1),
+            // Топ персонажи
+            'topCharacterByLevel' => $topCharacterByLevel,
+            'topCharacterByGold' => $topCharacterByGold,
+            'topCharacterByPlaytime' => $topCharacterByPlaytime,
+            'topCharacterByKills' => $topCharacterByKills,
         ]);
 
         
@@ -144,17 +173,37 @@ class AccountController extends Controller
     {
         $request->validate([
             'new_email' => 'required|email|min:3|max:64',
-            'current_password' => 'required|string',
+            'current_password' => 'required|string|min:3',
         ]);
 
         $user = Auth::user();
 
-        // Для SRP6 нет хэша пароля, поэтому проверку делаем через сервис SRP6 по необходимости
-        // Здесь допускаем смену без повторной аутентификации, если уже залогинен
+        // Проверяем текущий пароль через SRP6
+        if (!$user->authenticateWithSRP6($request->input('current_password'), $user->username)) {
+            return back()->withErrors(['current_password' => __('account.incorrect_password')]);
+        }
+
+        // Проверяем, не используется ли уже этот email
+        $emailExists = \App\Models\User::where('email', $request->input('new_email'))
+            ->where('id', '!=', $user->id)
+            ->exists();
+        
+        if ($emailExists) {
+            return back()->withErrors(['new_email' => __('account.email_already_used')]);
+        }
+
+        // Обновляем email в таблице account
         $user->email = $request->input('new_email');
         $user->save();
 
-        return back()->with('message', __('Email updated successfully!'));
+        // Обновляем email в таблице user_currencies (если запись существует)
+        $userCurrency = \App\Models\UserCurrency::where('account_id', $user->id)->first();
+        if ($userCurrency) {
+            $userCurrency->email = $request->input('new_email');
+            $userCurrency->save();
+        }
+
+        return back()->with('success', __('account.email_updated'));
     }
 
     public function updatePassword(Request $request)
@@ -166,10 +215,23 @@ class AccountController extends Controller
         ]);
 
         $user = Auth::user();
+        
+        // Проверяем текущий пароль через SRP6
+        if (!$user->authenticateWithSRP6($request->input('current_password'), $user->username)) {
+            return back()->withErrors(['current_password' => __('account.incorrect_password')]);
+        }
+        
         // Обновление SRP6
         $user->updatePasswordWithSRP6($request->input('new_password'));
 
-        return back()->with('message', __('Password changed successfully!'));
+        // Обновляем дату смены пароля в таблице user_currencies
+        $userCurrency = \App\Models\UserCurrency::where('account_id', $user->id)->first();
+        if ($userCurrency) {
+            $userCurrency->last_password_change = now();
+            $userCurrency->save();
+        }
+
+        return back()->with('success', __('account.password_updated'));
     }
 
     public function changeAvatar(Request $request)
@@ -179,12 +241,28 @@ class AccountController extends Controller
         ]);
 
         $accountId = Auth::id();
-        DB::connection('mysql_site')
-            ->table('user_currency')
-            ->where('account_id', $accountId)
-            ->update(['avatar' => $request->input('avatar')]);
+        $user = Auth::user();
+        
+        // Используем модель UserCurrency для обновления аватара
+        $userCurrency = \App\Models\UserCurrency::where('account_id', $accountId)->first();
+        
+        if ($userCurrency) {
+            $userCurrency->avatar = $request->input('avatar');
+            $userCurrency->save();
+        } else {
+            // Если записи нет, создаем новую
+            \App\Models\UserCurrency::create([
+                'account_id' => $accountId,
+                'username' => $user->username,
+                'email' => $user->email,
+                'avatar' => $request->input('avatar'),
+                'points' => 0,
+                'tokens' => 0,
+                'role' => 'player'
+            ]);
+        }
 
-        return back()->with('message', __('Avatar updated successfully!'));
+        return back()->with('success', __('account.avatar_updated'));
     }
 
     public function teleportCharacter(Request $request)
@@ -283,7 +361,7 @@ class AccountController extends Controller
         }
 
         $content = $response->body();
-        $accountId = $user->account_id;
+        $accountId = $user->id;
 
         // Поиск голоса по account_id
         $lines = explode("\n", $content);

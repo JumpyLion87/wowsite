@@ -13,6 +13,7 @@ use App\Http\Controllers\ShopController;
 use App\Http\Controllers\HowToPlayController;
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\VoteController;
 
 // Главная страница
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -32,6 +33,11 @@ Route::middleware('auth')->group(function () {
     Route::post('/account/password', [AccountController::class, 'updatePassword'])->name('account.password');
     Route::post('/account/avatar', [AccountController::class, 'changeAvatar'])->name('account.avatar');
     Route::post('/account/teleport', [AccountController::class, 'teleportCharacter'])->name('account.teleport');
+    
+    // Voting
+    Route::get('/vote', [VoteController::class, 'redirectToVote'])->name('vote.redirect');
+    Route::post('/vote/check', [VoteController::class, 'checkVote'])->name('vote.check');
+    Route::get('/vote/info', [VoteController::class, 'getVoteInfo'])->name('vote.info');
 });
 
 Route::get('/download', function () {
@@ -95,9 +101,3 @@ Route::middleware(['auth'])->group(function () {
 
 Route::post('/account/sessions/destroy', [AccountController::class, 'destroySessions'])
     ->name('account.sessions.destroy');
-
-
-Route::get('/vote/generate', [VoteController::class, 'generateToken'])->name('vote.generate');
-
-// Проверка голоса после возврата с mmotop
-Route::get('/vote/verify', [VoteController::class, 'verifyVote'])->name('vote.verify');
