@@ -19,6 +19,8 @@
     <link rel="stylesheet" href="{{ asset('assets/css/online-players.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/news.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/login.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/register.css') }}">
+    <link rel="stylesheet" href="{{ asset('assets/css/activation.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/account.css') }}">
     <link rel="stylesheet" href="{{ asset('assets/css/character.css') }}?v={{ time() }}">
     <link rel="stylesheet" href="{{ asset('assets/css/vote-notification.css') }}">

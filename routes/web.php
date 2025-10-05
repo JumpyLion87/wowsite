@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
-use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\NewsController;
 use App\Http\Controllers\LoginController;
@@ -18,13 +18,17 @@ use App\Http\Controllers\VoteController;
 // Главная страница
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Маршруты аутентификации (временные заглушки)
-Route::get('/register', function () {
-    return view('auth.register');
-})->name('register');
-
+// Authentication routes
 Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
 Route::post('/login', [LoginController::class, 'login']);
+
+// Registration routes
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+Route::post('/register', [RegisterController::class, 'register']);
+
+// Activation routes
+Route::get('/activate', [App\Http\Controllers\ActivationController::class, 'showActivationForm'])->name('activate');
+Route::get('/activate/confirm', [App\Http\Controllers\ActivationController::class, 'activate'])->name('activate.confirm');
 Route::middleware('auth')->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     // Account

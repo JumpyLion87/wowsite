@@ -20,6 +20,9 @@ class User extends Authenticatable
 
     //Подключение к БД 'auth' вместо default
     protected $connection = 'mysql_auth';
+    
+    //Отключаем timestamps для таблицы account
+    public $timestamps = false;
 
     /**
      * Атрибуты, разрещенные для массового заполнения

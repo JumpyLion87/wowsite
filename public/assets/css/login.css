@@ -59,3 +59,25 @@
     display: flex;
     justify-content: center;
 }
+
+/* Success message animation */
+.alert-success {
+    transition: all 0.5s ease;
+    transform: translateY(0);
+    opacity: 1;
+}
+
+.alert-success.animate-in {
+    animation: slideInDown 0.5s ease;
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}

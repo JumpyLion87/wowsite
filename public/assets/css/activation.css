@@ -1,0 +1,115 @@
+.activation-container {
+    min-height: calc(100vh - 200px);
+    font-family: 'Cinzel', sans-serif;
+    padding: 2rem 0;
+    display: flex;
+    justify-content: center;
+}
+
+.card.activation-card {
+    max-width: 500px;
+    width: 100%;
+    border-radius: 12px;
+    border: 2px solid #8b4513;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(45, 45, 45, 0.95) 100%);
+    color: #e2d3b7;
+    box-shadow: 0 0 20px rgba(255, 215, 0, 0.15);
+}
+
+.activation-title {
+    color: #ffd700;
+    letter-spacing: 0.5px;
+    font-size: 1.8rem;
+    margin-bottom: 1.5rem;
+}
+
+.card.activation-card .card-body {
+    padding: 2rem;
+}
+
+.card.activation-card .card-footer {
+    background: transparent;
+    border-top: 1px solid rgba(139, 69, 19, 0.4);
+}
+
+.activation-info {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.activation-info p {
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #d4af37;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #b88900 100%);
+    border: 1px solid #8b6f1a;
+    color: #1a1a1a;
+    font-weight: 700;
+    transition: transform 0.1s ease, box-shadow 0.2s ease;
+    border-radius: 8px;
+    padding: 12px 24px;
+}
+
+.btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(212, 175, 55, 0.35);
+    background: linear-gradient(135deg, #e6c547 0%, #c99a00 100%);
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
+}
+
+.alert {
+    border-radius: 8px;
+    border: none;
+    margin-bottom: 1rem;
+}
+
+.alert-danger {
+    background-color: rgba(220, 53, 69, 0.1);
+    border: 1px solid rgba(220, 53, 69, 0.3);
+    color: #f8d7da;
+}
+
+.alert-success {
+    background-color: rgba(25, 135, 84, 0.1);
+    border: 1px solid rgba(25, 135, 84, 0.3);
+    color: #d1e7dd;
+}
+
+.card-footer a {
+    color: #d4af37;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.card-footer a:hover {
+    color: #ffd700;
+    text-decoration: underline;
+}
+
+/* Responsive design */
+@media (max-width: 576px) {
+    .activation-container {
+        padding: 1rem 0;
+    }
+    
+    .card.activation-card {
+        margin: 1rem;
+        max-width: none;
+    }
+    
+    .card.activation-card .card-body {
+        padding: 1.5rem;
+    }
+    
+    .activation-title {
+        font-size: 1.5rem;
+    }
+}

@@ -31,9 +31,9 @@ class LoginController extends Controller
         }
 
         $request->validate($rules, [
-            'username.required' => __('Username is required'),
-            'password.required' => __('Password is required'),
-            'g-recaptcha-response.required' => __('Please complete the reCAPTCHA'),
+            'username.required' => __('auth.username_required'),
+            'password.required' => __('auth.password_required'),
+            'g-recaptcha-response.required' => __('auth.recaptcha_required'),
         ]);
 
         // Optional: server-side reCAPTCHA verification when configured
@@ -47,11 +47,11 @@ class LoginController extends Controller
                 ]);
                 $ok = $response->ok() ? (bool) data_get($response->json(), 'success', false) : false;
                 if (!$ok) {
-                    return back()->withErrors(['error' => __('reCAPTCHA verification failed')])->withInput();
+                    return back()->withErrors(['error' => __('auth.recaptcha_failed')])->withInput();
                 }
             } catch (\Throwable $e) {
                 // If Google is unreachable, fail gracefully but allow retry
-                return back()->withErrors(['error' => __('Unable to verify reCAPTCHA. Please try again.')])->withInput();
+                return back()->withErrors(['error' => __('auth.recaptcha_unavailable')])->withInput();
             }
         }
     
@@ -61,7 +61,33 @@ class LoginController extends Controller
 
         //Проверка брутфорса
         if (!$this->checkBruteForce($ip, $username)) {
-        return back()->withErrors(['error' => 'Too many attempts. Please try again later.']);
+        return back()->withErrors(['error' => __('auth.too_many_attempts')]);
+        }
+
+        // Check if account is activated (if email activation is enabled) BEFORE authentication
+        $emailActivationEnabled = env('MAIL_MAILER') !== 'log' && !empty(env('MAIL_HOST'));
+        \Log::info('Login attempt', [
+            'username' => $username,
+            'emailActivationEnabled' => $emailActivationEnabled,
+            'MAIL_MAILER' => env('MAIL_MAILER'),
+            'MAIL_HOST' => env('MAIL_HOST')
+        ]);
+        
+        if ($emailActivationEnabled) {
+            // Check if user exists in pending_accounts (not activated)
+            $pendingAccount = \App\Models\PendingAccount::where('username', $username)
+                ->where('activated', false)
+                ->first();
+            
+            \Log::info('Pending account check', [
+                'username' => $username,
+                'pendingAccount' => $pendingAccount ? 'found' : 'not found'
+            ]);
+            
+            if ($pendingAccount) {
+                \Log::info('Account not activated', ['username' => $username]);
+                return back()->withErrors(['error' => __('auth.account_not_activated')])->withInput();
+            }
         }
 
         $user = User::where('username', $username)->first();
@@ -94,7 +120,7 @@ class LoginController extends Controller
                     'block_until' => null,
                 ]);
             }
-            return back()->withErrors(['error' => 'Invalid username or password.'])->withInput();
+            return back()->withErrors(['error' => __('auth.invalid_credentials')])->withInput();
         }
 
         Auth::login($user);
