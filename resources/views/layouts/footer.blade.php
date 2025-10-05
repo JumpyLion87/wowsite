@@ -12,7 +12,7 @@
                 <li><a href="{{ route('home') }}">{{ __('nav.home') }}</a></li>
                 <li><a href="{{ route('how-to-play') }}">{{ __('nav.how_to_play') }}</a></li>
                 <li><a href="{{ route('news.index') }}">{{ __('nav.news') }}</a></li>
-                <li><a href="{{ route('shop') }}">{{ __('nav.shop') }}</a></li>
+                <li><a href="{{ route('shop.index') }}">{{ __('nav.shop') }}</a></li>
                 <li><a href="{{ route('armory') }}">{{ __('nav.armory') }}</a></li>
             </ul>
         </div>

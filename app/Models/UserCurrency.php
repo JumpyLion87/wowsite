@@ -83,4 +83,49 @@ class UserCurrency extends Model
         $currency = static::getByAccountId($accountId);
         return $currency ? $currency->role : 'player';
     }
+
+    /**
+     * Check if user has enough currency for purchase
+     */
+    public function hasEnoughCurrency(int $pointCost, int $tokenCost): bool
+    {
+        return $this->points >= $pointCost && $this->tokens >= $tokenCost;
+    }
+
+    /**
+     * Deduct currency after purchase
+     */
+    public function deductCurrency(int $pointCost, int $tokenCost): bool
+    {
+        if (!$this->hasEnoughCurrency($pointCost, $tokenCost)) {
+            return false;
+        }
+
+        $this->points -= $pointCost;
+        $this->tokens -= $tokenCost;
+        
+        return $this->save();
+    }
+
+    /**
+     * Add currency to user
+     */
+    public function addCurrency(int $points = 0, int $tokens = 0): bool
+    {
+        $this->points += $points;
+        $this->tokens += $tokens;
+        
+        return $this->save();
+    }
+
+    /**
+     * Get user balance as array
+     */
+    public function getBalance(): array
+    {
+        return [
+            'points' => $this->points,
+            'tokens' => $this->tokens
+        ];
+    }
 }

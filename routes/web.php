@@ -66,9 +66,15 @@ Route::get('/character/guid/{guid}', [CharacterController::class, 'byGuid'])->na
 Route::get('/character/{name}', [CharacterController::class, 'showByName'])->name('character.show.name');
 
 
-Route::get('/shop', function () {
-    return view('shop');
-})->name('shop');
+// Shop routes
+Route::get('/shop', [ShopController::class, 'index'])->name('shop.index');
+Route::get('/shop/item/{id}', [ShopController::class, 'show'])->name('shop.show');
+Route::post('/shop/buy', [ShopController::class, 'buy'])->name('shop.buy');
+Route::get('/shop/history', [ShopController::class, 'history'])->name('shop.history');
+
+// AJAX routes for shop
+Route::get('/shop/api/items', [ShopController::class, 'getItemsByCategory'])->name('shop.api.items');
+Route::get('/shop/api/check-availability', [ShopController::class, 'checkAvailability'])->name('shop.api.check-availability');
 
 Route::get('/how-to-play', [HowToPlayController::class, 'index'])->name('how-to-play');
 

@@ -33,7 +33,7 @@
                     </a>
                 </li>
                 <li>
-                    <a class="{{ request()->is('shop') ? 'active' : '' }}" href="{{ route('shop') }}">
+                    <a class="{{ request()->is('shop*') ? 'active' : '' }}" href="{{ route('shop.index') }}">
                         {{ __('nav.shop') }}
                     </a>
                 </li>
