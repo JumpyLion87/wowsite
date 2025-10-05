@@ -303,6 +303,28 @@
     min-width: 100px;
     text-align: center;
     vertical-align: middle;
+    padding: 0.5rem !important;
+}
+
+/* Стили для нового статус-дот с уникальными названиями классов */
+.data-table .admin-status-dot {
+    display: inline-block !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    margin-right: 0.3rem !important;
+    flex-shrink: 0 !important;
+    border: none !important;
+    padding: 0 !important;
+    background-color: #999 !important;
+}
+
+.data-table .admin-online-status.admin-online .admin-status-dot {
+    background-color: #4ecdc4 !important;
+}
+
+.data-table .admin-online-status.admin-offline .admin-status-dot {
+    background-color: #999 !important;
 }
 
 .user-info {
@@ -364,53 +386,25 @@
     border: 1px solid #4ecdc4;
 }
 
-.online-status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    font-size: 0.8rem;
-    min-width: 80px;
-    white-space: nowrap;
-    justify-content: center;
+/* Новые стили с уникальными названиями классов */
+.data-table .admin-online-status {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.3rem !important;
+    font-size: 0.8rem !important;
+    white-space: nowrap !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: none !important;
+    min-width: auto !important;
 }
 
-.online-status.online {
-    color: #4ecdc4;
-}
-
-.online-status.offline {
-    color: #999;
-}
-
-.online-status.online i {
+.data-table .admin-online-status.admin-online {
     color: #4ecdc4 !important;
-    font-size: 0.6rem;
-    flex-shrink: 0;
 }
 
-.online-status.offline i {
+.data-table .admin-online-status.admin-offline {
     color: #999 !important;
-    font-size: 0.6rem;
-    flex-shrink: 0;
-}
-
-/* Дополнительные стили для иконок статуса */
-.online-status i.fa-circle {
-    width: 8px;
-    height: 8px;
-    display: inline-block;
-    border-radius: 50%;
-    margin-right: 0.25rem;
-}
-
-.online-status.online i.fa-circle {
-    background-color: #4ecdc4;
-    color: #4ecdc4;
-}
-
-.online-status.offline i.fa-circle {
-    background-color: #999;
-    color: #999;
 }
 
 .date-cell {

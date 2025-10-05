@@ -139,8 +139,8 @@
                                             </span>
                                         </td>
                                         <td class="online-cell">
-                                            <span class="online-status {{ isset($user->online) && $user->online ? 'online' : 'offline' }}">
-                                                <i class="fas fa-circle"></i>
+                                            <span class="admin-online-status {{ isset($user->online) && $user->online ? 'admin-online' : 'admin-offline' }}">
+                                                <span class="admin-status-dot"></span>
                                                 {{ isset($user->online) && $user->online ? __('admin_dashboard.online') : __('admin_dashboard.offline') }}
                                             </span>
                                         </td>
