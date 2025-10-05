@@ -173,7 +173,8 @@ document.addEventListener('DOMContentLoaded', () => {
         for (let i = 1; i <= 10; i++) {
             const statType = item[`stat_type${i}`] || 0;
             const statValue = item[`stat_value${i}`] || 0;
-            if (statType > 0 && statValue != 0) {
+            console.log(`Stat ${i}: type=${statType}, value=${statValue}`);
+            if (statType > 0 && statValue != 0 && !isNaN(statValue)) {
                 const statName = getStatName(statType);
                 if (statName) {
                     const sign = statValue > 0 ? '+' : '';
@@ -247,6 +248,15 @@ document.addEventListener('DOMContentLoaded', () => {
             const silver = Math.floor((sell % 10000) / 100);
             const copper = sell % 100;
             html += `<div>Sell: ${gold} <span style='color:#ffd700;'>g</span> ${silver} <span style='color:#c0c0c0;'>s</span> ${copper} <span style='color:#b87333;'>c</span></div>`;
+        }
+
+        // Spell Effects
+        if (item.spellEffects && item.spellEffects.length > 0) {
+            html += '<div class="spells-container">';
+            item.spellEffects.forEach(effect => {
+                html += `<div class="spell-effect" style="color: #ffd700;">${effect}</div>`;
+            });
+            html += '</div>';
         }
 
         // Description
@@ -408,6 +418,39 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
         return result;
+    }
+
+    function getSpellTriggerText(trigger) {
+        const triggers = {
+            0: 'Use:',
+            1: 'Equip:',
+            2: 'Chance on hit:',
+            3: 'Chance on spell hit:',
+            4: 'Chance on crit:',
+            5: 'Chance on block:',
+            6: 'Chance on parry:',
+            7: 'Chance on dodge:',
+            8: 'Chance on resist:',
+            9: 'Chance on absorb:',
+            10: 'Chance on reflect:',
+            11: 'Chance on interrupt:',
+            12: 'Chance on kill:',
+            13: 'Chance on death:',
+            14: 'Chance on miss:',
+            15: 'Chance on spell miss:',
+            16: 'Chance on spell crit:',
+            17: 'Chance on spell block:',
+            18: 'Chance on spell parry:',
+            19: 'Chance on spell dodge:',
+            20: 'Chance on spell resist:',
+            21: 'Chance on spell absorb:',
+            22: 'Chance on spell reflect:',
+            23: 'Chance on spell interrupt:',
+            24: 'Chance on spell kill:',
+            25: 'Chance on spell death:',
+            26: 'Chance on spell miss:'
+        };
+        return triggers[trigger] || 'Use:';
     }
 });
 

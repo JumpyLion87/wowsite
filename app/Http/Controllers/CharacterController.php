@@ -186,7 +186,30 @@ class CharacterController extends Controller
             ->get()
             ->keyBy('entry');
 
-        // Map items to slots
+        // Get spell information for items with spells
+        $spellIds = [];
+        foreach ($items as $item) {
+            for ($i = 1; $i <= 5; $i++) {
+                $spellId = $item->{"spellid_$i"};
+                if ($spellId > 0) {
+                    $spellIds[] = $spellId;
+                }
+            }
+        }
+
+        $spells = [];
+        if (!empty($spellIds)) {
+            $spells = DB::connection('mysql_world')
+                ->table('armory_spell')
+                ->whereIn('id', array_unique($spellIds))
+                ->select([
+                    'id', 'Description_ru_ru', 'ToolTip_1'
+                ])
+                ->get()
+                ->keyBy('id');
+        }
+
+        // Map items to slots and add spell information
         $equippedItems = [];
         foreach ($itemEntries as $slot => $entry) {
             if (isset($items[$entry])) {
@@ -194,6 +217,40 @@ class CharacterController extends Controller
                 if (!empty($item->icon)) {
                     $item->icon = strtolower($item->icon);
                 }
+                
+                // Add spell information to item (only for triggers 0, 1, 2, 4)
+                $item->spellEffects = [];
+                for ($i = 1; $i <= 5; $i++) {
+                    $spellId = $item->{"spellid_$i"};
+                    $spellTrigger = $item->{"spelltrigger_$i"};
+                    if ($spellId > 0 && in_array($spellTrigger, [0, 1, 2, 4]) && isset($spells[$spellId])) {
+                        $spell = $spells[$spellId];
+                        $triggerText = $this->getSpellTriggerText($spellTrigger);
+                        $description = !empty($spell->Description_ru_ru) ? $spell->Description_ru_ru : $spell->ToolTip_1;
+                        if (!empty($description)) {
+                            $item->spellEffects[] = "$triggerText: $description";
+                        }
+                    }
+                }
+                
+                // Convert stat values to integers and filter out formulas
+                for ($i = 1; $i <= 10; $i++) {
+                    $statValue = $item->{"stat_value$i"};
+                    if (is_string($statValue) && (strpos($statValue, '$') === 0 || !is_numeric($statValue))) {
+                        $item->{"stat_value$i"} = 0;
+                    } else {
+                        $item->{"stat_value$i"} = (int)$statValue;
+                    }
+                }
+                
+                // Debug: Log item stats for debugging
+                \Log::info("Item {$item->entry} stats:", [
+                    'stat_type1' => $item->stat_type1,
+                    'stat_value1' => $item->stat_value1,
+                    'stat_type2' => $item->stat_type2,
+                    'stat_value2' => $item->stat_value2,
+                ]);
+                
                 $equippedItems[$slot] = $item;
             }
         }
@@ -233,5 +290,20 @@ class CharacterController extends Controller
         }
         
         return 'unknown';
+    }
+
+    /**
+     * Get spell trigger text
+     */
+    private function getSpellTriggerText($trigger)
+    {
+        $triggers = [
+            0 => 'Use',
+            1 => 'Equip',
+            2 => 'Chance on hit',
+            4 => 'Soulstone'
+        ];
+        
+        return $triggers[$trigger] ?? 'Unknown';
     }
 }

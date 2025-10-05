@@ -68,6 +68,8 @@ return [
     'pvp_rating' => 'Rating',
     'pvp_total_kills' => 'Total PvP Kills',
     'level_label' => 'Level',
+    'class_unknown' => 'Unknown Class',
+    'race_unknown' => 'Unknown Race',
     'default_character_image' => 'Default Character Image',
     'error_db_connection' => 'Database connection is not available.',
     'error_db_connection_world' => 'Database connection (world) is not available.',

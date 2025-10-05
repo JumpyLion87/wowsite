@@ -27,11 +27,11 @@ class News extends Model
     /**
      * Get paginated news with excerpts
      */
-    public function scopePaginatedWithExcerpt($query, $page = 1, $perPage = 5, $excerptLength = 200)
+    public static function paginatedWithExcerpt($page = 1, $perPage = 5, $excerptLength = 200)
     {
         $offset = ($page - 1) * $perPage;
         
-        return $query->orderBy('post_date', 'desc')
+        return self::orderBy('post_date', 'desc')
                     ->offset($offset)
                     ->limit($perPage)
                     ->get()
@@ -44,17 +44,17 @@ class News extends Model
     /**
      * Get news by slug
      */
-    public function scopeFindBySlug($query, $slug)
+    public static function findBySlug($slug)
     {
-        return $query->where('slug', $slug)->first();
+        return self::where('slug', $slug)->first();
     }
 
     /**
      * Get total pages count for pagination
      */
-    public function scopeTotalPages($query, $perPage = 5)
+    public static function totalPages($perPage = 5)
     {
-        $total = $query->count();
+        $total = self::count();
         return ceil($total / $perPage);
     }
 }

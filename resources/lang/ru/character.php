@@ -68,6 +68,8 @@ return [
     'pvp_rating' => 'Рейтинг',
     'pvp_total_kills' => 'Всего убийств в PvP',
     'level_label' => 'Уровень',
+    'class_unknown' => 'Неизвестный класс',
+    'race_unknown' => 'Неизвестная раса',
     'default_character_image' => 'Изображение персонажа по умолчанию',
     'error_db_connection' => 'Подключение к базе данных недоступно.',
     'error_db_connection_world' => 'Подключение к базе данных (мир) недоступно.',

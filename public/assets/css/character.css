@@ -555,6 +555,20 @@ main {
     color: #ffffff !important;
 }
 
+/* Spell Effects in tooltip */
+.spells-container {
+    margin-top: 8px;
+    border-top: 1px solid #444;
+    padding-top: 8px;
+}
+
+.spell-effect {
+    color: #ffd700 !important;
+    font-size: 12px;
+    margin-bottom: 4px;
+    line-height: 1.3;
+}
+
 /* Item Quality Colors */
 .item-quality-poor {
     color: #9d9d9d !important;
