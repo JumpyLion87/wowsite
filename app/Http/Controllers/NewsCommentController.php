@@ -29,7 +29,7 @@ class NewsCommentController extends Controller
             'is_approved' => false // Комментарии требуют модерации
         ]);
 
-        return back()->with('success', 'Комментарий отправлен на модерацию');
+        return back()->with('success', __('news.comment_sent_for_moderation'));
     }
 
     /**

@@ -23,4 +23,7 @@ return [
     // Meta descriptions
     'meta_description_list' => 'Latest news and updates from our World of Warcraft server.',
     'meta_description_single' => ':title - Latest news from our World of Warcraft server.',
+    
+    // Comments
+    'comment_sent_for_moderation' => 'Comment sent for moderation',
 ];

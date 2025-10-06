@@ -46,25 +46,108 @@
 
 .admin-actions {
     margin-left: 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
 }
 
-.btn-settings {
-    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
-    border: 2px solid #8b4513;
-    color: #8b4513;
-    font-weight: bold;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+/* Компактные кнопки дашборда */
+.admin-actions .btn {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
     transition: all 0.3s ease;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-size: 1rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 140px;
+    text-align: center;
+    border: 1px solid transparent;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.btn-settings:hover {
-    background: linear-gradient(135deg, #ffed4e 0%, #ffd700 100%);
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
+.admin-actions .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.admin-actions .btn i {
+    margin-right: 6px;
+    font-size: 0.9rem;
+}
+
+/* Цветовые схемы для кнопок дашборда */
+.admin-actions .btn-primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: #fff;
+    border-color: #007bff;
+}
+
+.admin-actions .btn-primary:hover {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    color: #fff;
+}
+
+.admin-actions .btn-success {
+    background: linear-gradient(135deg, #28a745, #1e7e34);
+    color: #fff;
+    border-color: #28a745;
+}
+
+.admin-actions .btn-success:hover {
+    background: linear-gradient(135deg, #1e7e34, #155724);
+    color: #fff;
+}
+
+.admin-actions .btn-warning {
+    background: linear-gradient(135deg, #ffc107, #e0a800);
+    color: #000;
+    border-color: #ffc107;
+}
+
+.admin-actions .btn-warning:hover {
+    background: linear-gradient(135deg, #e0a800, #d39e00);
+    color: #000;
+}
+
+.admin-actions .btn-info {
+    background: linear-gradient(135deg, #17a2b8, #138496);
+    color: #fff;
+    border-color: #17a2b8;
+}
+
+.admin-actions .btn-info:hover {
+    background: linear-gradient(135deg, #138496, #117a8b);
+    color: #fff;
+}
+
+.admin-actions .btn-secondary {
+    background: linear-gradient(135deg, #6c757d, #545b62);
+    color: #fff;
+    border-color: #6c757d;
+}
+
+.admin-actions .btn-secondary:hover {
+    background: linear-gradient(135deg, #545b62, #495057);
+    color: #fff;
+}
+
+.admin-actions .btn-settings {
+    background: linear-gradient(135deg, #ffd700, #ffed4e);
     color: #8b4513;
+    border-color: #ffd700;
+    font-weight: 700;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.admin-actions .btn-settings:hover {
+    background: linear-gradient(135deg, #ffed4e, #ffd700);
+    color: #8b4513;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.4);
 }
 
 /* Статистические карточки */
@@ -492,6 +575,15 @@
     
     .admin-actions {
         margin-left: 0;
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .admin-actions .btn {
+        width: 100%;
+        min-width: auto;
+        padding: 10px 16px;
+        font-size: 0.9rem;
     }
     
     .stats-grid {
