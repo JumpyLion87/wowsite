@@ -586,6 +586,11 @@
         font-size: 0.9rem;
     }
     
+    .admin-actions .btn i {
+        margin-right: 4px;
+        font-size: 0.8rem;
+    }
+    
     .stats-grid {
         grid-template-columns: 1fr;
         gap: 1rem;
