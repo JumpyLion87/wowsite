@@ -55,4 +55,5 @@ return [
     'manage_purchases' => 'Manage Purchases',
     'manage_characters' => 'Manage Characters',
     'check_soap' => 'Check SOAP',
+    'manage_news' => 'Manage News',
 ];

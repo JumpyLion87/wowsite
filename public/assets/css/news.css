@@ -213,6 +213,285 @@
     margin-bottom: 20px;
 }
 
+/* Убираем лишние отступы и исправляем структуру */
+.news-content p:empty {
+    display: none;
+}
+
+.news-content br + br {
+    display: none;
+}
+
+.news-content p:has(br:only-child) {
+    display: none;
+}
+
+/* Стили для кнопок действий в админском просмотре новости */
+.news-actions {
+    margin-top: 30px;
+    padding: 20px 0;
+    border-top: 1px solid #4a3c27;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+.news-actions .btn {
+    padding: 10px 20px;
+    border-radius: 4px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.news-actions .btn-warning {
+    background: #ffd100;
+    color: #000;
+}
+
+.news-actions .btn-warning:hover {
+    background: #ffed4e;
+    transform: translateY(-2px);
+}
+
+.news-actions .btn-danger {
+    background: #dc3545;
+    color: #fff;
+}
+
+.news-actions .btn-danger:hover {
+    background: #c82333;
+    transform: translateY(-2px);
+}
+
+.news-actions form {
+    margin: 0;
+}
+
+@media (max-width: 768px) {
+    .news-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .news-actions .btn {
+        width: 100%;
+        text-align: center;
+    }
+}
+
+/* Стили для системы комментариев */
+.news-comments-section {
+    margin-top: 40px;
+    padding: 30px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid #4a3c27;
+}
+
+.comments-title {
+    color: #ffd100;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+.comment-form-container {
+    margin-bottom: 30px;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border: 1px solid #4a3c27;
+}
+
+.comment-form .form-group {
+    margin-bottom: 15px;
+}
+
+.comment-form .form-label {
+    color: #ffd100;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.comment-form .form-control {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #4a3c27;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.comment-form .form-control:focus {
+    border-color: #ffd100;
+    box-shadow: 0 0 0 0.2rem rgba(255, 209, 0, 0.25);
+}
+
+.comment-login-prompt {
+    text-align: center;
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 6px;
+    border: 1px solid #4a3c27;
+    margin-bottom: 30px;
+}
+
+.comment-login-prompt a {
+    color: #ffd100;
+    text-decoration: none;
+}
+
+.comment-login-prompt a:hover {
+    text-decoration: underline;
+}
+
+.comments-list {
+    space-y: 20px;
+}
+
+.comment-item {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid #4a3c27;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.comment-item:hover {
+    background: rgba(0, 0, 0, 0.3);
+    border-color: #ffd100;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #4a3c27;
+}
+
+.comment-author {
+    color: #ffd100;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+}
+
+.comment-date {
+    color: #999;
+    font-size: 0.9rem;
+}
+
+.comment-content {
+    color: #fff;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.comment-actions {
+    margin-bottom: 15px;
+}
+
+.reply-btn {
+    background: transparent;
+    border: 1px solid #4a3c27;
+    color: #ffd100;
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.reply-btn:hover {
+    background: #ffd100;
+    color: #000;
+    border-color: #ffd100;
+}
+
+.reply-form {
+    margin-top: 15px;
+    padding: 15px;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 6px;
+    border: 1px solid #4a3c27;
+}
+
+.reply-comment-form .form-group {
+    margin-bottom: 10px;
+}
+
+.reply-comment-form .form-control {
+    background: rgba(0, 0, 0, 0.4);
+    border: 1px solid #4a3c27;
+    color: #fff;
+    border-radius: 4px;
+}
+
+.reply-comment-form .form-control:focus {
+    border-color: #ffd100;
+    box-shadow: 0 0 0 0.2rem rgba(255, 209, 0, 0.25);
+}
+
+.form-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.comment-replies {
+    margin-top: 15px;
+    margin-left: 30px;
+    border-left: 2px solid #4a3c27;
+    padding-left: 20px;
+}
+
+.reply-item {
+    background: rgba(0, 0, 0, 0.1);
+    border: 1px solid #4a3c27;
+    margin-bottom: 10px;
+}
+
+.reply-item .comment-header {
+    border-bottom: 1px solid #4a3c27;
+}
+
+.no-comments {
+    text-align: center;
+    padding: 40px 20px;
+    color: #999;
+    font-style: italic;
+}
+
+/* Адаптивность для комментариев */
+@media (max-width: 768px) {
+    .news-comments-section {
+        padding: 20px 15px;
+    }
+    
+    .comment-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+    
+    .comment-replies {
+        margin-left: 15px;
+        padding-left: 15px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+        gap: 8px;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+
 .news-content h2,
 .news-content h3,
 .news-content h4 {

@@ -28,6 +28,10 @@
                 <i class="fas fa-users me-2"></i>
                 {{ __('admin_dashboard.manage_characters') }}
             </a>
+            <a href="{{ route('admin.news.index') }}" class="btn btn-success me-2">
+                <i class="fas fa-newspaper me-2"></i>
+                {{ __('admin_dashboard.manage_news') }}
+            </a>
             <a href="{{ route('admin.settings') }}" class="btn btn-settings me-2">
                 <i class="fas fa-cogs me-2"></i>
                 {{ __('admin_dashboard.settings') }}

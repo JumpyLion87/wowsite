@@ -55,4 +55,5 @@ return [
     'manage_purchases' => 'Управление покупками',
     'manage_characters' => 'Управление персонажами',
     'check_soap' => 'Проверить SOAP',
+    'manage_news' => 'Управление новостями',
 ];

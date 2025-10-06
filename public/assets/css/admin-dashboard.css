@@ -1013,6 +1013,136 @@
     }
 }
 
+/* Admin Filters (used in News management) */
+.admin-filters {
+    margin-bottom: 1rem;
+}
+
+.filter-form {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    border: 1px solid #4a5f7a;
+    border-radius: 12px;
+    padding: 1rem;
+}
+
+.filter-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    align-items: end;
+}
+
+.filter-group label {
+    color: #bdc3c7;
+    font-weight: 500;
+    margin-bottom: 0.25rem;
+    display: block;
+}
+
+.filter-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Content header for cards */
+.content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+/* Badges */
+.badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.6rem;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.badge-info {
+    color: #0dcaf0;
+    background: rgba(13, 202, 240, 0.15);
+    border: 1px solid rgba(13, 202, 240, 0.35);
+}
+
+.badge-warning {
+    color: #f1c40f;
+    background: rgba(241, 196, 15, 0.15);
+    border: 1px solid rgba(241, 196, 15, 0.35);
+}
+
+.badge-secondary {
+    color: #bdc3c7;
+    background: rgba(189, 195, 199, 0.12);
+    border: 1px solid rgba(189, 195, 199, 0.28);
+}
+
+/* Admin table (used in News list) */
+.admin-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    border: 1px solid #4a5f7a;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.admin-table thead th {
+    background: rgba(0, 0, 0, 0.25);
+    color: #ecf0f1;
+    padding: 0.75rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #4a5f7a;
+    font-weight: 700;
+}
+
+.admin-table tbody td {
+    color: #bdc3c7;
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid rgba(74, 95, 122, 0.5);
+}
+
+.admin-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.news-title-cell .news-info { /* ensure nested display works in table */
+    display: flex;
+    flex-direction: column;
+}
+
+/* News categories */
+.category-update {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: #fff;
+}
+
+.category-event {
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: #fff;
+}
+
+.category-maintenance {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    color: #fff;
+}
+
+.category-other {
+    background: linear-gradient(135deg, #7f8c8d 0%, #636e72 100%);
+    color: #fff;
+}
+
+@media (max-width: 768px) {
+    .filter-row {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Game Role Badges */
 .game-role-badge {
     display: inline-block;
@@ -1461,5 +1591,728 @@
         flex-direction: column;
         gap: 1rem;
         align-items: stretch;
+    }
+}
+
+/* Shop Items Styles */
+.item-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.item-name {
+    font-weight: 500;
+    color: #ecf0f1;
+    margin-bottom: 2px;
+}
+
+.item-description {
+    color: #bdc3c7;
+    font-size: 0.8rem;
+    font-style: italic;
+}
+
+.category-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.category-service {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: #fff;
+}
+
+.category-mount {
+    background: linear-gradient(135deg, #6f42c1 0%, #5a32a3 100%);
+    color: #fff;
+}
+
+.category-pet {
+    background: linear-gradient(135deg, #fd7e14 0%, #e55a00 100%);
+    color: #fff;
+}
+
+.category-item {
+    background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+    color: #fff;
+}
+
+.category-gold {
+    background: linear-gradient(135deg, #ffc107 0%, #e0a800 100%);
+    color: #000;
+}
+
+.stock-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.stock-available {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: #fff;
+}
+
+.stock-out {
+    background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+    color: #fff;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+}
+
+.action-buttons .btn {
+    flex: 0 0 auto;
+    min-width: 70px;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    white-space: nowrap;
+}
+
+.action-buttons .btn i {
+    margin-right: 0.25rem;
+}
+
+.btn-text {
+    display: inline;
+}
+
+/* Shop Items Responsive */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        gap: 2px;
+    }
+    
+    .action-buttons .btn {
+        flex: none;
+        width: 100%;
+        min-width: auto;
+        font-size: 0.7rem;
+        padding: 0.2rem 0.4rem;
+    }
+    
+    .btn-text {
+        display: none;
+    }
+    
+    .action-buttons .btn i {
+        margin-right: 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .action-buttons .btn {
+        font-size: 0.65rem;
+        padding: 0.15rem 0.3rem;
+    }
+}
+
+
+/* News Management Styles */
+.news-form {
+    max-width: 100%;
+}
+
+.news-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.news-title {
+    font-weight: 500;
+    color: #ecf0f1;
+    margin-bottom: 2px;
+}
+
+.news-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 8px;
+    border: 1px solid #4a5f7a;
+}
+
+.news-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.meta-label {
+    color: #bdc3c7;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.meta-value {
+    color: #ecf0f1;
+    font-weight: 500;
+}
+
+.news-image {
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.news-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.news-content {
+    line-height: 1.6;
+    color: #ecf0f1;
+}
+
+.news-content h1,
+.news-content h2,
+.news-content h3,
+.news-content h4,
+.news-content h5,
+.news-content h6 {
+    color: #ecf0f1;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.news-content p {
+    margin-bottom: 1rem;
+}
+
+.news-content ul,
+.news-content ol {
+    margin-bottom: 1rem;
+    padding-left: 2rem;
+}
+
+.news-content li {
+    margin-bottom: 0.5rem;
+}
+
+.news-content blockquote {
+    border-left: 4px solid #e67e22;
+    padding-left: 1rem;
+    margin: 1rem 0;
+    color: #bdc3c7;
+    font-style: italic;
+}
+
+.news-content table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.news-content table th,
+.news-content table td {
+    border: 1px solid #4a5f7a;
+    padding: 0.5rem;
+    text-align: left;
+}
+
+.news-content table th {
+    background: rgba(0, 0, 0, 0.3);
+    color: #ecf0f1;
+    font-weight: 600;
+}
+
+.news-content table td {
+    color: #bdc3c7;
+}
+
+.news-actions {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #4a5f7a;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* CKEditor Styles */
+.ck-editor__editable {
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: #ecf0f1 !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    min-height: 400px !important;
+    max-height: 600px !important;
+    overflow-y: auto !important;
+}
+
+.ck-editor__editable:focus {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: #ffd700 !important;
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25) !important;
+}
+
+.ck-toolbar {
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px 6px 0 0 !important;
+}
+
+.ck-toolbar__separator {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+.ck-button {
+    color: #ecf0f1 !important;
+}
+
+.ck-button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.ck-button.ck-on {
+    background: rgba(255, 215, 0, 0.2) !important;
+    color: #ffd700 !important;
+}
+
+/* CK Editor Container */
+.ck-editor {
+    min-height: 400px !important;
+}
+
+.ck-editor__main {
+    min-height: 400px !important;
+}
+
+/* CK Editor for news content specifically */
+#content + .ck-editor {
+    min-height: 400px !important;
+}
+
+#content + .ck-editor .ck-editor__editable {
+    min-height: 400px !important;
+}
+
+/* CK Editor Dropdown Styles */
+.ck-dropdown__panel {
+    background: #2c3e50 !important;
+    border: 1px solid #4a5f7a !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ck-dropdown__panel .ck-list {
+    background: #2c3e50 !important;
+}
+
+.ck-dropdown__panel .ck-list__item {
+    color: #ecf0f1 !important;
+    background: #2c3e50 !important;
+    border-bottom: 1px solid rgba(74, 95, 122, 0.3) !important;
+}
+
+.ck-dropdown__panel .ck-list__item:hover {
+    background: #34495e !important;
+    color: #fff !important;
+}
+
+.ck-dropdown__panel .ck-list__item.ck-on {
+    background: #ffd700 !important;
+    color: #2c3e50 !important;
+    font-weight: 600 !important;
+}
+
+/* CK Editor Font Family Dropdown */
+.ck-dropdown__panel .ck-list__item[data-value] {
+    color: #ecf0f1 !important;
+    background: #2c3e50 !important;
+}
+
+.ck-dropdown__panel .ck-list__item[data-value]:hover {
+    background: #34495e !important;
+    color: #fff !important;
+}
+
+.ck-dropdown__panel .ck-list__item[data-value].ck-on {
+    background: #ffd700 !important;
+    color: #2c3e50 !important;
+}
+
+/* CK Editor Font Size Dropdown */
+.ck-dropdown__panel .ck-list__item[data-value="8px"],
+.ck-dropdown__panel .ck-list__item[data-value="9px"],
+.ck-dropdown__panel .ck-list__item[data-value="10px"],
+.ck-dropdown__panel .ck-list__item[data-value="11px"],
+.ck-dropdown__panel .ck-list__item[data-value="12px"],
+.ck-dropdown__panel .ck-list__item[data-value="14px"],
+.ck-dropdown__panel .ck-list__item[data-value="16px"],
+.ck-dropdown__panel .ck-list__item[data-value="18px"],
+.ck-dropdown__panel .ck-list__item[data-value="20px"],
+.ck-dropdown__panel .ck-list__item[data-value="24px"],
+.ck-dropdown__panel .ck-list__item[data-value="28px"],
+.ck-dropdown__panel .ck-list__item[data-value="32px"],
+.ck-dropdown__panel .ck-list__item[data-value="36px"],
+.ck-dropdown__panel .ck-list__item[data-value="48px"],
+.ck-dropdown__panel .ck-list__item[data-value="72px"] {
+    color: #ecf0f1 !important;
+    background: #2c3e50 !important;
+}
+
+.ck-dropdown__panel .ck-list__item[data-value]:hover {
+    background: #34495e !important;
+    color: #fff !important;
+}
+
+.ck-dropdown__panel .ck-list__item[data-value].ck-on {
+    background: #ffd700 !important;
+    color: #2c3e50 !important;
+}
+
+/* CK Editor Button Dropdown */
+.ck-dropdown__button {
+    color: #ecf0f1 !important;
+}
+
+.ck-dropdown__button:hover {
+    background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.ck-dropdown__button.ck-on {
+    background: rgba(255, 215, 0, 0.2) !important;
+    color: #ffd700 !important;
+}
+
+/* CK Editor Balloon Panel */
+.ck-balloon-panel {
+    background: #2c3e50 !important;
+    border: 1px solid #4a5f7a !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ck-balloon-panel .ck-list {
+    background: #2c3e50 !important;
+}
+
+.ck-balloon-panel .ck-list__item {
+    color: #ecf0f1 !important;
+    background: #2c3e50 !important;
+}
+
+.ck-balloon-panel .ck-list__item:hover {
+    background: #34495e !important;
+    color: #fff !important;
+}
+
+.ck-balloon-panel .ck-list__item.ck-on {
+    background: #ffd700 !important;
+    color: #2c3e50 !important;
+}
+
+/* CK Editor Context Menu */
+.ck-context-menu {
+    background: #2c3e50 !important;
+    border: 1px solid #4a5f7a !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ck-context-menu .ck-list {
+    background: #2c3e50 !important;
+}
+
+.ck-context-menu .ck-list__item {
+    color: #ecf0f1 !important;
+    background: #2c3e50 !important;
+}
+
+.ck-context-menu .ck-list__item:hover {
+    background: #34495e !important;
+    color: #fff !important;
+}
+
+.ck-context-menu .ck-list__item.ck-on {
+    background: #ffd700 !important;
+    color: #2c3e50 !important;
+}
+
+/* CK Editor Toolbar Dropdown */
+.ck-toolbar .ck-dropdown__panel {
+    background: #2c3e50 !important;
+    border: 1px solid #4a5f7a !important;
+    border-radius: 6px !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+.ck-toolbar .ck-dropdown__panel .ck-list {
+    background: #2c3e50 !important;
+}
+
+.ck-toolbar .ck-dropdown__panel .ck-list__item {
+    color: #ecf0f1 !important;
+    background: #2c3e50 !important;
+}
+
+.ck-toolbar .ck-dropdown__panel .ck-list__item:hover {
+    background: #34495e !important;
+    color: #fff !important;
+}
+
+.ck-toolbar .ck-dropdown__panel .ck-list__item.ck-on {
+    background: #ffd700 !important;
+    color: #2c3e50 !important;
+}
+
+/* Responsive News Styles */
+@media (max-width: 768px) {
+    .news-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .news-meta-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.25rem;
+    }
+    
+    .news-actions {
+        flex-direction: column;
+    }
+    
+    .news-actions .btn {
+        width: 100%;
+    }
+}
+
+/* Form Checkbox Styles */
+.form-check {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.form-check-input {
+    width: 1.2rem;
+    height: 1.2rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.form-check-input:checked {
+    background: #ffd700;
+    border-color: #ffd700;
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+}
+
+.form-check-label {
+    color: #ecf0f1;
+    font-weight: 500;
+    cursor: pointer;
+    margin: 0;
+}
+
+/* Form Validation Styles */
+.form-control.is-invalid {
+    border-color: #e74c3c;
+    background: rgba(231, 76, 60, 0.1);
+}
+
+.form-control.is-invalid:focus {
+    border-color: #e74c3c;
+    box-shadow: 0 0 0 0.2rem rgba(231, 76, 60, 0.25);
+}
+
+.invalid-feedback {
+    color: #e74c3c;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: block;
+}
+
+/* DateTime Input Styles */
+input[type="datetime-local"] {
+    color-scheme: dark;
+}
+
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    cursor: pointer;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit {
+    color: #ecf0f1;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-fields-wrapper {
+    background: transparent;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-text {
+    color: #ecf0f1;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-month-field,
+input[type="datetime-local"]::-webkit-datetime-edit-day-field,
+input[type="datetime-local"]::-webkit-datetime-edit-year-field {
+    color: #ecf0f1;
+}
+
+input[type="datetime-local"]::-webkit-datetime-edit-hour-field,
+input[type="datetime-local"]::-webkit-datetime-edit-minute-field {
+    color: #ecf0f1;
+}
+
+/* Form Select Styles */
+.form-select {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ecf0f1;
+    padding: 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffd700;
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+    color: #fff;
+}
+
+.form-select option {
+    background: #2c3e50;
+    color: #ecf0f1;
+}
+
+/* Select with form-control class (used in news forms) */
+select.form-control {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ecf0f1;
+    padding: 0.75rem;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%23ecf0f1' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 0.75rem center;
+    background-repeat: no-repeat;
+    background-size: 1rem;
+    padding-right: 2.5rem;
+}
+
+select.form-control:focus {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: #ffd700;
+    box-shadow: 0 0 0 0.2rem rgba(255, 215, 0, 0.25);
+    color: #fff;
+    outline: none;
+}
+
+select.form-control option {
+    background: #2c3e50;
+    color: #ecf0f1;
+    padding: 0.5rem;
+}
+
+select.form-control option:hover {
+    background: #34495e;
+}
+
+select.form-control option:checked {
+    background: #ffd700;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+/* Enhanced Select Styles for News Categories */
+select.form-control:hover {
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(255, 255, 255, 0.12);
+}
+
+select.form-control:active {
+    border-color: #ffd700;
+    background: rgba(255, 255, 255, 0.15);
+}
+
+/* Firefox specific styles */
+@-moz-document url-prefix() {
+    select.form-control {
+        background-image: none;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Internet Explorer specific styles */
+@media screen and (-ms-high-contrast: active), (-ms-high-contrast: none) {
+    select.form-control {
+        background-image: none;
+        padding-right: 0.75rem;
+    }
+}
+
+/* Safari specific styles */
+@supports (-webkit-appearance: none) {
+    select.form-control {
+        -webkit-appearance: none;
+        appearance: none;
+    }
+}
+
+/* Text Area Styles */
+textarea.form-control {
+    resize: vertical;
+    min-height: 300px;
+}
+
+/* CK Editor specific textarea */
+textarea.form-control#content {
+    min-height: 400px;
+}
+
+/* Form Actions Enhancement */
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    flex-wrap: wrap;
+}
+
+.form-actions .btn {
+    min-width: 120px;
+}
+
+/* Responsive Form Styles */
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .form-actions .btn {
+        width: 100%;
+        max-width: 300px;
     }
 }

@@ -52,6 +52,12 @@ Route::get('/download', function () {
 Route::get('/news', [NewsController::class, 'index'])->name('news.index')->middleware(\App\Http\Middleware\Localization::class);
 Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show')->middleware(\App\Http\Middleware\Localization::class);
 
+// News comments routes
+Route::middleware('auth')->group(function () {
+    Route::post('/news/{slug}/comments', [\App\Http\Controllers\NewsCommentController::class, 'store'])->name('news.comments.store');
+    Route::get('/news/{slug}/comments', [\App\Http\Controllers\NewsCommentController::class, 'getComments'])->name('news.comments.get');
+});
+
 // Дополнительные маршруты для WoW сайта
 Route::get('/armory', [ArmoryController::class, 'index'])->name('armory')->middleware(\App\Http\Middleware\Localization::class);
 Route::get('/armory/arena-2v2', [ArmoryController::class, 'arena2v2'])->name('armory.arena-2v2')->middleware(\App\Http\Middleware\Localization::class);
@@ -159,13 +165,27 @@ Route::middleware(['auth'])->group(function () {
          ->name('admin.character.details');
     Route::post('/admin/characters/{id}/teleport', [AdminController::class, 'teleportCharacter'])
          ->name('admin.character.teleport');
-Route::post('/admin/characters/{id}/kick', [AdminController::class, 'kickCharacter'])
-                ->name('admin.character.kick');
-Route::get('/admin/soap', function() {
-    return view('admin.soap-check');
-})->name('admin.soap');
-Route::get('/admin/soap/check', [AdminController::class, 'checkSoapConnection'])
-                ->name('admin.soap.check');
+    Route::post('/admin/characters/{id}/kick', [AdminController::class, 'kickCharacter'])
+         ->name('admin.character.kick');
+    
+    // Управление новостями
+    Route::resource('admin/news', \App\Http\Controllers\Admin\NewsController::class)
+         ->names([
+             'index' => 'admin.news.index',
+             'create' => 'admin.news.create',
+             'store' => 'admin.news.store',
+             'show' => 'admin.news.show',
+             'edit' => 'admin.news.edit',
+             'update' => 'admin.news.update',
+             'destroy' => 'admin.news.destroy'
+         ]);
+    
+    // SOAP проверка
+    Route::get('/admin/soap', function() {
+        return view('admin.soap-check');
+    })->name('admin.soap');
+    Route::get('/admin/soap/check', [AdminController::class, 'checkSoapConnection'])
+         ->name('admin.soap.check');
 });
 
 

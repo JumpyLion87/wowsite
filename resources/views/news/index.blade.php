@@ -12,7 +12,7 @@
         @else
             <div class="news-list">
                 @foreach($newsList as $news)
-                    <a href="{{ route('news.index', ['slug' => $news->slug]) }}" class="news-link">
+                    <a href="{{ route('news.show', $news->slug) }}" class="news-link">
                         <article class="news-item {{ $news->is_important ? 'important' : '' }}">
                             @if(!empty($news->image_url))
                                 <img src="{{ asset($news->image_url) }}"
