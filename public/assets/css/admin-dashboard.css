@@ -1047,9 +1047,117 @@
 /* Content header for cards */
 .content-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: center;
     align-items: center;
     margin-bottom: 1rem;
+    text-align: center;
+}
+
+/* Content body with padding */
+.content-body {
+    padding: 20px;
+}
+
+/* News form specific styles */
+.news-form {
+    max-width: 100%;
+}
+
+.news-form .form-group {
+    margin-bottom: 20px;
+}
+
+.news-form .form-label {
+    font-weight: 600;
+    color: #ffd100;
+    margin-bottom: 8px;
+}
+
+.news-form .form-control {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4a3c27;
+    color: #fff;
+    border-radius: 6px;
+    padding: 12px 15px;
+    transition: all 0.3s ease;
+}
+
+.news-form .form-control:focus {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: #ffd100;
+    box-shadow: 0 0 0 0.2rem rgba(255, 209, 0, 0.25);
+    color: #fff;
+}
+
+.news-form .form-control::placeholder {
+    color: #999;
+}
+
+.news-form textarea.form-control {
+    min-height: 200px;
+    resize: vertical;
+}
+
+.news-form .form-check {
+    margin-bottom: 15px;
+}
+
+.news-form .form-check-input {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4a3c27;
+}
+
+.news-form .form-check-input:checked {
+    background-color: #ffd100;
+    border-color: #ffd100;
+}
+
+.news-form .form-check-label {
+    color: #fff;
+    font-weight: 500;
+}
+
+.news-form .btn {
+    padding: 12px 24px;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.news-form .btn-primary {
+    background: linear-gradient(135deg, #ffd100, #ffed4e);
+    border: none;
+    color: #000;
+    box-shadow: 0 4px 15px rgba(255, 209, 0, 0.3);
+}
+
+.news-form .btn-primary:hover {
+    background: linear-gradient(135deg, #ffed4e, #ffd100);
+    box-shadow: 0 6px 20px rgba(255, 209, 0, 0.4);
+    transform: translateY(-2px);
+}
+
+.news-form .btn-secondary {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4a3c27;
+    color: #fff;
+}
+
+.news-form .btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: #ffd100;
+    color: #ffd100;
+}
+
+.news-form .form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #4a3c27;
 }
 
 /* Badges */

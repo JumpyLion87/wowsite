@@ -158,10 +158,6 @@
                     </div>
                     
                     <div class="form-actions">
-                        <button type="button" id="test-btn" class="btn btn-info me-2">
-                            <i class="fas fa-bug me-2"></i>
-                            Test Form
-                        </button>
                         <button type="submit" class="btn btn-primary" id="submit-btn">
                             <i class="fas fa-save me-2"></i>
                             {{ __('admin_news.create_news') }}
@@ -184,35 +180,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log('Initializing CKEditor...');
     
-    // Test button functionality
-    const testBtn = document.getElementById('test-btn');
     const submitBtn = document.getElementById('submit-btn');
-    
-    if (testBtn) {
-        testBtn.addEventListener('click', function() {
-            console.log('Test button clicked');
-            
-            // Сначала синхронизируем данные
-            if (window.ckeditor) {
-                const textarea = document.querySelector('#content');
-                if (textarea) {
-                    textarea.value = window.ckeditor.getData();
-                    console.log('Synced textarea with CKEditor data');
-                }
-            }
-            
-            const form = document.querySelector('.news-form');
-            const formData = new FormData(form);
-            console.log('Form data:');
-            for (let [key, value] of formData.entries()) {
-                console.log(key + ': ' + value);
-            }
-            console.log('CKEditor instance:', window.ckeditor);
-            if (window.ckeditor) {
-                console.log('CKEditor content:', window.ckeditor.getData());
-            }
-        });
-    }
     
     if (submitBtn) {
         submitBtn.addEventListener('click', function(e) {
