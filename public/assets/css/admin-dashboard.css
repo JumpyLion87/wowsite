@@ -2316,3 +2316,164 @@ textarea.form-control#content {
         max-width: 300px;
     }
 }
+
+/* Хлебные крошки в админ-панели */
+.admin-breadcrumb {
+    margin-bottom: 20px;
+    padding: 15px 0;
+    border-bottom: 1px solid #4a3c27;
+}
+
+.admin-breadcrumb .breadcrumb {
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-size: 0.9rem;
+}
+
+.admin-breadcrumb .breadcrumb-item {
+    color: #a0a0a0;
+}
+
+.admin-breadcrumb .breadcrumb-item a {
+    color: #ffd100;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.admin-breadcrumb .breadcrumb-item a:hover {
+    color: #ffed4e;
+    text-decoration: underline;
+}
+
+.admin-breadcrumb .breadcrumb-item.active {
+    color: #fff;
+    font-weight: 600;
+}
+
+.admin-breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+    content: ">";
+    color: #4a3c27;
+    margin: 0 8px;
+}
+
+/* Стили для модерации комментариев */
+.bulk-actions {
+    background: rgba(0, 0, 0, 0.2);
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #4a3c27;
+    margin-bottom: 20px;
+}
+
+.bulk-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 32px;
+    height: 32px;
+    background: #4a3c27;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffd100;
+}
+
+.user-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-weight: 600;
+    color: #ffd100;
+}
+
+.user-id {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.news-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.news-title {
+    font-weight: 600;
+    color: #fff;
+}
+
+.news-slug {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.comment-content {
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+.reply-indicator {
+    font-size: 0.8rem;
+    color: #ffd100;
+    margin-top: 5px;
+}
+
+.date-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.date {
+    font-weight: 600;
+    color: #fff;
+}
+
+.time {
+    font-size: 0.8rem;
+    color: #999;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 5px;
+}
+
+.action-buttons .btn {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+}
+
+.checkbox-column {
+    width: 40px;
+    text-align: center;
+}
+
+.comment-row[data-status="approved"] {
+    background: rgba(0, 255, 0, 0.1);
+}
+
+.comment-row[data-status="pending"] {
+    background: rgba(255, 255, 0, 0.1);
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    color: #999;
+}
+
+.empty-state i {
+    color: #4a3c27;
+}

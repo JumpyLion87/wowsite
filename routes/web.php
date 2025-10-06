@@ -5,6 +5,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\DownloadController;
 use App\Http\Controllers\NewsController;
+use App\Http\Controllers\NewsCommentController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\ArmoryController;
 use App\Http\Controllers\CharacterController;
@@ -53,10 +54,8 @@ Route::get('/news', [NewsController::class, 'index'])->name('news.index')->middl
 Route::get('/news/{slug}', [NewsController::class, 'show'])->name('news.show')->middleware(\App\Http\Middleware\Localization::class);
 
 // News comments routes
-Route::middleware('auth')->group(function () {
-    Route::post('/news/{slug}/comments', [\App\Http\Controllers\NewsCommentController::class, 'store'])->name('news.comments.store');
-    Route::get('/news/{slug}/comments', [\App\Http\Controllers\NewsCommentController::class, 'getComments'])->name('news.comments.get');
-});
+Route::post('/news/{slug}/comments', [NewsCommentController::class, 'store'])->name('news.comments.store')->middleware('auth');
+Route::get('/news/{slug}/comments', [NewsCommentController::class, 'getComments'])->name('news.comments.get');
 
 // Дополнительные маршруты для WoW сайта
 Route::get('/armory', [ArmoryController::class, 'index'])->name('armory')->middleware(\App\Http\Middleware\Localization::class);
@@ -170,15 +169,24 @@ Route::middleware(['auth'])->group(function () {
     
     // Управление новостями
     Route::resource('admin/news', \App\Http\Controllers\Admin\NewsController::class)
-         ->names([
-             'index' => 'admin.news.index',
-             'create' => 'admin.news.create',
-             'store' => 'admin.news.store',
-             'show' => 'admin.news.show',
-             'edit' => 'admin.news.edit',
-             'update' => 'admin.news.update',
-             'destroy' => 'admin.news.destroy'
-         ]);
+        ->names([
+            'index' => 'admin.news.index',
+            'create' => 'admin.news.create',
+            'store' => 'admin.news.store',
+            'show' => 'admin.news.show',
+            'edit' => 'admin.news.edit',
+            'update' => 'admin.news.update',
+            'destroy' => 'admin.news.destroy'
+        ]);
+    
+    // Маршруты для модерации комментариев
+    Route::get('/admin/news-comments', [\App\Http\Controllers\Admin\NewsCommentController::class, 'index'])->name('admin.news-comments.index');
+    Route::post('/admin/news-comments/{comment}/approve', [\App\Http\Controllers\Admin\NewsCommentController::class, 'approve'])->name('admin.news-comments.approve');
+    Route::post('/admin/news-comments/{comment}/reject', [\App\Http\Controllers\Admin\NewsCommentController::class, 'reject'])->name('admin.news-comments.reject');
+    Route::delete('/admin/news-comments/{comment}', [\App\Http\Controllers\Admin\NewsCommentController::class, 'destroy'])->name('admin.news-comments.destroy');
+    Route::post('/admin/news-comments/bulk-approve', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkApprove'])->name('admin.news-comments.bulk-approve');
+    Route::post('/admin/news-comments/bulk-reject', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkReject'])->name('admin.news-comments.bulk-reject');
+    Route::post('/admin/news-comments/bulk-delete', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkDelete'])->name('admin.news-comments.bulk-delete');
     
     // SOAP проверка
     Route::get('/admin/soap', function() {

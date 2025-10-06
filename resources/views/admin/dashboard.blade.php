@@ -32,6 +32,10 @@
                 <i class="fas fa-newspaper me-2"></i>
                 {{ __('admin_dashboard.manage_news') }}
             </a>
+            <a href="{{ route('admin.news-comments.index') }}" class="btn btn-warning me-2">
+                <i class="fas fa-comments me-2"></i>
+                {{ __('admin_dashboard.moderate_comments') }}
+            </a>
             <a href="{{ route('admin.settings') }}" class="btn btn-settings me-2">
                 <i class="fas fa-cogs me-2"></i>
                 {{ __('admin_dashboard.settings') }}

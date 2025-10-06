@@ -4,6 +4,28 @@
 
 @section('content')
 <div class="dashboard-container">
+    <!-- Хлебные крошки -->
+    <nav aria-label="breadcrumb" class="admin-breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">
+                    <i class="fas fa-tachometer-alt me-1"></i>
+                    {{ __('admin_dashboard.title') }}
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.news.index') }}">
+                    <i class="fas fa-newspaper me-1"></i>
+                    {{ __('admin_news.news_management') }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-plus me-1"></i>
+                {{ __('admin_news.create_news') }}
+            </li>
+        </ol>
+    </nav>
+
     <div class="admin-header">
         <div class="admin-header-content">
             <h1 class="admin-title">
@@ -13,6 +35,10 @@
             <p class="admin-subtitle">{{ __('admin_news.create_news_description') }}</p>
         </div>
         <div class="admin-header-actions">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary me-2">
+                <i class="fas fa-home me-2"></i>
+                {{ __('admin_dashboard.title') }}
+            </a>
             <a href="{{ route('admin.news.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>
                 {{ __('admin_news.back_to_list') }}

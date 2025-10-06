@@ -56,4 +56,6 @@ return [
     'manage_characters' => 'Управление персонажами',
     'check_soap' => 'Проверить SOAP',
     'manage_news' => 'Управление новостями',
+    'moderate_comments' => 'Модерация комментариев',
+    'back_to_dashboard' => 'Назад к дашборду',
 ];

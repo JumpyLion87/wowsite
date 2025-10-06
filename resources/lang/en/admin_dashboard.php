@@ -56,4 +56,7 @@ return [
     'manage_characters' => 'Manage Characters',
     'check_soap' => 'Check SOAP',
     'manage_news' => 'Manage News',
+    'never' => 'Never',
+    'moderate_comments' => 'Moderate Comments',
+    'back_to_dashboard' => 'Back to Dashboard',
 ];

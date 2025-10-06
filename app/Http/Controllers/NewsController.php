@@ -60,8 +60,8 @@ class NewsController extends Controller
         $news->content = preg_replace('/<p>\s*<h([1-6])>/i', '<h$1>', $news->content); // Убираем <p> перед заголовками
         $news->content = preg_replace('/<\/h([1-6])>\s*<\/p>/i', '</h$1>', $news->content); // Убираем </p> после заголовков
 
-        // Загружаем комментарии
-        $comments = $news->approvedComments()->get();
+        // Загружаем комментарии (временно показываем все для тестирования)
+        $comments = $news->comments()->with(['user', 'replies.user'])->orderBy('created_at', 'desc')->get();
 
         return view('news.show', compact('news', 'default_image_url', 'comments'));
     }

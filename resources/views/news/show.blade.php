@@ -7,7 +7,7 @@
     <div class="wow-news-container">
         <article class="news-single">
             <div class="news-header">
-                <h1 class="news-title">{{ $news->title }}</h1>
+                <h1 class="news-page-title">{{ $news->title }}</h1>
                 <div class="news-meta">
                     <span class="category {{ $news->category }}">
                         {{ trans()->has('news.category_' . $news->category) ? __('news.category_' . $news->category) : ucfirst($news->category) }}
