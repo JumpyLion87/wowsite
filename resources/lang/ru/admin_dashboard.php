@@ -50,4 +50,6 @@ return [
     'uptime' => 'Время работы',
     'recent_purchases' => 'Последние покупки',
     'no_recent_purchases' => 'Нет недавних покупок',
+    'manage_users' => 'Управление пользователями',
+    'manage_items' => 'Управление товарами',
 ];

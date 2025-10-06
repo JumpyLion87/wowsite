@@ -47,8 +47,8 @@ class CharacterController extends Controller
         } else {
             // Fetch character data
             $character = Character::where('guid', $guid)->first();
-            
-            if (!$character) {
+        
+        if (!$character) {
                 return redirect()->route('home')->with('error', __('character.error_character_not_found', ['guid' => $guid]));
             }
 
@@ -67,8 +67,8 @@ class CharacterController extends Controller
             // Cache the data
             $cacheData = [
                 'timestamp' => time(),
-                'character' => $character,
-                'stats' => $stats,
+            'character' => $character,
+            'stats' => $stats,
                 'pvp_teams' => $pvpTeams,
                 'items' => $equippedItems,
                 'total_kills' => $totalKills

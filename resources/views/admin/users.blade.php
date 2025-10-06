@@ -1,0 +1,308 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="dashboard-container">
+    <!-- Заголовок -->
+    <div class="admin-header">
+        <div class="admin-title-section">
+            <h1 class="admin-title">
+                <i class="fas fa-users me-3"></i>
+                {{ __('admin_users.title') }}
+            </h1>
+            <p class="admin-subtitle">{{ __('admin_users.subtitle') }}</p>
+        </div>
+        <div class="admin-actions">
+            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>
+                {{ __('admin_users.back_to_dashboard') }}
+            </a>
+        </div>
+    </div>
+
+    <!-- Хлебные крошки -->
+    <nav class="breadcrumb-nav">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{{ route('admin.dashboard') }}">
+                    <i class="fas fa-tachometer-alt me-1"></i>
+                    {{ __('admin_users.dashboard') }}
+                </a>
+            </li>
+            <li class="breadcrumb-item active">
+                <i class="fas fa-users me-1"></i>
+                {{ __('admin_users.title') }}
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Статистика -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $stats['total_users'] }}</h3>
+                <p class="stat-label">{{ __('admin_users.total_users') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-circle text-success"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $stats['online_users'] }}</h3>
+                <p class="stat-label">{{ __('admin_users.online_users') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-ban text-danger"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $stats['banned_users'] }}</h3>
+                <p class="stat-label">{{ __('admin_users.banned_users') }}</p>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-icon">
+                <i class="fas fa-user-shield text-warning"></i>
+            </div>
+            <div class="stat-content">
+                <h3 class="stat-number">{{ $stats['admin_users'] }}</h3>
+                <p class="stat-label">{{ __('admin_users.admin_users') }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Основной контент -->
+    <div class="content-card">
+        <div class="card-header">
+            <h3 class="card-title">
+                <i class="fas fa-list me-2"></i>
+                {{ __('admin_users.users_list') }}
+            </h3>
+            <div class="card-actions">
+                <button class="btn btn-sm btn-refresh" onclick="location.reload()">
+                    <i class="fas fa-sync-alt"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="card-body">
+            <!-- Форма поиска и фильтрации -->
+            <form class="search-form" method="GET" action="{{ route('admin.users') }}">
+                <div class="search-row">
+                    <div class="search-group">
+                        <input type="text" name="search_username" class="form-control" 
+                               placeholder="{{ __('admin_users.search_username') }}" 
+                               value="{{ $searchUsername }}">
+                    </div>
+                    <div class="search-group">
+                        <input type="text" name="search_email" class="form-control" 
+                               placeholder="{{ __('admin_users.search_email') }}" 
+                               value="{{ $searchEmail }}">
+                    </div>
+                    <div class="search-group">
+                        <select name="role_filter" class="form-select">
+                            <option value="">{{ __('admin_users.all_roles') }}</option>
+                            <option value="user" {{ $roleFilter == 'user' ? 'selected' : '' }}>User</option>
+                            <option value="moderator" {{ $roleFilter == 'moderator' ? 'selected' : '' }}>Moderator</option>
+                            <option value="admin" {{ $roleFilter == 'admin' ? 'selected' : '' }}>Admin</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <select name="status_filter" class="form-select">
+                            <option value="">{{ __('admin_users.all_status') }}</option>
+                            <option value="active" {{ $statusFilter == 'active' ? 'selected' : '' }}>{{ __('admin_users.active') }}</option>
+                            <option value="banned" {{ $statusFilter == 'banned' ? 'selected' : '' }}>{{ __('admin_users.banned') }}</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <select name="per_page" class="form-select">
+                            <option value="20" {{ $perPage == 20 ? 'selected' : '' }}>20 {{ __('admin_users.per_page') }}</option>
+                            <option value="50" {{ $perPage == 50 ? 'selected' : '' }}>50 {{ __('admin_users.per_page') }}</option>
+                            <option value="100" {{ $perPage == 100 ? 'selected' : '' }}>100 {{ __('admin_users.per_page') }}</option>
+                        </select>
+                    </div>
+                    <div class="search-group">
+                        <button type="submit" class="btn btn-search">
+                            <i class="fas fa-search me-1"></i>
+                            {{ __('admin_users.search') }}
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <!-- Таблица пользователей -->
+            <div class="table-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>{{ __('admin_users.table_username') }}</th>
+                            <th>{{ __('admin_users.table_email') }}</th>
+                            <th>{{ __('admin_users.table_role') }}</th>
+                            <th>{{ __('admin_users.table_points') }}</th>
+                            <th>{{ __('admin_users.table_tokens') }}</th>
+                            <th>{{ __('admin_users.table_status') }}</th>
+                            <th>{{ __('admin_users.table_joined') }}</th>
+                            <th>{{ __('admin_users.table_actions') }}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($users as $user)
+                            <tr>
+                                <td class="username-cell">
+                                    <div class="user-info">
+                                        <span class="username">{{ $user->username }}</span>
+                                        <small class="user-id">ID: {{ $user->account_id }}</small>
+                                    </div>
+                                </td>
+                                <td class="email-cell">{{ $user->email ?? __('admin_users.email_not_set') }}</td>
+                                <td class="role-cell">
+                                    <span class="role-badge role-{{ $user->role }}">
+                                        {{ ucfirst($user->role) }}
+                                    </span>
+                                </td>
+                                <td class="points-cell">{{ number_format($user->points ?? 0) }}</td>
+                                <td class="tokens-cell">{{ number_format($user->tokens ?? 0) }}</td>
+                                <td class="status-cell">
+                                    @if($user->bandate)
+                                        <span class="status-badge status-banned">
+                                            <i class="fas fa-ban me-1"></i>
+                                            {{ __('admin_users.banned') }}
+                                        </span>
+                                    @else
+                                        <span class="status-badge status-active">
+                                            <i class="fas fa-check-circle me-1"></i>
+                                            {{ __('admin_users.active') }}
+                                        </span>
+                                    @endif
+                                </td>
+                                <td class="date-cell">
+                                    {{ isset($user->joindate) && $user->joindate ? \Carbon\Carbon::parse($user->joindate)->format('M j, Y') : __('admin_users.unknown') }}
+                                </td>
+                                <td class="action-cell">
+                                    <a href="{{ route('admin.user.details', $user->account_id) }}" 
+                                       class="btn btn-sm btn-primary">
+                                        <i class="fas fa-eye me-1"></i>
+                                        {{ __('admin_users.view') }}
+                                    </a>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="text-center no-data">
+                                    <i class="fas fa-users fa-2x mb-2"></i>
+                                    <p>{{ __('admin_users.no_users_found') }}</p>
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Пагинация -->
+            @if($users->hasPages())
+                {{ $users->appends(request()->query())->links('pagination.admin-pagination') }}
+            @endif
+        </div>
+    </div>
+</div>
+@endsection
+
+@push('styles')
+<style>
+/* Дополнительные стили для страницы пользователей */
+.role-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.role-user {
+    background-color: #6c757d;
+    color: white;
+}
+
+.role-moderator {
+    background-color: #ffc107;
+    color: #000;
+}
+
+.role-admin {
+    background-color: #dc3545;
+    color: white;
+}
+
+.status-badge {
+    padding: 4px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.status-active {
+    background-color: #d4edda;
+    color: #155724;
+}
+
+.status-banned {
+    background-color: #f8d7da;
+    color: #721c24;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.username {
+    font-weight: 500;
+    color: #333;
+}
+
+.user-id {
+    color: #6c757d;
+    font-size: 11px;
+}
+
+.pagination-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.pagination-container .pagination {
+    margin: 0;
+}
+
+.pagination-container .page-link {
+    background-color: #2c3e50;
+    border-color: #34495e;
+    color: #ecf0f1;
+}
+
+.pagination-container .page-link:hover {
+    background-color: #34495e;
+    border-color: #2c3e50;
+    color: #ecf0f1;
+}
+
+.pagination-container .page-item.active .page-link {
+    background-color: #e67e22;
+    border-color: #d35400;
+}
+
+.pagination-container .page-item.disabled .page-link {
+    background-color: #34495e;
+    border-color: #2c3e50;
+    color: #7f8c8d;
+}
+</style>
+@endpush

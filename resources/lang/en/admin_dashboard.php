@@ -50,4 +50,6 @@ return [
     'uptime' => 'Uptime',
     'recent_purchases' => 'Recent Purchases',
     'no_recent_purchases' => 'No recent purchases',
+    'manage_users' => 'Manage Users',
+    'manage_items' => 'Manage Items',
 ];

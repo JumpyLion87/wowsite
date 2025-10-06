@@ -117,6 +117,40 @@ Route::middleware(['auth'])->group(function () {
          ->name('admin.settings');
     Route::post('/admin/settings', [AdminController::class, 'updateSettings'])
          ->name('admin.settings.update');
+    
+    // Управление пользователями
+    Route::get('/admin/users', [AdminController::class, 'users'])
+         ->name('admin.users');
+    Route::get('/admin/users/{id}', [AdminController::class, 'userDetails'])
+         ->name('admin.user.details');
+    Route::post('/admin/users/{id}/update', [AdminController::class, 'updateUser'])
+         ->name('admin.user.update');
+    Route::post('/admin/users/{id}/ban', [AdminController::class, 'banUser'])
+         ->name('admin.user.ban');
+    Route::post('/admin/users/{id}/unban', [AdminController::class, 'unbanUser'])
+         ->name('admin.user.unban');
+    
+    // Управление товарами магазина
+    Route::get('/admin/shop-items', [AdminController::class, 'shopItems'])
+         ->name('admin.shop-items');
+    Route::get('/admin/shop-items/create', [AdminController::class, 'createShopItem'])
+         ->name('admin.shop-item.create');
+    Route::post('/admin/shop-items', [AdminController::class, 'storeShopItem'])
+         ->name('admin.shop-item.store');
+    Route::get('/admin/shop-items/{id}/edit', [AdminController::class, 'editShopItem'])
+         ->name('admin.shop-item.edit');
+    Route::put('/admin/shop-items/{id}', [AdminController::class, 'updateShopItem'])
+         ->name('admin.shop-item.update');
+    Route::delete('/admin/shop-items/{id}', [AdminController::class, 'deleteShopItem'])
+         ->name('admin.shop-item.delete');
+    
+    // Управление покупками
+    Route::get('/admin/purchases', [AdminController::class, 'purchases'])
+         ->name('admin.purchases');
+    Route::get('/admin/purchases/{id}', [AdminController::class, 'purchaseDetails'])
+         ->name('admin.purchase.details');
+    Route::post('/admin/purchases/{id}/refund', [AdminController::class, 'refundPurchase'])
+         ->name('admin.purchase.refund');
 });
 
 

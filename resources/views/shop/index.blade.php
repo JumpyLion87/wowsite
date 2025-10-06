@@ -179,13 +179,17 @@
                     </div>
                     <div class="modal-body">
                         <div class="character-selection">
-                            <h4>{{ __('shop.character_must_be_offline') }}</h4>
+                            <div class="alert alert-warning mb-3">
+                                <i class="fas fa-exclamation-triangle me-2"></i>
+                                {{ __('shop.character_must_be_offline') }}
+                            </div>
                             <div class="character-list">
                                 @foreach ($characters as $character)
-                                    <div class="character-option {{ $character->online ? 'online' : '' }}" 
+                                    <div class="character-option {{ $character->online ? 'online disabled' : '' }}" 
                                          data-guid="{{ $character->guid }}"
                                          data-name="{{ $character->name }}"
-                                         data-level="{{ $character->level }}">
+                                         data-level="{{ $character->level }}"
+                                         data-online="{{ $character->online ? '1' : '0' }}">
                                         <div class="d-flex align-items-center">
                                             @php
                                                 $raceNames = [
@@ -370,6 +374,23 @@ function initializeBuyButtons() {
                 const genderChangeOption = document.getElementById('genderChangeOption');
                 const factionChangeOption = document.getElementById('factionChangeOption');
                 
+                // Reset all service fields first
+                const serviceName = document.getElementById('serviceName');
+                const serviceRace = document.getElementById('serviceRace');
+                const serviceGender = document.getElementById('serviceGender');
+                const serviceFaction = document.getElementById('serviceFaction');
+                
+                if (serviceName) serviceName.value = '';
+                if (serviceRace) serviceRace.value = '';
+                if (serviceGender) serviceGender.value = '';
+                if (serviceFaction) serviceFaction.value = '';
+                
+                // Hide all service options first
+                if (nameChangeOption) nameChangeOption.style.display = 'none';
+                if (raceChangeOption) raceChangeOption.style.display = 'none';
+                if (genderChangeOption) genderChangeOption.style.display = 'none';
+                if (factionChangeOption) factionChangeOption.style.display = 'none';
+                
                 if (isService) {
                     // Show service options
                     if (serviceOptions) serviceOptions.style.display = 'block';
@@ -391,10 +412,6 @@ function initializeBuyButtons() {
                 } else {
                     // Hide service options for non-service items
                     if (serviceOptions) serviceOptions.style.display = 'none';
-                    if (nameChangeOption) nameChangeOption.style.display = 'none';
-                    if (raceChangeOption) raceChangeOption.style.display = 'none';
-                    if (genderChangeOption) genderChangeOption.style.display = 'none';
-                    if (factionChangeOption) factionChangeOption.style.display = 'none';
                 }
                 
                 console.log('Bootstrap available:', typeof bootstrap);
@@ -417,8 +434,9 @@ function initializeBuyButtons() {
         console.log(`Character option ${index}:`, option);
         option.addEventListener('click', function() {
             console.log('Character option clicked:', this);
-            if (this.classList.contains('online')) {
+            if (this.classList.contains('online') || this.dataset.online === '1') {
                 console.log('Character is online, cannot select');
+                alert('{{ __("shop.character_must_be_offline") }}');
                 return;
             }
             
@@ -751,4 +769,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<style>
+/* Стили для онлайн персонажей в модальном окне */
+.character-option.online {
+    opacity: 0.5;
+    background-color: rgba(220, 53, 69, 0.1) !important;
+    border: 1px solid rgba(220, 53, 69, 0.3) !important;
+    cursor: not-allowed !important;
+}
+
+.character-option.online:hover {
+    background-color: rgba(220, 53, 69, 0.2) !important;
+    transform: none !important;
+}
+
+.character-option.online::after {
+    content: " (Онлайн)";
+    color: #dc3545;
+    font-weight: bold;
+    font-size: 0.8em;
+}
+
+.character-option.disabled {
+    pointer-events: none;
+}
+</style>
 @endsection

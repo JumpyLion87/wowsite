@@ -113,12 +113,22 @@ class AccountController extends Controller
             }
         }
         
-        // Получаем информацию о голосовании с учетом времени mmotop
+        // Получаем информацию о голосовании (упрощенная версия)
         $voteCheckService = app(\App\Services\VoteCheckService::class);
         $voteInfo = $voteCheckService->getVoteInfo($user);
-        $remainingVoteTime = $voteInfo['remaining_time'];
 
-        $this->checkVoteAutomatically($user);
+        // Проверяем голос автоматически
+        $voteCheckService = app(\App\Services\VoteCheckService::class);
+        $voteResult = $voteCheckService->checkUserVote($user);
+        
+        // Если голос найден, сохраняем уведомление
+        if ($voteResult['success']) {
+            session()->flash('vote_notification', [
+                'type' => 'success',
+                'message' => $voteResult['message'],
+                'points' => $voteResult['points']
+            ]);
+        }
 
         $activeSessions = $this->getActiveSessions($user->id);
         
@@ -144,7 +154,7 @@ class AccountController extends Controller
             'totalGold' => $totalGold,
             'activeSessions' => $activeSessions,
             'lastPasswordChange' => $lastPasswordChange,
-            'remainingVoteTime' => $remainingTime ?? null,
+            'voteInfo' => $voteInfo,
             // Расширенная статистика
             'totalPlaytime' => $totalPlaytime,
             'totalKills' => $totalKills,

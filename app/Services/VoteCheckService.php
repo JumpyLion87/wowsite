@@ -33,20 +33,11 @@ class VoteCheckService
             return ['success' => false, 'points' => 0, 'message' => 'MMOTOP URL not configured'];
         }
 
-        // Проверка кулдауна
+        // Получаем последний голос для проверки дубликатов
         $lastVote = DB::table('votes')
             ->where('user_id', $user->id)
             ->orderBy('voted_at', 'desc')
             ->first();
-
-        if ($lastVote && Carbon::parse($lastVote->voted_at)->addHours($cooldownHours) > now()) {
-            $remainingTime = Carbon::parse($lastVote->voted_at)->addHours($cooldownHours)->diffForHumans();
-            return [
-                'success' => false, 
-                'points' => 0, 
-                'message' => __('vote.cooldown_active', ['time' => $remainingTime])
-            ];
-        }
 
         try {
             // Запрос к MMOTOP API
@@ -205,14 +196,13 @@ class VoteCheckService
     }
 
     /**
-     * Получить информацию о голосовании с учетом времени mmotop
+     * Получить информацию о голосовании (упрощенная версия)
      * 
      * @param User $user
      * @return array
      */
     public function getVoteInfo(User $user): array
     {
-        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 24);
         $rewardPoints = (int) env('VOTE_REWARD_POINTS', 100);
         
         // Получаем последний голос
@@ -221,34 +211,11 @@ class VoteCheckService
             ->orderBy('voted_at', 'desc')
             ->first();
 
-        $canVote = true;
-        $remainingTime = null;
-        $nextVoteTime = null;
-
-        if ($lastVote) {
-            // Используем время mmotop для расчета следующего голоса
-            $lastVoteTime = Carbon::parse($lastVote->voted_at);
-            $nextVoteTime = $lastVoteTime->copy()->addHours($cooldownHours);
-            
-            // Получаем текущее время mmotop
-            $mmotopTimezone = env('MMOTOP_TIMEZONE', 'UTC');
-            $currentMmotopTime = Carbon::now($mmotopTimezone);
-            
-            if ($currentMmotopTime < $nextVoteTime) {
-                $canVote = false;
-                $remainingTime = $nextVoteTime->diffForHumans($currentMmotopTime, true);
-            }
-        }
-
         return [
             'success' => true,
-            'can_vote' => $canVote,
-            'remaining_time' => $remainingTime,
-            'next_vote_time' => $nextVoteTime ? $nextVoteTime->format('d.m.Y H:i') : null,
+            'can_vote' => true, // Всегда можно голосовать, MMOTOP сам контролирует кулдаун
             'last_vote' => $lastVote ? Carbon::parse($lastVote->voted_at)->format('d.m.Y H:i') : null,
-            'reward_points' => $rewardPoints,
-            'cooldown_hours' => $cooldownHours,
-            'mmotop_timezone' => $mmotopTimezone ?? 'UTC'
+            'reward_points' => $rewardPoints
         ];
     }
 

@@ -12,6 +12,14 @@
             <p class="admin-subtitle">{{ __('admin_dashboard.welcome_message') }}</p>
         </div>
         <div class="admin-actions">
+            <a href="{{ route('admin.users') }}" class="btn btn-primary me-2">
+                <i class="fas fa-users me-2"></i>
+                {{ __('admin_dashboard.manage_users') }}
+            </a>
+            <a href="{{ route('admin.shop-items') }}" class="btn btn-success me-2">
+                <i class="fas fa-store me-2"></i>
+                {{ __('admin_dashboard.manage_items') }}
+            </a>
             <a href="{{ route('admin.settings') }}" class="btn btn-settings">
                 <i class="fas fa-cogs me-2"></i>
                 {{ __('admin_dashboard.settings') }}
@@ -81,15 +89,7 @@
             </div>
         </div>
         
-        <div class="stat-card">
-            <div class="stat-icon">
-                <i class="fas fa-dollar-sign"></i>
-            </div>
-            <div class="stat-content">
-                <h3 class="stat-number">{{ number_format($dailyStats['total_revenue'], 0) }}</h3>
-                <p class="stat-label">{{ __('admin_dashboard.today_revenue') }}</p>
-            </div>
-        </div>
+        
     </div>
 
     <!-- Дополнительная информация -->
