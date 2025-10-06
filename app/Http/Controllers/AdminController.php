@@ -1048,4 +1048,647 @@ class AdminController extends Controller
                 ->with('error', 'Ошибка при возврате покупки');
         }
     }
+
+    /**
+     * Управление персонажами: список
+     */
+    public function characters(Request $request)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $perPage = (int) $request->input('per_page', 20);
+        $search = trim((string) $request->input('search', ''));
+        $levelFilter = $request->input('level_filter', '');
+        $classFilter = $request->input('class_filter', '');
+        $onlineFilter = $request->input('online_filter', '');
+
+        $query = DB::connection('mysql_char')->table('characters')
+            ->select(
+                'characters.guid',
+                'characters.name',
+                'characters.race',
+                'characters.class',
+                'characters.level',
+                'characters.online',
+                'characters.totaltime',
+                'characters.money',
+                'characters.position_x',
+                'characters.position_y',
+                'characters.position_z',
+                'characters.map',
+                'characters.zone',
+                'characters.account'
+            )
+            ->orderBy('characters.level', 'desc');
+
+        if ($search !== '') {
+            $query->where('characters.name', 'like', "%{$search}%");
+        }
+
+        if ($levelFilter !== '') {
+            $query->where('characters.level', '>=', (int) $levelFilter);
+        }
+
+        if ($classFilter !== '') {
+            $query->where('characters.class', $classFilter);
+        }
+
+        if ($onlineFilter !== '') {
+            $query->where('characters.online', $onlineFilter === 'online' ? 1 : 0);
+        }
+
+        $characters = $query->paginate($perPage);
+
+        // Получаем информацию об аккаунтах
+        $accountIds = $characters->pluck('account')->unique();
+        $accounts = DB::connection('mysql_auth')->table('account')
+            ->whereIn('id', $accountIds)
+            ->pluck('username', 'id');
+
+        // Добавляем информацию об аккаунтах к персонажам
+        $characters->getCollection()->transform(function ($character) use ($accounts) {
+            $character->account_name = $accounts[$character->account] ?? 'Unknown';
+            return $character;
+        });
+
+        // Статистика
+        $stats = [
+            'total_characters' => DB::connection('mysql_char')->table('characters')->count(),
+            'online_characters' => DB::connection('mysql_char')->table('characters')->where('online', 1)->count(),
+            'max_level' => DB::connection('mysql_char')->table('characters')->max('level'),
+            'total_money' => DB::connection('mysql_char')->table('characters')->sum('money'),
+        ];
+
+        return View::make('admin.characters', compact(
+            'characters', 'stats', 'perPage', 'search', 'levelFilter', 'classFilter', 'onlineFilter'
+        ));
+    }
+
+    /**
+     * Детали персонажа
+     */
+    public function characterDetails($id)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $character = DB::connection('mysql_char')->table('characters')
+            ->where('characters.guid', $id)
+            ->first();
+
+        if ($character) {
+            // Получаем информацию об аккаунте
+            $account = DB::connection('mysql_auth')->table('account')
+                ->where('id', $character->account)
+                ->first();
+            
+            if ($account) {
+                $character->account_name = $account->username;
+                $character->email = $account->email;
+            } else {
+                $character->account_name = 'Unknown';
+                $character->email = 'Unknown';
+            }
+        }
+
+        if (!$character) {
+            return redirect()->route('admin.characters')
+                ->with('error', 'Персонаж не найден');
+        }
+
+        return View::make('admin.character-details', compact('character'));
+    }
+
+    /**
+     * Телепорт персонажа
+     */
+    public function teleportCharacter(Request $request, $id)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'x' => 'required|numeric',
+            'y' => 'required|numeric',
+            'z' => 'required|numeric',
+            'map' => 'required|integer',
+            'zone' => 'nullable|integer',
+        ]);
+
+        try {
+            DB::connection('mysql_char')->table('characters')
+                ->where('guid', $id)
+                ->update([
+                    'position_x' => $request->x,
+                    'position_y' => $request->y,
+                    'position_z' => $request->z,
+                    'map' => $request->map,
+                    'zone' => $request->zone ?? 0,
+                ]);
+
+            return redirect()->route('admin.character.details', $id)
+                ->with('success', 'Персонаж телепортирован');
+
+        } catch (\Exception $e) {
+            \Log::error('Character teleport error: ' . $e->getMessage());
+            return redirect()->route('admin.character.details', $id)
+                ->with('error', 'Ошибка при телепорте персонажа');
+        }
+    }
+
+    /**
+     * Кик персонажа (отключение)
+     */
+    public function kickCharacter(Request $request, $id)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'kick_type' => 'required|in:soft,hard,force',
+            'reason' => 'nullable|string|max:255'
+        ]);
+
+        try {
+            $character = DB::connection('mysql_char')->table('characters')
+                ->where('guid', $id)
+                ->where('online', 1)
+                ->first();
+
+            if (!$character) {
+                return redirect()->route('admin.character.details', $id)
+                    ->with('error', 'Персонаж не найден или не в игре');
+            }
+
+            $kickType = $request->input('kick_type');
+            $reason = $request->input('reason', 'Admin kick');
+
+            switch ($kickType) {
+                case 'soft':
+                    // Мягкий кик - только обновляем статус в базе
+                    DB::connection('mysql_char')->table('characters')
+                        ->where('guid', $id)
+                        ->update(['online' => 0]);
+                    
+                    $message = 'Мягкий кик применен (только статус в базе данных)';
+                    break;
+
+                case 'hard':
+                    // Жесткий кик - обновляем статус + устанавливаем время выхода
+                    DB::connection('mysql_char')->table('characters')
+                        ->where('guid', $id)
+                        ->update([
+                            'online' => 0,
+                            'logout_time' => time()
+                        ]);
+                    
+                    $message = 'Жесткий кик применен (статус + время выхода)';
+                    break;
+
+                case 'force':
+                    // Принудительный кик - агрессивные методы
+                    DB::connection('mysql_char')->table('characters')
+                        ->where('guid', $id)
+                        ->update([
+                            'online' => 0,
+                            'logout_time' => time(),
+                            'last_login' => time() - 3600, // Устанавливаем время последнего входа на час назад
+                            'totaltime' => 0 // Сбрасываем время игры
+                        ]);
+                    
+                    // Дополнительные методы принудительного кика
+                    $this->forceKickCharacter($character, $reason);
+                    
+                    $message = 'Принудительный кик применен (агрессивные методы)';
+                    break;
+            }
+
+            // Логируем действие
+            \Log::info("Character kick: {$character->name} (GUID: {$id}) by admin " . Auth::user()->username . 
+                      " - Type: {$kickType}, Reason: {$reason}");
+
+            return redirect()->route('admin.character.details', $id)
+                ->with('success', $message);
+
+        } catch (\Exception $e) {
+            \Log::error('Character kick error: ' . $e->getMessage());
+            return redirect()->route('admin.character.details', $id)
+                ->with('error', 'Ошибка при отключении персонажа');
+        }
+    }
+
+    /**
+     * Принудительный кик персонажа (агрессивные методы)
+     */
+    private function forceKickCharacter($character, $reason)
+    {
+        try {
+            // Метод 1: Попытка SOAP (если настроен)
+            $soapResult = $this->sendKickCommand($character->name, $reason);
+            
+            // Метод 2: Обновление сессии в базе данных
+            $this->invalidateCharacterSession($character->guid);
+            
+            // Метод 3: Сброс позиции персонажа (телепорт в безопасное место)
+            $this->teleportToSafeLocation($character->guid);
+            
+            // Метод 4: Очистка кэша персонажа
+            $this->clearCharacterCache($character->guid);
+            
+            // Метод 5: Принудительное отключение аккаунта
+            $this->forceDisconnectAccount($character->account);
+            
+            // Метод 6: Временный бан аккаунта (на 1 минуту)
+            $this->temporaryBanAccount($character->account, $reason);
+            
+            \Log::info("Force kick applied to character {$character->name} (GUID: {$character->guid}) - Reason: {$reason}");
+            
+        } catch (\Exception $e) {
+            \Log::error('Force kick error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Инвалидация сессии персонажа
+     */
+    private function invalidateCharacterSession($characterGuid)
+    {
+        try {
+            // Обновляем время последнего входа
+            DB::connection('mysql_char')->table('characters')
+                ->where('guid', $characterGuid)
+                ->update([
+                    'last_login' => time() - 3600,
+                    'logout_time' => time(),
+                    'online' => 0
+                ]);
+                
+            // Если есть таблица сессий, очищаем её
+            if (DB::connection('mysql_char')->getSchemaBuilder()->hasTable('character_sessions')) {
+                DB::connection('mysql_char')->table('character_sessions')
+                    ->where('character_guid', $characterGuid)
+                    ->delete();
+            }
+                    
+        } catch (\Exception $e) {
+            \Log::error('Session invalidation error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Телепорт персонажа в безопасное место
+     */
+    private function teleportToSafeLocation($characterGuid)
+    {
+        try {
+            // Телепорт в Оргриммар (безопасная зона)
+            DB::connection('mysql_char')->table('characters')
+                ->where('guid', $characterGuid)
+                ->update([
+                    'position_x' => 1676.21,
+                    'position_y' => -4315.29,
+                    'position_z' => 61.52,
+                    'map' => 1, // Kalimdor
+                    'zone' => 1637, // Orgrimmar
+                    'orientation' => 1.58
+                ]);
+                    
+        } catch (\Exception $e) {
+            \Log::error('Safe teleport error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Очистка кэша персонажа
+     */
+    private function clearCharacterCache($characterGuid)
+    {
+        try {
+            // Очищаем кэш в Redis (если используется)
+            if (config('cache.default') === 'redis') {
+                $redis = app('redis');
+                $redis->del("character:{$characterGuid}");
+                $redis->del("character:{$characterGuid}:*");
+            }
+                    
+        } catch (\Exception $e) {
+            \Log::error('Cache clear error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Принудительное отключение аккаунта
+     */
+    private function forceDisconnectAccount($accountId)
+    {
+        try {
+            // Обновляем время последнего входа аккаунта
+            DB::connection('mysql_auth')->table('account')
+                ->where('id', $accountId)
+                ->update([
+                    'last_login' => time() - 3600,
+                    'last_ip' => '127.0.0.1' // Сбрасываем IP
+                ]);
+                
+            // Если есть таблица сессий аккаунта, очищаем её
+            if (DB::connection('mysql_auth')->getSchemaBuilder()->hasTable('account_sessions')) {
+                DB::connection('mysql_auth')->table('account_sessions')
+                    ->where('account_id', $accountId)
+                    ->delete();
+            }
+            
+            // Обновляем все персонажи этого аккаунта
+            DB::connection('mysql_char')->table('characters')
+                ->where('account', $accountId)
+                ->update([
+                    'online' => 0,
+                    'logout_time' => time()
+                ]);
+                    
+        } catch (\Exception $e) {
+            \Log::error('Account disconnect error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Временный бан аккаунта для принудительного отключения
+     */
+    private function temporaryBanAccount($accountId, $reason)
+    {
+        try {
+            // Создаем временный бан на 1 минуту
+            $banTime = time() + 60; // 1 минута
+            
+            DB::connection('mysql_auth')->table('account_banned')->insert([
+                'id' => $accountId,
+                'bandate' => time(),
+                'unbandate' => $banTime,
+                'bannedby' => 'Admin Panel',
+                'banreason' => "Force kick: {$reason}",
+                'active' => 1
+            ]);
+            
+            // Планируем автоматическое снятие бана через 1 минуту
+            $this->scheduleUnban($accountId, $banTime);
+                    
+        } catch (\Exception $e) {
+            \Log::error('Temporary ban error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Планирование автоматического снятия бана
+     */
+    private function scheduleUnban($accountId, $unbanTime)
+    {
+        try {
+            // Добавляем задачу в очередь (если используется)
+            if (config('queue.default') !== 'sync') {
+                \App\Jobs\UnbanAccount::dispatch($accountId)->delay(now()->addSeconds(60));
+            } else {
+                // Если очередь не настроена, создаем задачу в базе данных
+                DB::connection('mysql')->table('scheduled_tasks')->insert([
+                    'task' => 'unban_account',
+                    'data' => json_encode(['account_id' => $accountId]),
+                    'scheduled_at' => date('Y-m-d H:i:s', $unbanTime),
+                    'created_at' => now(),
+                    'status' => 'pending'
+                ]);
+            }
+                    
+        } catch (\Exception $e) {
+            \Log::error('Schedule unban error: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Отправить команду кика на игровой сервер через SOAP
+     */
+    private function sendKickCommand($characterName, $reason)
+    {
+        try {
+            $soapService = app(\App\Services\SoapService::class);
+            $result = $soapService->kickPlayer($characterName, $reason);
+            
+            \Log::info("SOAP kick command sent: {$characterName} - Result: " . json_encode($result));
+            return true;
+
+        } catch (\Exception $e) {
+            \Log::error('Failed to send SOAP kick command: ' . $e->getMessage());
+            return false;
+        }
+    }
+
+    /**
+     * Проверить статус SOAP соединения
+     */
+    public function checkSoapConnection()
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Unauthorized access'
+            ], 403);
+        }
+
+        try {
+            $soapService = app(\App\Services\SoapService::class);
+            $result = $soapService->checkConnection();
+            
+            return response()->json($result);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Ошибка соединения: ' . $e->getMessage(),
+                'response' => null
+            ]);
+        }
+    }
+
+    /**
+     * Забанить аккаунт через SOAP
+     */
+    public function banAccountViaSoap(Request $request, $accountId)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'duration' => 'required|string',
+            'reason' => 'required|string|max:255'
+        ]);
+
+        try {
+            $account = DB::connection('mysql_auth')->table('account')
+                ->where('id', $accountId)
+                ->first();
+
+            if (!$account) {
+                return redirect()->back()->with('error', 'Аккаунт не найден');
+            }
+
+            $soapService = app(\App\Services\SoapService::class);
+            $result = $soapService->banAccount($account->username, $request->duration, $request->reason);
+
+            \Log::info("SOAP ban account: {$account->username} - Result: " . json_encode($result));
+
+            return redirect()->back()->with('success', 'Аккаунт забанен через SOAP');
+
+        } catch (\Exception $e) {
+            \Log::error('SOAP ban account error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ошибка при бане аккаунта: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Разбанить аккаунт через SOAP
+     */
+    public function unbanAccountViaSoap($accountId)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        try {
+            $account = DB::connection('mysql_auth')->table('account')
+                ->where('id', $accountId)
+                ->first();
+
+            if (!$account) {
+                return redirect()->back()->with('error', 'Аккаунт не найден');
+            }
+
+            $soapService = app(\App\Services\SoapService::class);
+            $result = $soapService->unbanAccount($account->username);
+
+            \Log::info("SOAP unban account: {$account->username} - Result: " . json_encode($result));
+
+            return redirect()->back()->with('success', 'Аккаунт разбанен через SOAP');
+
+        } catch (\Exception $e) {
+            \Log::error('SOAP unban account error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ошибка при разбане аккаунта: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Отправить объявление через SOAP
+     */
+    public function announceViaSoap(Request $request)
+    {
+        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+            return redirect('/login');
+        }
+
+        $request->validate([
+            'message' => 'required|string|max:255'
+        ]);
+
+        try {
+            $soapService = app(\App\Services\SoapService::class);
+            $result = $soapService->announce($request->message);
+
+            \Log::info("SOAP announce: {$request->message} - Result: " . json_encode($result));
+
+            return redirect()->back()->with('success', 'Объявление отправлено через SOAP');
+
+        } catch (\Exception $e) {
+            \Log::error('SOAP announce error: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ошибка при отправке объявления: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * Конвертировать деньги из меди в золото
+     */
+    public static function formatMoney($copper)
+    {
+        $gold = floor($copper / 10000);
+        $silver = floor(($copper % 10000) / 100);
+        $copper = $copper % 100;
+        
+        $result = '';
+        if ($gold > 0) {
+            $result .= $gold . 'g';
+        }
+        if ($silver > 0) {
+            $result .= ($result ? ' ' : '') . $silver . 's';
+        }
+        if ($copper > 0) {
+            $result .= ($result ? ' ' : '') . $copper . 'c';
+        }
+        
+        return $result ?: '0c';
+    }
+
+    /**
+     * Получить название расы по ID
+     */
+    public static function getRaceName($raceId)
+    {
+        $raceKeys = [
+            1 => 'human', 2 => 'orc', 3 => 'dwarf', 4 => 'night_elf',
+            5 => 'undead', 6 => 'tauren', 7 => 'gnome', 8 => 'troll',
+            10 => 'blood_elf', 11 => 'draenei'
+        ];
+        
+        $key = $raceKeys[$raceId] ?? null;
+        return $key ? __('races.' . $key) : 'Unknown';
+    }
+
+    /**
+     * Получить название класса по ID
+     */
+    public static function getClassName($classId)
+    {
+        $classKeys = [
+            1 => 'warrior', 2 => 'paladin', 3 => 'hunter', 4 => 'rogue',
+            5 => 'priest', 6 => 'death_knight', 7 => 'shaman', 8 => 'mage',
+            9 => 'warlock', 10 => 'monk', 11 => 'druid', 12 => 'demon_hunter'
+        ];
+        
+        $key = $classKeys[$classId] ?? null;
+        return $key ? __('classes.' . $key) : 'Unknown';
+    }
+
+    /**
+     * Получить название карты по ID
+     */
+    public static function getMapName($mapId)
+    {
+        return __('maps.' . $mapId, [], 'Map ID: ' . $mapId);
+    }
+
+    /**
+     * Форматировать время игры
+     */
+    public static function formatPlaytime($seconds)
+    {
+        if (!$seconds) return '0m';
+        
+        $days = floor($seconds / 86400);
+        $hours = floor(($seconds % 86400) / 3600);
+        $minutes = floor(($seconds % 3600) / 60);
+        
+        $result = [];
+        
+        if ($days > 0) {
+            $result[] = $days . 'd';
+        }
+        if ($hours > 0) {
+            $result[] = $hours . 'h';
+        }
+        if ($minutes > 0) {
+            $result[] = $minutes . 'm';
+        }
+        
+        return empty($result) ? '0m' : implode(' ', $result);
+    }
 }

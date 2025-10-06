@@ -151,6 +151,21 @@ Route::middleware(['auth'])->group(function () {
          ->name('admin.purchase.details');
     Route::post('/admin/purchases/{id}/refund', [AdminController::class, 'refundPurchase'])
          ->name('admin.purchase.refund');
+    
+    // Управление персонажами
+    Route::get('/admin/characters', [AdminController::class, 'characters'])
+         ->name('admin.characters');
+    Route::get('/admin/characters/{id}', [AdminController::class, 'characterDetails'])
+         ->name('admin.character.details');
+    Route::post('/admin/characters/{id}/teleport', [AdminController::class, 'teleportCharacter'])
+         ->name('admin.character.teleport');
+Route::post('/admin/characters/{id}/kick', [AdminController::class, 'kickCharacter'])
+                ->name('admin.character.kick');
+Route::get('/admin/soap', function() {
+    return view('admin.soap-check');
+})->name('admin.soap');
+Route::get('/admin/soap/check', [AdminController::class, 'checkSoapConnection'])
+                ->name('admin.soap.check');
 });
 
 

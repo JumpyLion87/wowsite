@@ -52,4 +52,7 @@ return [
     'no_recent_purchases' => 'No recent purchases',
     'manage_users' => 'Manage Users',
     'manage_items' => 'Manage Items',
+    'manage_purchases' => 'Manage Purchases',
+    'manage_characters' => 'Manage Characters',
+    'check_soap' => 'Check SOAP',
 ];

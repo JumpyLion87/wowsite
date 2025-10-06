@@ -20,9 +20,21 @@
                 <i class="fas fa-store me-2"></i>
                 {{ __('admin_dashboard.manage_items') }}
             </a>
-            <a href="{{ route('admin.settings') }}" class="btn btn-settings">
+            <a href="{{ route('admin.purchases') }}" class="btn btn-warning me-2">
+                <i class="fas fa-shopping-cart me-2"></i>
+                {{ __('admin_dashboard.manage_purchases') }}
+            </a>
+            <a href="{{ route('admin.characters') }}" class="btn btn-info me-2">
+                <i class="fas fa-users me-2"></i>
+                {{ __('admin_dashboard.manage_characters') }}
+            </a>
+            <a href="{{ route('admin.settings') }}" class="btn btn-settings me-2">
                 <i class="fas fa-cogs me-2"></i>
                 {{ __('admin_dashboard.settings') }}
+            </a>
+            <a href="{{ route('admin.soap') }}" class="btn btn-secondary">
+                <i class="fas fa-plug me-2"></i>
+                {{ __('admin_dashboard.check_soap') }}
             </a>
         </div>
     </div>

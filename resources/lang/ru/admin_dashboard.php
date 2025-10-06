@@ -52,4 +52,7 @@ return [
     'no_recent_purchases' => 'Нет недавних покупок',
     'manage_users' => 'Управление пользователями',
     'manage_items' => 'Управление товарами',
+    'manage_purchases' => 'Управление покупками',
+    'manage_characters' => 'Управление персонажами',
+    'check_soap' => 'Проверить SOAP',
 ];
