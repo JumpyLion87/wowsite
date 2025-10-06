@@ -66,8 +66,8 @@ class VoteCheckService
             $voteData = $this->parseVoteData($content, $user, $lastVote);
 
             if ($voteData) {
-                // Начисление очков с сохранением ID голоса
-                $this->rewardUser($user, $rewardPoints, $voteData['vote_id']);
+                // Начисление очков с сохранением ID голоса и времени mmotop
+                $this->rewardUser($user, $rewardPoints, $voteData['vote_id'], $voteData['mmotop_datetime'] ?? null);
                 
                 return [
                     'success' => true,
@@ -130,15 +130,21 @@ class VoteCheckService
                     continue; // Этот голос уже был учтен
                 }
 
-                // Парсинг времени голоса
+                // Парсинг времени голоса - используем время mmotop как есть
                 try {
-                    $voteTimestamp = Carbon::createFromFormat('d.m.Y H:i:s', "$date $time")->timestamp;
+                    // Получаем часовой пояс mmotop из конфигурации (по умолчанию UTC)
+                    $mmotopTimezone = env('MMOTOP_TIMEZONE', 'UTC');
+                    
+                    // Создаем Carbon объект с временем mmotop в его часовом поясе
+                    $voteDateTime = Carbon::createFromFormat('d.m.Y H:i:s', "$date $time", $mmotopTimezone);
+                    $voteTimestamp = $voteDateTime->timestamp;
                     
                     // Проверка, что голос новый (после последнего учтенного)
                     if ($voteTimestamp > $lastVoteTimestamp) {
                         return [
                             'vote_id' => $voteId,
-                            'timestamp' => $voteTimestamp
+                            'timestamp' => $voteTimestamp,
+                            'mmotop_datetime' => $voteDateTime->toDateTimeString()
                         ];
                     }
                 } catch (\Exception $e) {
@@ -162,24 +168,28 @@ class VoteCheckService
      * @param User $user
      * @param int $points
      * @param string $mmotopVoteId
+     * @param string|null $mmotopDateTime
      * @return void
      */
-    protected function rewardUser(User $user, int $points, string $mmotopVoteId): void
+    protected function rewardUser(User $user, int $points, string $mmotopVoteId, string $mmotopDateTime = null): void
     {
-        DB::transaction(function () use ($user, $points, $mmotopVoteId) {
+        DB::transaction(function () use ($user, $points, $mmotopVoteId, $mmotopDateTime) {
+            // Используем время mmotop как время голоса, если доступно
+            $voteTime = $mmotopDateTime ? Carbon::parse($mmotopDateTime) : now();
+            
             // Начисление очков
             DB::connection('mysql')->table('user_currencies')
                 ->where('account_id', $user->id)
                 ->update([
                     'points' => DB::raw("points + $points"),
-                    'last_vote_time' => now()
+                    'last_vote_time' => $voteTime
                 ]);
 
-            // Запись голоса с ID от MMOTOP
+            // Запись голоса с ID от MMOTOP и временем mmotop
             DB::table('votes')->insert([
                 'user_id' => $user->id,
                 'mmotop_vote_id' => $mmotopVoteId,
-                'voted_at' => now(),
+                'voted_at' => $voteTime,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -188,10 +198,58 @@ class VoteCheckService
             DB::connection('mysql')->table('website_activity_log')->insert([
                 'account_id' => $user->id,
                 'action' => 'vote_rewarded',
-                'timestamp' => time(), // UNIX timestamp
-                'details' => "Получено $points поинтов за голосование на MMOTOP (Vote ID: $mmotopVoteId)",
+                'timestamp' => $voteTime->timestamp, // UNIX timestamp времени mmotop
+                'details' => "Получено $points поинтов за голосование на MMOTOP (Vote ID: $mmotopVoteId, MMOTOP Time: " . ($mmotopDateTime ?? 'N/A') . ")",
             ]);
         });
+    }
+
+    /**
+     * Получить информацию о голосовании с учетом времени mmotop
+     * 
+     * @param User $user
+     * @return array
+     */
+    public function getVoteInfo(User $user): array
+    {
+        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 24);
+        $rewardPoints = (int) env('VOTE_REWARD_POINTS', 100);
+        
+        // Получаем последний голос
+        $lastVote = DB::table('votes')
+            ->where('user_id', $user->id)
+            ->orderBy('voted_at', 'desc')
+            ->first();
+
+        $canVote = true;
+        $remainingTime = null;
+        $nextVoteTime = null;
+
+        if ($lastVote) {
+            // Используем время mmotop для расчета следующего голоса
+            $lastVoteTime = Carbon::parse($lastVote->voted_at);
+            $nextVoteTime = $lastVoteTime->copy()->addHours($cooldownHours);
+            
+            // Получаем текущее время mmotop
+            $mmotopTimezone = env('MMOTOP_TIMEZONE', 'UTC');
+            $currentMmotopTime = Carbon::now($mmotopTimezone);
+            
+            if ($currentMmotopTime < $nextVoteTime) {
+                $canVote = false;
+                $remainingTime = $nextVoteTime->diffForHumans($currentMmotopTime, true);
+            }
+        }
+
+        return [
+            'success' => true,
+            'can_vote' => $canVote,
+            'remaining_time' => $remainingTime,
+            'next_vote_time' => $nextVoteTime ? $nextVoteTime->format('d.m.Y H:i') : null,
+            'last_vote' => $lastVote ? Carbon::parse($lastVote->voted_at)->format('d.m.Y H:i') : null,
+            'reward_points' => $rewardPoints,
+            'cooldown_hours' => $cooldownHours,
+            'mmotop_timezone' => $mmotopTimezone ?? 'UTC'
+        ];
     }
 
     /**

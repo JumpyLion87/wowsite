@@ -286,7 +286,7 @@
                                 {{ __('expansions.' . $accountInfo['expansion']) }}
                             </p>
                             @if(in_array($role, ['admin','moderator']) || ($gmlevel ?? 0) > 0)
-                                <a href="{{ route('home') }}" class="btn btn-account mt-2">{{ __('account.adminpanel') }}</a>
+                                <a href="{{ route('admin.dashboard') }}" class="btn btn-account mt-2">{{ __('account.adminpanel') }}</a>
                             @endif
                         </div>
                     </div>
@@ -387,14 +387,14 @@
                             <p>{{ __('vote.description', ['hours' => env('VOTE_COOLDOWN_HOURS', 24), 'points' => env('VOTE_REWARD_POINTS', 100)]) }}</p>
                             
                             @if($remainingVoteTime)
-                                <div class="alert alert-warning mb-3">
+                                <div class="alert alert-warning mb-3" data-vote-timer>
                                     <i class="fas fa-clock"></i> {{ __('vote.remaining_time', ['time' => $remainingVoteTime]) }}
                                 </div>
                                 <button class="btn btn-secondary" disabled>
                                     <i class="fas fa-vote-yea"></i> {{ __('vote.vote_button') }}
                                 </button>
                             @else
-                                <div class="alert alert-success mb-3">
+                                <div class="alert alert-success mb-3" data-vote-timer>
                                     <i class="fas fa-check-circle"></i> {{ __('vote.can_vote_now') }}
                                 </div>
                                 <a href="{{ route('vote.redirect') }}" class="btn btn-primary" target="_blank">
@@ -407,6 +407,10 @@
                                     <i class="fas fa-info-circle"></i> {{ __('vote.auto_check_info') }}
                                 </small>
                             </div>
+                            
+                            @push('scripts')
+                            <script src="{{ asset('assets/js/vote-timer.js') }}" defer></script>
+                            @endpush
                         </div>
                     </div>
                 </div>

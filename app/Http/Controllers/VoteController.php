@@ -71,32 +71,8 @@ class VoteController extends Controller
         }
 
         $user = Auth::user();
-        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 24);
+        $voteInfo = $this->voteCheckService->getVoteInfo($user);
 
-        // Последний голос
-        $lastVote = DB::table('votes')
-            ->where('user_id', $user->id)
-            ->orderBy('voted_at', 'desc')
-            ->first();
-
-        $canVote = true;
-        $remainingTime = null;
-
-        if ($lastVote) {
-            $nextVoteTime = Carbon::parse($lastVote->voted_at)->addHours($cooldownHours);
-            if (now() < $nextVoteTime) {
-                $canVote = false;
-                $remainingTime = $nextVoteTime->diffForHumans(now(), true);
-            }
-        }
-
-        return response()->json([
-            'success' => true,
-            'can_vote' => $canVote,
-            'remaining_time' => $remainingTime,
-            'last_vote' => $lastVote ? Carbon::parse($lastVote->voted_at)->format('d.m.Y H:i') : null,
-            'reward_points' => env('VOTE_REWARD_POINTS', 100),
-            'cooldown_hours' => $cooldownHours
-        ]);
+        return response()->json($voteInfo);
     }
 }

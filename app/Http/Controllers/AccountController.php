@@ -113,20 +113,10 @@ class AccountController extends Controller
             }
         }
         
-        $lastVote = DB::table('votes')
-            ->where('user_id', $user->id)
-            ->orderBy('voted_at', 'desc')
-            ->first();
-
-        $cooldownHours = (int) env('VOTE_COOLDOWN_HOURS', 12);
-        $remainingTime = null;
-
-        if ($lastVote) {
-            $nextVoteTime = Carbon::parse($lastVote->voted_at)->addHours($cooldownHours);
-            if (now() < $nextVoteTime) {
-                $remainingTime = $nextVoteTime->diffForHumans(now(), true); // Пример: "через 5 часов"
-            }
-        }
+        // Получаем информацию о голосовании с учетом времени mmotop
+        $voteCheckService = app(\App\Services\VoteCheckService::class);
+        $voteInfo = $voteCheckService->getVoteInfo($user);
+        $remainingVoteTime = $voteInfo['remaining_time'];
 
         $this->checkVoteAutomatically($user);
 
