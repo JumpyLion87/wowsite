@@ -16,4 +16,11 @@ return [
     'soap_username' => 'SOAP Username',
     'soap_password' => 'SOAP Password',
     'diagnostics' => 'Diagnostics',
+    'remote_server_setup' => 'Remote Server Setup',
+    'step_1' => 'Enable SOAP in worldserver.conf: SOAP.Enabled = 1',
+    'step_2' => 'Ensure port 7878 is open on the remote machine',
+    'step_3' => 'Create GM account with level 3 in account_access (RealmID = -1)',
+    'step_4' => 'Update SOAP settings in config/wow.php with remote server IP',
+    'connection_partial' => 'Partial Connection',
+    'note' => 'Note',
 ];

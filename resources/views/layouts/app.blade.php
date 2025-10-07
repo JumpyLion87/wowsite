@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="{{ __('home_meta_description') }}">
     <meta name="robots" content="index">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ __('home.home_page_title') }} - {{ config('app.name') }}</title>
     
     <!-- Styles -->

@@ -36,6 +36,10 @@
                 <i class="fas fa-comments me-2"></i>
                 {{ __('admin_dashboard.moderate_comments') }}
             </a>
+            <a href="{{ route('admin.bans.index') }}" class="btn btn-danger me-2">
+                <i class="fas fa-ban me-2"></i>
+                {{ __('admin_dashboard.ban_management') }}
+            </a>
             <a href="{{ route('admin.settings') }}" class="btn btn-settings me-2">
                 <i class="fas fa-cogs me-2"></i>
                 {{ __('admin_dashboard.settings') }}
@@ -137,6 +141,13 @@
                         <span class="status-label">{{ __('admin_dashboard.uptime') }}:</span>
                         <span class="status-value">{{ $serverStatus['uptime'] ?? 'Unknown' }}</span>
                     </div>
+                    @if(isset($serverStatus['total_characters']))
+                    <div class="status-item">
+                        <i class="fas fa-user-ninja text-info me-2"></i>
+                        <span class="status-label">{{ __('admin_dashboard.total_characters') }}:</span>
+                        <span class="status-value">{{ $serverStatus['total_characters'] }}</span>
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>

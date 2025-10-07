@@ -54,6 +54,24 @@
                     <span class="config-value">{{ str_repeat('*', strlen(config('wow.soap_password', 'admin'))) }}</span>
                 </div>
             </div>
+            
+            <div class="remote-server-info">
+                <h4>{{ __('admin_soap.remote_server_setup') }}</h4>
+                <div class="setup-steps">
+                    <div class="step">
+                        <strong>1.</strong> {{ __('admin_soap.step_1') }}
+                    </div>
+                    <div class="step">
+                        <strong>2.</strong> {{ __('admin_soap.step_2') }}
+                    </div>
+                    <div class="step">
+                        <strong>3.</strong> {{ __('admin_soap.step_3') }}
+                    </div>
+                    <div class="step">
+                        <strong>4.</strong> {{ __('admin_soap.step_4') }}
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -66,7 +84,7 @@ function checkSoapConnection() {
     fetch('{{ route("admin.soap.check") }}')
         .then(response => response.json())
         .then(data => {
-                if (data.status === 'success') {
+            if (data.status === 'success') {
                 statusDiv.innerHTML = `
                     <div class="status-success">
                         <i class="fas fa-check-circle"></i>
@@ -84,10 +102,29 @@ function checkSoapConnection() {
                         ` : ''}
                     </div>
                 `;
+            } else if (data.status === 'partial' || data.status === 'auth_error') {
+                statusDiv.innerHTML = `
+                    <div class="status-warning">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h4>{{ __('admin_soap.connection_partial') }}</h4>
+                        <p>${data.message}</p>
+                        ${data.note ? `<p class="note"><strong>Примечание:</strong> ${data.note}</p>` : ''}
+                        <div class="response-details">
+                            <strong>{{ __('admin_soap.server_response') }}:</strong>
+                            <pre>${data.response || 'Нет ответа'}</pre>
+                        </div>
+                        ${data.diagnostics ? `
+                        <div class="response-details">
+                            <strong>{{ __('admin_soap.diagnostics') }}:</strong>
+                            <pre>${JSON.stringify(data.diagnostics, null, 2)}</pre>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
             } else {
                 statusDiv.innerHTML = `
                     <div class="status-error">
-                        <i class="fas fa-exclamation-triangle"></i>
+                        <i class="fas fa-times-circle"></i>
                         <h4>{{ __('admin_soap.connection_error') }}</h4>
                         <p>${data.message}</p>
                         ${data.diagnostics ? `

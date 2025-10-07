@@ -57,5 +57,6 @@ return [
     'check_soap' => 'Проверить SOAP',
     'manage_news' => 'Управление новостями',
     'moderate_comments' => 'Модерация комментариев',
+    'ban_management' => 'Управление банами',
     'back_to_dashboard' => 'Назад к дашборду',
 ];

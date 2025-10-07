@@ -20,7 +20,7 @@ class SoapService
     }
 
     /**
-     * Создать SOAP клиент
+     * Создать SOAP клиент для удаленного сервера
      */
     protected function createSoapClient()
     {
@@ -29,13 +29,31 @@ class SoapService
         }
 
         try {
-            $this->soapClient = new \SoapClient($this->soapUrl . '?WSDL', [
+            // Согласно документации AzerothCore, используем правильный формат URL
+            $soapUrl = $this->soapUrl;
+            
+            // Если URL не содержит протокол, добавляем http://
+            if (!preg_match('/^https?:\/\//', $soapUrl)) {
+                $soapUrl = 'http://' . $soapUrl;
+            }
+            
+            // Создаем SOAP клиент с правильными параметрами для удаленного сервера
+            $this->soapClient = new \SoapClient(null, [
+                'location' => $soapUrl,
+                'uri' => 'urn:AC',
+                'style' => SOAP_RPC,
                 'login' => $this->soapUsername,
                 'password' => $this->soapPassword,
                 'trace' => true,
                 'exceptions' => true,
-                'connection_timeout' => 10,
-                'cache_wsdl' => WSDL_CACHE_NONE
+                'connection_timeout' => 15,
+                'cache_wsdl' => WSDL_CACHE_NONE,
+                'stream_context' => stream_context_create([
+                    'http' => [
+                        'timeout' => 15,
+                        'user_agent' => 'AzerothCore-SOAP-Client/1.0'
+                    ]
+                ])
             ]);
 
             return $this->soapClient;
@@ -46,7 +64,7 @@ class SoapService
     }
 
     /**
-     * Выполнить GM команду
+     * Выполнить GM команду через SOAP
      */
     public function executeCommand($command, $params = [])
     {
@@ -56,9 +74,8 @@ class SoapService
             // Форматируем команду с параметрами
             $formattedCommand = $this->formatCommand($command, $params);
             
-            $result = $soapClient->executeCommand([
-                'command' => $formattedCommand
-            ]);
+            // Согласно документации AzerothCore, используем правильный формат вызова
+            $result = $soapClient->executeCommand(new \SoapParam($formattedCommand, 'command'));
 
             Log::info("SOAP command executed: {$formattedCommand} - Result: " . json_encode($result));
             return $result;
@@ -274,14 +291,36 @@ class SoapService
                 ];
             }
 
-            // Затем проверяем SOAP
-            $result = $this->getServerInfo();
-            return [
-                'status' => 'success',
-                'message' => 'SOAP соединение работает',
-                'response' => $result,
-                'diagnostics' => $connectionTest
-            ];
+            // Если SOAP доступен, но есть ошибка аутентификации
+            if ($connectionTest['has_soap_error']) {
+                return [
+                    'status' => 'partial',
+                    'message' => 'SOAP сервер доступен, но требуется аутентификация',
+                    'response' => $connectionTest['soap_response'],
+                    'diagnostics' => $connectionTest,
+                    'note' => 'Проверьте правильность логина и пароля GM аккаунта'
+                ];
+            }
+
+            // Если все хорошо, пробуем выполнить команду
+            try {
+                $result = $this->getServerInfo();
+                return [
+                    'status' => 'success',
+                    'message' => 'SOAP соединение работает корректно',
+                    'response' => $result,
+                    'diagnostics' => $connectionTest
+                ];
+            } catch (\Exception $e) {
+                return [
+                    'status' => 'auth_error',
+                    'message' => 'SOAP сервер доступен, но аутентификация не удалась: ' . $e->getMessage(),
+                    'response' => $connectionTest['soap_response'],
+                    'diagnostics' => $connectionTest,
+                    'note' => 'Проверьте правильность логина и пароля GM аккаунта'
+                ];
+            }
+
         } catch (\Exception $e) {
             return [
                 'status' => 'error',
@@ -293,7 +332,7 @@ class SoapService
     }
 
     /**
-     * Тестировать соединение с сервером
+     * Тестировать соединение с удаленным сервером
      */
     protected function testServerConnection()
     {
@@ -301,50 +340,87 @@ class SoapService
         $host = $url['host'] ?? 'localhost';
         $port = $url['port'] ?? 7878;
         
-        // Проверяем доступность порта
-        $connection = @fsockopen($host, $port, $errno, $errstr, 5);
+        // Проверяем доступность порта на удаленном сервере
+        $connection = @fsockopen($host, $port, $errno, $errstr, 10);
         if (!$connection) {
             return [
                 'success' => false,
-                'message' => "Не удается подключиться к {$host}:{$port}",
+                'message' => "Не удается подключиться к удаленному серверу {$host}:{$port}",
                 'error' => "{$errno}: {$errstr}",
                 'host' => $host,
-                'port' => $port
+                'port' => $port,
+                'suggestion' => "Проверьте, что сервер запущен и порт {$port} открыт на удаленной машине"
             ];
         }
         
         fclose($connection);
         
-        // Проверяем HTTP доступность
-        $httpUrl = "http://{$host}:{$port}";
+        // Проверяем SOAP сервис через POST запрос (SOAP не поддерживает GET)
+        $soapUrl = "http://{$host}:{$port}";
+        $soapRequest = $this->createTestSoapRequest();
+        
         $context = stream_context_create([
             'http' => [
-                'timeout' => 5,
-                'method' => 'GET'
+                'timeout' => 10,
+                'method' => 'POST',
+                'header' => [
+                    'Content-Type: application/xml',
+                    'SOAPAction: "urn:AC#executeCommand"',
+                    'User-Agent: AzerothCore-SOAP-Client/1.0'
+                ],
+                'content' => $soapRequest
             ]
         ]);
         
-        $response = @file_get_contents($httpUrl, false, $context);
+        $response = @file_get_contents($soapUrl, false, $context);
         if ($response === false) {
             return [
                 'success' => false,
-                'message' => "HTTP запрос к {$httpUrl} не удался",
+                'message' => "SOAP сервис на {$soapUrl} недоступен",
                 'host' => $host,
-                'port' => $port
+                'port' => $port,
+                'suggestion' => "Убедитесь, что SOAP включен в worldserver.conf (SOAP.Enabled = 1)"
             ];
         }
         
+        // Проверяем, что это валидный SOAP ответ
+        $isValidSoap = strpos($response, 'SOAP-ENV:Envelope') !== false;
+        $hasError = strpos($response, 'SOAP-ENV:Fault') !== false;
+        
         return [
             'success' => true,
-            'message' => "Сервер {$host}:{$port} доступен",
+            'message' => "Удаленный сервер {$host}:{$port} доступен",
             'host' => $host,
             'port' => $port,
-            'http_response' => substr($response, 0, 200)
+            'soap_response' => substr($response, 0, 500),
+            'soap_available' => $isValidSoap,
+            'has_soap_error' => $hasError,
+            'note' => $hasError ? "SOAP сервер работает, но требует аутентификации" : "SOAP сервер полностью доступен"
         ];
     }
 
     /**
-     * Получить диагностическую информацию
+     * Создать тестовый SOAP запрос для проверки соединения
+     */
+    protected function createTestSoapRequest()
+    {
+        return '<?xml version="1.0" encoding="UTF-8"?>
+<SOAP-ENV:Envelope 
+    xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/" 
+    xmlns:SOAP-ENC="http://schemas.xmlsoap.org/soap/encoding/" 
+    xmlns:xsi="http://www.w3.org/1999/XMLSchema-instance" 
+    xmlns:xsd="http://www.w3.org/1999/XMLSchema" 
+    xmlns:ns1="urn:AC">
+    <SOAP-ENV:Body>
+        <ns1:executeCommand>
+            <command>server info</command>
+        </ns1:executeCommand>
+    </SOAP-ENV:Body>
+</SOAP-ENV:Envelope>';
+    }
+
+    /**
+     * Получить диагностическую информацию для удаленного сервера
      */
     protected function getDiagnostics()
     {
@@ -360,7 +436,15 @@ class SoapService
             'password_set' => !empty($this->soapPassword),
             'php_soap_available' => class_exists('SoapClient'),
             'curl_available' => function_exists('curl_init'),
-            'fsockopen_available' => function_exists('fsockopen')
+            'fsockopen_available' => function_exists('fsockopen'),
+            'remote_server' => $host !== 'localhost' && $host !== '127.0.0.1',
+            'connection_timeout' => 15,
+            'suggestions' => [
+                'Убедитесь, что на удаленном сервере включен SOAP (SOAP.Enabled = 1)',
+                'Проверьте, что порт 7878 открыт на удаленной машине',
+                'Убедитесь, что GM аккаунт имеет уровень 3 в account_access с RealmID = -1',
+                'Проверьте правильность IP адреса и порта в настройках'
+            ]
         ];
     }
 }

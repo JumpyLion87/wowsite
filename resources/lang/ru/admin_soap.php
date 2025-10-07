@@ -16,4 +16,11 @@ return [
     'soap_username' => 'SOAP пользователь',
     'soap_password' => 'SOAP пароль',
     'diagnostics' => 'Диагностика',
+    'remote_server_setup' => 'Настройка удаленного сервера',
+    'step_1' => 'Включите SOAP в worldserver.conf: SOAP.Enabled = 1',
+    'step_2' => 'Убедитесь, что порт 7878 открыт на удаленной машине',
+    'step_3' => 'Создайте GM аккаунт с уровнем 3 в account_access (RealmID = -1)',
+    'step_4' => 'Обновите настройки SOAP в config/wow.php с IP удаленного сервера',
+    'connection_partial' => 'Частичное соединение',
+    'note' => 'Примечание',
 ];

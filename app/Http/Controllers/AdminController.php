@@ -188,25 +188,40 @@ class AdminController extends Controller
     protected function getServerStatus()
     {
         try {
-            // Получаем количество онлайн игроков напрямую из базы
+            // Проверяем подключение к базе данных персонажей
+            $totalCharacters = DB::connection('mysql_char')->table('characters')->count();
+            
+            // Получаем количество онлайн игроков
             $onlinePlayers = DB::connection('mysql_char')->table('characters')
                 ->where('online', 1)
                 ->count();
             
-            // Получаем время работы сервера (время последнего входа игрока)
-            $lastLogin = DB::connection('mysql_char')->table('characters')
-                ->where('online', 1)
+            // Получаем время работы сервера (максимальное время игры среди всех персонажей)
+            $maxTotaltime = DB::connection('mysql_char')->table('characters')
                 ->max('totaltime');
             
-            $uptime = 'Unknown';
-            if ($lastLogin) {
-                $uptime = $this->formatUptime($lastLogin);
+            // Получаем время последнего входа (если есть онлайн игроки)
+            $lastLogin = null;
+            if ($onlinePlayers > 0) {
+                $lastLogin = DB::connection('mysql_char')->table('characters')
+                    ->where('online', 1)
+                    ->max('totaltime');
             }
             
+            $uptime = 'Unknown';
+            if ($maxTotaltime && $maxTotaltime > 0) {
+                $uptime = $this->formatUptime($maxTotaltime);
+            }
+            
+            // Сервер считается онлайн, если есть персонажи в базе данных
+            // или есть онлайн игроки
+            $serverOnline = $totalCharacters > 0 || $onlinePlayers > 0;
+            
             return [
-                'online' => $onlinePlayers > 0,
+                'online' => $serverOnline,
                 'players' => $onlinePlayers,
-                'uptime' => $uptime
+                'uptime' => $uptime,
+                'total_characters' => $totalCharacters
             ];
         } catch (\Exception $e) {
             \Log::error('Server status error: ' . $e->getMessage());
@@ -214,7 +229,8 @@ class AdminController extends Controller
             return [
                 'online' => false,
                 'players' => 0,
-                'uptime' => 'Unknown'
+                'uptime' => 'Unknown',
+                'total_characters' => 0
             ];
         }
     }
@@ -224,11 +240,12 @@ class AdminController extends Controller
      */
     private function formatUptime($seconds)
     {
-        if (!$seconds) return 'Unknown';
+        if (!$seconds || $seconds <= 0) return 'Unknown';
         
         $days = floor($seconds / 86400);
         $hours = floor(($seconds % 86400) / 3600);
         $minutes = floor(($seconds % 3600) / 60);
+        $secs = $seconds % 60;
         
         $result = [];
         
@@ -241,8 +258,11 @@ class AdminController extends Controller
         if ($minutes > 0) {
             $result[] = $minutes . 'm';
         }
+        if ($secs > 0 && empty($result)) {
+            $result[] = $secs . 's';
+        }
         
-        return empty($result) ? '0m' : implode(' ', $result);
+        return empty($result) ? '0s' : implode(' ', $result);
     }
 
     /**

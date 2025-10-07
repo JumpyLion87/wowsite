@@ -1785,6 +1785,263 @@
     border: 1px solid #4a5f7a;
 }
 
+/* Remote Server Setup Styles */
+.remote-server-info {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #4a5f7a;
+}
+
+.remote-server-info h4 {
+    color: #ffd100;
+    margin-bottom: 1rem;
+    font-size: 1.1rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.setup-steps {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+}
+
+.step {
+    color: #e0e0e0;
+    line-height: 1.5;
+    padding: 0.8rem;
+    background: rgba(255, 209, 0, 0.1);
+    border-radius: 6px;
+    border-left: 3px solid #ffd100;
+    transition: all 0.3s ease;
+}
+
+.step:hover {
+    background: rgba(255, 209, 0, 0.15);
+    transform: translateX(5px);
+}
+
+.step strong {
+    color: #ffd100;
+    margin-right: 0.5rem;
+    font-weight: 600;
+}
+
+/* SOAP Status Styles */
+.status-warning {
+    background: linear-gradient(135deg, #f39c12, #e67e22);
+    color: #fff;
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #d68910;
+    margin: 1rem 0;
+}
+
+.status-warning i {
+    color: #f1c40f;
+    margin-right: 0.5rem;
+}
+
+.status-warning h4 {
+    color: #fff;
+    margin: 0.5rem 0;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+}
+
+.status-warning .note {
+    background: rgba(255, 255, 255, 0.1);
+    padding: 0.8rem;
+    border-radius: 4px;
+    margin: 1rem 0;
+    border-left: 3px solid #f1c40f;
+}
+
+/* Modal Styles */
+.modal-content {
+    background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+    border: 1px solid #4a5f7a;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+    background: rgba(0, 0, 0, 0.2);
+    border-bottom: 1px solid #4a5f7a;
+    border-radius: 12px 12px 0 0;
+    padding: 1.5rem;
+}
+
+.modal-title {
+    color: #ffd100;
+    font-weight: 600;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+    margin: 0;
+}
+
+.modal-body {
+    padding: 2rem;
+    color: #e0e0e0;
+}
+
+.modal-footer {
+    background: rgba(0, 0, 0, 0.2);
+    border-top: 1px solid #4a5f7a;
+    border-radius: 0 0 12px 12px;
+    padding: 1.5rem;
+}
+
+.btn-close {
+    filter: invert(1);
+    opacity: 0.8;
+}
+
+.btn-close:hover {
+    opacity: 1;
+}
+
+/* Form Styles in Modal */
+.modal .form-label {
+    color: #ffd100;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+
+.modal .form-control,
+.modal .form-select {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4a5f7a;
+    color: #e0e0e0;
+    border-radius: 6px;
+    padding: 0.75rem;
+}
+
+.modal .form-control:focus,
+.modal .form-select:focus {
+    background: rgba(0, 0, 0, 0.4);
+    border-color: #ffd100;
+    color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(255, 209, 0, 0.25);
+}
+
+.modal .form-control::placeholder {
+    color: #bdc3c7;
+}
+
+.modal .form-text {
+    color: #bdc3c7;
+    font-size: 0.875rem;
+}
+
+/* Account Search Results */
+.account-results {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    border: 1px solid #4a5f7a;
+    border-top: none;
+    border-radius: 0 0 6px 6px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.account-result-item {
+    padding: 0.75rem;
+    cursor: pointer;
+    border-bottom: 1px solid #4a5f7a;
+    transition: all 0.3s ease;
+}
+
+.account-result-item:hover {
+    background: rgba(255, 209, 0, 0.1);
+    color: #ffd100;
+}
+
+.account-result-item:last-child {
+    border-bottom: none;
+}
+
+.account-info strong {
+    color: #ffd100;
+    display: block;
+    margin-bottom: 0.25rem;
+}
+
+.account-info small {
+    color: #bdc3c7;
+}
+
+.no-results {
+    padding: 0.75rem;
+    color: #bdc3c7;
+    text-align: center;
+    font-style: italic;
+}
+
+/* Selected Account Info */
+.selected-account-info {
+    background: rgba(255, 209, 0, 0.1);
+    border: 1px solid #ffd100;
+    border-radius: 6px;
+    padding: 1rem;
+}
+
+.selected-account-info .alert {
+    background: rgba(255, 209, 0, 0.1);
+    border: 1px solid #ffd100;
+    color: #ffd100;
+    margin: 0;
+}
+
+/* Modal Buttons */
+.modal .btn {
+    padding: 0.75rem 1.5rem;
+    font-weight: 600;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.modal .btn-danger {
+    background: linear-gradient(135deg, #e74c3c, #c0392b);
+    border: 1px solid #e74c3c;
+    color: #fff;
+}
+
+.modal .btn-danger:hover {
+    background: linear-gradient(135deg, #c0392b, #a93226);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+}
+
+.modal .btn-secondary {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4a5f7a;
+    color: #e0e0e0;
+}
+
+.modal .btn-secondary:hover {
+    background: rgba(0, 0, 0, 0.5);
+    border-color: #ffd100;
+    color: #ffd100;
+}
+
+/* Modal Responsive */
+@media (max-width: 768px) {
+    .modal-dialog {
+        margin: 1rem;
+    }
+    
+    .modal-body {
+        padding: 1.5rem;
+    }
+    
+    .modal-header,
+    .modal-footer {
+        padding: 1rem;
+    }
+}
+
 /* SOAP Responsive */
 @media (max-width: 768px) {
     .soap-status-container {

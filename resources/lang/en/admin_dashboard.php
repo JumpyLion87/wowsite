@@ -58,5 +58,6 @@ return [
     'manage_news' => 'Manage News',
     'never' => 'Never',
     'moderate_comments' => 'Moderate Comments',
+    'ban_management' => 'Ban Management',
     'back_to_dashboard' => 'Back to Dashboard',
 ];

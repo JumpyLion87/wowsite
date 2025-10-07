@@ -194,8 +194,88 @@ Route::middleware(['auth'])->group(function () {
     })->name('admin.soap');
     Route::get('/admin/soap/check', [AdminController::class, 'checkSoapConnection'])
          ->name('admin.soap.check');
+    
+    // Управление банами
+    Route::get('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'index'])->name('admin.bans.index');
+    Route::get('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'show'])->name('admin.bans.show');
+    Route::post('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'store'])->name('admin.bans.store');
+    Route::post('/admin/bans/{id}/unban', [\App\Http\Controllers\Admin\BanController::class, 'unban'])->name('admin.bans.unban');
+    Route::delete('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'destroy'])->name('admin.bans.destroy');
+    Route::post('/admin/bans/bulk', [\App\Http\Controllers\Admin\BanController::class, 'bulkAction'])->name('admin.bans.bulk');
+    // Временный маршрут для тестирования подключения к базе данных
+    Route::get('/admin/test-db', function() {
+        try {
+            $connection = DB::connection('mysql_auth');
+            $pdo = $connection->getPdo();
+            $result = $connection->table('account')->count();
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Database connection successful',
+                'account_count' => $result
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Database connection failed: ' . $e->getMessage()
+            ], 500);
+        }
+    });
+    
+    // Временный маршрут для тестирования JSON ответа
+    Route::get('/admin/test-json', function() {
+        return response()->json([
+            'status' => 'success',
+            'message' => 'JSON response test',
+            'timestamp' => now()
+        ]);
+    });
+    
+    // Временный маршрут для тестирования авторизации
+    Route::get('/admin/test-auth', function(\Illuminate\Http\Request $request) {
+        $response = response()->json([
+            'status' => 'success',
+            'message' => 'Auth test',
+            'user_id' => Auth::id(),
+            'is_authenticated' => Auth::check(),
+            'is_ajax' => $request->ajax(),
+            'is_admin' => \App\Models\User::isAdmin(Auth::id())
+        ]);
+        $response->header('Content-Type', 'application/json');
+        return $response;
+    });
+    
+    // Временный маршрут для тестирования JSON ответов с принудительными заголовками
+    Route::get('/admin/test-json-headers', function(\Illuminate\Http\Request $request) {
+        $response = response()->json([
+            'status' => 'success',
+            'message' => 'JSON headers test',
+            'timestamp' => now(),
+            'headers' => $request->headers->all()
+        ]);
+        $response->header('Content-Type', 'application/json');
+        $response->header('X-Content-Type-Options', 'nosniff');
+        return $response;
+    });
+    
+    // Временный маршрут для тестирования JSON ответов с принудительными заголовками
+    Route::get('/admin/test-json-force', function(\Illuminate\Http\Request $request) {
+        $response = response()->json([
+            'status' => 'success',
+            'message' => 'JSON force test',
+            'timestamp' => now()
+        ]);
+        $response->header('Content-Type', 'application/json');
+        $response->header('X-Content-Type-Options', 'nosniff');
+        $response->header('Cache-Control', 'no-cache, no-store, must-revalidate');
+        $response->header('Pragma', 'no-cache');
+        $response->header('Expires', '0');
+        return $response;
+    });
 });
 
+// AJAX маршруты для банов
+Route::get('/ajax/search-accounts', [\App\Http\Controllers\AjaxController::class, 'searchAccounts'])->name('ajax.search-accounts');
+Route::get('/ajax/account-characters', [\App\Http\Controllers\AjaxController::class, 'getAccountCharacters'])->name('ajax.account-characters');
 
 Route::post('/account/sessions/destroy', [AccountController::class, 'destroySessions'])
     ->name('account.sessions.destroy');
