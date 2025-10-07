@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Services\ServerStatusService;
 use App\Services\FailedLoginService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class HomeController extends Controller
 {
@@ -25,16 +26,21 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $latestNews = News::orderBy('is_important', 'desc')
-            ->orderBy('post_date', 'desc')
-            ->limit(4)
-            ->get();
+        // Кэшируем новости на 30 минут
+        $latestNews = Cache::remember('latest_news', 1800, function () {
+            return News::orderBy('is_important', 'desc')
+                ->orderBy('post_date', 'desc')
+                ->limit(4)
+                ->get();
+        });
 
         // Получаем данные о статусе сервера
         $serverStatusData = $this->serverStatusService->getServerStatusData();
 
-        // Получаем последнего зарегистрированного пользователя
-        $lastRegisteredUser = User::getLastRegisteredUser();
+        // Получаем последнего зарегистрированного пользователя (кэш на 10 минут)
+        $lastRegisteredUser = Cache::remember('last_registered_user', 600, function () {
+            return User::getLastRegisteredUser();
+        });
 
         // Получаем данные о блокировках и статистике
         $blockedIps = $this->failedLoginService->getAllBlockedIps();

@@ -10,6 +10,8 @@ class Role extends Model
 {
     use HasFactory;
 
+    protected $connection = 'mysql'; // Указываем правильную базу данных
+
     protected $fillable = [
         'name',
         'display_name',

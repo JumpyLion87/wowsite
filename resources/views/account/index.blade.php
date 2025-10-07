@@ -285,8 +285,16 @@
                                 <strong class="text-warning">{{ __('account.expansion') }}:</strong> 
                                 {{ __('expansions.' . $accountInfo['expansion']) }}
                             </p>
-                            @if(in_array($role, ['admin','moderator']) || ($gmlevel ?? 0) > 0)
-                                <a href="{{ route('admin.dashboard') }}" class="btn btn-account mt-2">{{ __('account.adminpanel') }}</a>
+                            @if(auth()->user()->isAdministrator())
+                                <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}" class="btn btn-account mt-2">
+                                    <i class="{{ \App\Helpers\DashboardHelper::getDashboardIcon() }} me-2"></i>
+                                    {{ \App\Helpers\DashboardHelper::getDashboardTitle() }}
+                                </a>
+                            @elseif(auth()->user()->isModerator())
+                                <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}" class="btn btn-account mt-2">
+                                    <i class="{{ \App\Helpers\DashboardHelper::getDashboardIcon() }} me-2"></i>
+                                    {{ \App\Helpers\DashboardHelper::getDashboardTitle() }}
+                                </a>
                             @endif
                         </div>
                     </div>

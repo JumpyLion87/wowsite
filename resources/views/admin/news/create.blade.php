@@ -8,9 +8,9 @@
     <nav aria-label="breadcrumb" class="admin-breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{{ route('admin.dashboard') }}">
-                    <i class="fas fa-tachometer-alt me-1"></i>
-                    {{ __('admin_dashboard.title') }}
+                <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}">
+                    <i class="{{ \App\Helpers\DashboardHelper::getDashboardIcon() }} me-1"></i>
+                    {{ \App\Helpers\DashboardHelper::getDashboardTitle() }}
                 </a>
             </li>
             <li class="breadcrumb-item">
@@ -35,9 +35,9 @@
             <p class="admin-subtitle">{{ __('admin_news.create_news_description') }}</p>
         </div>
         <div class="admin-header-actions">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary me-2">
-                <i class="fas fa-home me-2"></i>
-                {{ __('admin_dashboard.title') }}
+            <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}" class="btn btn-secondary me-2">
+                <i class="{{ \App\Helpers\DashboardHelper::getDashboardIcon() }} me-2"></i>
+                {{ \App\Helpers\DashboardHelper::getDashboardTitle() }}
             </a>
             <a href="{{ route('admin.news.index') }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>

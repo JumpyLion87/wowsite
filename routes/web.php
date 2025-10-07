@@ -127,11 +127,14 @@ Route::fallback(function () {
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'dashboard'])
-         ->name('admin.dashboard');
+         ->name('admin.dashboard')
+         ->middleware(\App\Http\Middleware\AdminMiddleware::class);
     Route::get('/admin/settings', [AdminController::class, 'settings'])
-         ->name('admin.settings');
+         ->name('admin.settings')
+         ->middleware(\App\Http\Middleware\AdminMiddleware::class);
     Route::post('/admin/settings', [AdminController::class, 'updateSettings'])
-         ->name('admin.settings.update');
+         ->name('admin.settings.update')
+         ->middleware(\App\Http\Middleware\AdminMiddleware::class);
     
     // Управление пользователями
     Route::get('/admin/users', [AdminController::class, 'users'])
@@ -177,7 +180,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/characters/{id}/kick', [AdminController::class, 'kickCharacter'])
          ->name('admin.character.kick');
     
-    // Управление новостями
+    // Управление новостями - доступно модераторам
     Route::resource('admin/news', \App\Http\Controllers\Admin\NewsController::class)
         ->names([
             'index' => 'admin.news.index',
@@ -187,16 +190,37 @@ Route::middleware(['auth'])->group(function () {
             'edit' => 'admin.news.edit',
             'update' => 'admin.news.update',
             'destroy' => 'admin.news.destroy'
-        ]);
+        ])
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     
+    // Маршруты для модераторов
+    Route::get('/moderator/dashboard', [\App\Http\Controllers\ModeratorController::class, 'dashboard'])
+        ->name('moderator.dashboard')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+
     // Маршруты для модерации комментариев
-    Route::get('/admin/news-comments', [\App\Http\Controllers\Admin\NewsCommentController::class, 'index'])->name('admin.news-comments.index');
-    Route::post('/admin/news-comments/{comment}/approve', [\App\Http\Controllers\Admin\NewsCommentController::class, 'approve'])->name('admin.news-comments.approve');
-    Route::post('/admin/news-comments/{comment}/reject', [\App\Http\Controllers\Admin\NewsCommentController::class, 'reject'])->name('admin.news-comments.reject');
-    Route::delete('/admin/news-comments/{comment}', [\App\Http\Controllers\Admin\NewsCommentController::class, 'destroy'])->name('admin.news-comments.destroy');
-    Route::post('/admin/news-comments/bulk-approve', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkApprove'])->name('admin.news-comments.bulk-approve');
-    Route::post('/admin/news-comments/bulk-reject', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkReject'])->name('admin.news-comments.bulk-reject');
-    Route::post('/admin/news-comments/bulk-delete', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkDelete'])->name('admin.news-comments.bulk-delete');
+    // Модерация комментариев - доступно модераторам
+    Route::get('/admin/news-comments', [\App\Http\Controllers\Admin\NewsCommentController::class, 'index'])
+        ->name('admin.news-comments.index')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+    Route::post('/admin/news-comments/{comment}/approve', [\App\Http\Controllers\Admin\NewsCommentController::class, 'approve'])
+        ->name('admin.news-comments.approve')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+    Route::post('/admin/news-comments/{comment}/reject', [\App\Http\Controllers\Admin\NewsCommentController::class, 'reject'])
+        ->name('admin.news-comments.reject')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+    Route::delete('/admin/news-comments/{comment}', [\App\Http\Controllers\Admin\NewsCommentController::class, 'destroy'])
+        ->name('admin.news-comments.destroy')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+    Route::post('/admin/news-comments/bulk-approve', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkApprove'])
+        ->name('admin.news-comments.bulk-approve')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+    Route::post('/admin/news-comments/bulk-reject', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkReject'])
+        ->name('admin.news-comments.bulk-reject')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
+    Route::post('/admin/news-comments/bulk-delete', [\App\Http\Controllers\Admin\NewsCommentController::class, 'bulkDelete'])
+        ->name('admin.news-comments.bulk-delete')
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     
     // SOAP проверка
     Route::get('/admin/soap', function() {
@@ -205,25 +229,25 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/admin/soap/check', [AdminController::class, 'checkSoapConnection'])
          ->name('admin.soap.check');
     
-    // Управление банами
+    // Управление банами - доступно модераторам
     Route::get('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'index'])
         ->name('admin.bans.index')
-        ->middleware('permission:bans.view');
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     Route::get('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'show'])
         ->name('admin.bans.show')
-        ->middleware('permission:bans.view');
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     Route::post('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'store'])
         ->name('admin.bans.store')
-        ->middleware('permission:bans.create');
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     Route::post('/admin/bans/{id}/unban', [\App\Http\Controllers\Admin\BanController::class, 'unban'])
         ->name('admin.bans.unban')
-        ->middleware('permission:bans.unban');
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     Route::delete('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'destroy'])
         ->name('admin.bans.destroy')
-        ->middleware('permission:bans.delete');
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     Route::post('/admin/bans/bulk', [\App\Http\Controllers\Admin\BanController::class, 'bulkAction'])
         ->name('admin.bans.bulk')
-        ->middleware('permission:bans.delete');
+        ->middleware(\App\Http\Middleware\ModeratorMiddleware::class);
     // Временный маршрут для тестирования подключения к базе данных
     Route::get('/admin/test-db', function() {
         try {

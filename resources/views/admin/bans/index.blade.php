@@ -7,7 +7,7 @@
     <!-- Хлебные крошки -->
     <nav aria-label="breadcrumb" class="admin-breadcrumb">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">{{ __('admin_dashboard.title') }}</a></li>
+            <li class="breadcrumb-item"><a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}">{{ \App\Helpers\DashboardHelper::getDashboardTitle() }}</a></li>
             <li class="breadcrumb-item active" aria-current="page">{{ __('admin_bans.ban_management') }}</li>
         </ol>
     </nav>
@@ -22,7 +22,7 @@
             <p class="admin-subtitle">{{ __('admin_bans.ban_management_description') }}</p>
         </div>
         <div class="admin-actions">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary me-2">
+            <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}" class="btn btn-secondary me-2">
                 <i class="fas fa-arrow-left me-2"></i>
                 {{ __('admin_dashboard.back_to_dashboard') }}
             </a>

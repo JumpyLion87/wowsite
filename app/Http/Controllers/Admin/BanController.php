@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use App\Helpers\PermissionHelper;
 
 class BanController extends Controller
@@ -148,53 +149,55 @@ class BanController extends Controller
             ]
         );
 
-        // Статистика
-        $accountBansCount = DB::connection('mysql_auth')->table('account_banned')->count();
-        $characterBansCount = DB::connection('mysql_char')->table('character_banned')->count();
-        $ipBansCount = DB::connection('mysql_auth')->table('ip_banned')->count();
-        
-        $stats = [
-            'total' => $accountBansCount + $characterBansCount + $ipBansCount,
-            'active' => DB::connection('mysql_auth')->table('account_banned')
-                ->where('active', 1)
-                ->where(function($q) {
-                    $q->whereNull('unbandate')
-                      ->orWhere('unbandate', '>', time());
-                })->count() + 
-                DB::connection('mysql_char')->table('character_banned')
-                ->where('active', 1)
-                ->where(function($q) {
-                    $q->whereNull('unbandate')
-                      ->orWhere('unbandate', '>', time());
-                })->count() +
-                DB::connection('mysql_auth')->table('ip_banned')
-                ->where(function($q) {
-                    $q->where('unbandate', 0)
-                      ->orWhere('unbandate', '>', time());
-                })->count(),
-            'expired' => DB::connection('mysql_auth')->table('account_banned')
-                ->where('active', 1)
-                ->where('unbandate', '<=', time())
-                ->count() +
-                DB::connection('mysql_char')->table('character_banned')
-                ->where('active', 1)
-                ->where('unbandate', '<=', time())
-                ->count() +
-                DB::connection('mysql_auth')->table('ip_banned')
-                ->where('unbandate', '<=', time())
-                ->count(),
-            'permanent' => DB::connection('mysql_auth')->table('account_banned')
-                ->where('active', 1)
-                ->whereNull('unbandate')
-                ->count() +
-                DB::connection('mysql_char')->table('character_banned')
-                ->where('active', 1)
-                ->whereNull('unbandate')
-                ->count() +
-                DB::connection('mysql_auth')->table('ip_banned')
-                ->where('unbandate', 0)
-                ->count()
-        ];
+        // Статистика с кэшированием (5 минут)
+        $stats = Cache::remember('ban_stats', 300, function () {
+            $accountBansCount = DB::connection('mysql_auth')->table('account_banned')->count();
+            $characterBansCount = DB::connection('mysql_char')->table('character_banned')->count();
+            $ipBansCount = DB::connection('mysql_auth')->table('ip_banned')->count();
+            
+            return [
+                'total' => $accountBansCount + $characterBansCount + $ipBansCount,
+                'active' => DB::connection('mysql_auth')->table('account_banned')
+                    ->where('active', 1)
+                    ->where(function($q) {
+                        $q->whereNull('unbandate')
+                          ->orWhere('unbandate', '>', time());
+                    })->count() + 
+                    DB::connection('mysql_char')->table('character_banned')
+                    ->where('active', 1)
+                    ->where(function($q) {
+                        $q->whereNull('unbandate')
+                          ->orWhere('unbandate', '>', time());
+                    })->count() +
+                    DB::connection('mysql_auth')->table('ip_banned')
+                    ->where(function($q) {
+                        $q->where('unbandate', 0)
+                          ->orWhere('unbandate', '>', time());
+                    })->count(),
+                'expired' => DB::connection('mysql_auth')->table('account_banned')
+                    ->where('active', 1)
+                    ->where('unbandate', '<=', time())
+                    ->count() +
+                    DB::connection('mysql_char')->table('character_banned')
+                    ->where('active', 1)
+                    ->where('unbandate', '<=', time())
+                    ->count() +
+                    DB::connection('mysql_auth')->table('ip_banned')
+                    ->where('unbandate', '<=', time())
+                    ->count(),
+                'permanent' => DB::connection('mysql_auth')->table('account_banned')
+                    ->where('active', 1)
+                    ->whereNull('unbandate')
+                    ->count() +
+                    DB::connection('mysql_char')->table('character_banned')
+                    ->where('active', 1)
+                    ->whereNull('unbandate')
+                    ->count() +
+                    DB::connection('mysql_auth')->table('ip_banned')
+                    ->where('unbandate', 0)
+                    ->count()
+            ];
+        });
 
         return view('admin.bans.index', compact('bans', 'stats', 'status', 'search'));
     }
@@ -461,6 +464,9 @@ class BanController extends Controller
             }
 
 
+            // Очистить кэш статистики
+            $this->clearBanCache();
+
             return redirect()->route('admin.bans.index')
                 ->with('success', __('admin_bans.ban_created_successfully'));
 
@@ -504,6 +510,9 @@ class BanController extends Controller
                     ->with('error', __('admin_bans.ban_not_found'));
             }
 
+
+            // Очистить кэш статистики
+            $this->clearBanCache();
 
             return redirect()->route('admin.bans.index')
                 ->with('success', __('admin_bans.unban_successful'));
@@ -565,6 +574,9 @@ class BanController extends Controller
             }
 
 
+            // Очистить кэш статистики
+            $this->clearBanCache();
+
             return redirect()->route('admin.bans.index')
                 ->with('success', __('admin_bans.ban_deleted_successfully'));
 
@@ -615,6 +627,9 @@ class BanController extends Controller
                 'ban_ids' => $banIds,
                 'performed_by' => Auth::id()
             ]);
+
+            // Очистить кэш статистики
+            $this->clearBanCache();
 
             return redirect()->route('admin.bans.index')
                 ->with('success', $message);
@@ -792,5 +807,22 @@ class BanController extends Controller
         $response->header('Content-Type', 'application/json');
         $response->header('X-Content-Type-Options', 'nosniff');
         return $response;
+    }
+
+    /**
+     * Очистить кэш статистики банов
+     */
+    private function clearBanStatsCache()
+    {
+        Cache::forget('ban_stats');
+    }
+
+    /**
+     * Очистить кэш при создании/удалении бана
+     */
+    private function clearBanCache()
+    {
+        $this->clearBanStatsCache();
+        // Можно добавить очистку других связанных кэшей
     }
 }

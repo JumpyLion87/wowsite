@@ -27,7 +27,8 @@
         },
         "files": [
             "app/Helpers/Helper.php",
-            "app/Helpers/WowHelper.php"
+            "app/Helpers/WowHelper.php",
+            "app/Helpers/DashboardHelper.php"
         ]
     },
     "autoload-dev": {

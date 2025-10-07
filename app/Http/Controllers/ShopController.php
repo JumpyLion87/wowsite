@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Cache;
 use App\Models\ShopItem;
 use App\Models\Purchase;
 use App\Models\UserCurrency;
@@ -33,8 +34,10 @@ class ShopController extends Controller
             $selectedCategory = 'All';
         }
 
-        // Получить все товары (фильтрация будет на клиенте)
-        $items = ShopItem::getGroupedByCategory();
+        // Получить все товары с кэшированием (1 час)
+        $items = Cache::remember('shop_items_grouped', 3600, function () {
+            return ShopItem::getGroupedByCategory();
+        });
         
         // Получить баланс пользователя
         $userBalance = ['points' => 0, 'tokens' => 0];
@@ -46,15 +49,21 @@ class ShopController extends Controller
                 $userBalance = $userCurrency->getBalance();
             }
             
-            // Получить персонажей пользователя
-            $characters = Character::where('account', Auth::id())
-                ->where('online', 0) // Только офлайн персонажи
-                ->get(['guid', 'name', 'level', 'race', 'class']);
+            // Получить персонажей пользователя с кэшированием (10 минут)
+            $userId = Auth::id();
+            $characters = Cache::remember("user_characters_{$userId}", 600, function () use ($userId) {
+                return Character::where('account', $userId)
+                    ->where('online', 0) // Только офлайн персонажи
+                    ->get(['guid', 'name', 'level', 'race', 'class']);
+            });
         }
 
-        // Получить доступные категории
-        $categories = ShopItem::getCategories();
-        array_unshift($categories, 'All');
+        // Получить доступные категории с кэшированием (1 час)
+        $categories = Cache::remember('shop_categories', 3600, function () {
+            $cats = ShopItem::getCategories();
+            array_unshift($cats, 'All');
+            return $cats;
+        });
 
         return view('shop.index', compact(
             'items',

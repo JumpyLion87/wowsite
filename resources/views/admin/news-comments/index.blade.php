@@ -8,9 +8,9 @@
     <nav aria-label="breadcrumb" class="admin-breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a href="{{ route('admin.dashboard') }}">
-                    <i class="fas fa-tachometer-alt me-1"></i>
-                    {{ __('admin_news_comments.dashboard') }}
+                <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}">
+                    <i class="{{ \App\Helpers\DashboardHelper::getDashboardIcon() }} me-1"></i>
+                    {{ \App\Helpers\DashboardHelper::getDashboardTitle() }}
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
@@ -26,7 +26,7 @@
             {{ __('admin_news_comments.comments_moderation') }}
         </h1>
         <div class="admin-actions">
-            <a href="{{ route('admin.dashboard') }}" class="btn btn-secondary">
+            <a href="{{ \App\Helpers\DashboardHelper::getDashboardRoute() }}" class="btn btn-secondary">
                 <i class="fas fa-arrow-left me-2"></i>
                 {{ __('admin_news_comments.back_to_dashboard') }}
             </a>

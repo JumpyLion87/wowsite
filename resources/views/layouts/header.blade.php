@@ -78,10 +78,16 @@
                             <a href="{{ route('account') }}" class="dropdown-item">
                                 <i class="fas fa-user-circle"></i> {{ __('nav.account_settings') }}
                             </a>
-                            @if(\App\Models\User::isAdmin(auth()->id()))
+                            @if(auth()->user()->isAdministrator())
                                 @if (Route::has('admin.dashboard'))
                                     <a href="{{ route('admin.dashboard') }}" class="dropdown-item admin-panel">
                                         <i class="fas fa-cogs"></i> {{ __('nav.admin_panel') }}
+                                    </a>
+                                @endif
+                            @elseif(auth()->user()->isModerator())
+                                @if (Route::has('moderator.dashboard'))
+                                    <a href="{{ route('moderator.dashboard') }}" class="dropdown-item moderator-panel">
+                                        <i class="fas fa-user-shield"></i> {{ __('nav.moderator_panel') }}
                                     </a>
                                 @endif
                             @endif

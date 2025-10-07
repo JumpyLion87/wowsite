@@ -17,4 +17,5 @@ return [
     'tokens' => 'Токены',
     'account_settings' => 'Настройки аккаунта',
     'admin_panel' => 'Панель администратора',
+    'moderator_panel' => 'Панель модератора',
 ];

@@ -6,7 +6,7 @@ use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
-class AdminMiddleware
+class ModeratorMiddleware
 {
     /**
      * Handle an incoming request.
@@ -23,12 +23,12 @@ class AdminMiddleware
         $userId = auth()->id();
         $user = auth()->user();
         
-        // Только администраторы имеют доступ к админ панели
-        if ($user && $user->isAdministrator()) {
+        // Проверяем права администратора или модератора
+        if ($user && ($user->isAdministrator() || $user->isModerator())) {
             return $next($request);
         }
 
-        // Модераторы не имеют доступа к админ панели
-        abort(403, 'Доступ запрещен. Требуются права администратора.');
+        // Для остальных пользователей показываем ошибку доступа
+        abort(403, 'Доступ запрещен. Требуются права администратора или модератора.');
     }
 }

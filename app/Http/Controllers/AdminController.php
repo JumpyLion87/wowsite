@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Cache;
 use App\Services\ServerStatusService;
 
 class AdminController extends Controller
@@ -17,17 +18,29 @@ class AdminController extends Controller
             return redirect('/login');
         }
 
-        // Получение общих статистик
-        $totalUsers = $this->getTotalUsers();
-        $totalAccounts = $this->getTotalAccounts();
-        $totalChars = $this->getTotalChars();
-        $totalBans = $this->getTotalBans();
+        // Получение общих статистик с кэшированием (5 минут)
+        $dashboardStats = Cache::remember('admin_dashboard_stats', 300, function () {
+            return [
+                'totalUsers' => $this->getTotalUsers(),
+                'totalAccounts' => $this->getTotalAccounts(),
+                'totalChars' => $this->getTotalChars(),
+                'totalBans' => $this->getTotalBans(),
+                'onlineUsers' => $this->getOnlineUsers(),
+                'recentPurchases' => $this->getRecentPurchases(),
+                'serverStatus' => $this->getServerStatus(),
+                'dailyStats' => $this->getDailyStats(),
+            ];
+        });
         
-        // Дополнительная статистика
-        $onlineUsers = $this->getOnlineUsers();
-        $recentPurchases = $this->getRecentPurchases();
-        $serverStatus = $this->getServerStatus();
-        $dailyStats = $this->getDailyStats();
+        // Извлекаем данные из кэша
+        $totalUsers = $dashboardStats['totalUsers'];
+        $totalAccounts = $dashboardStats['totalAccounts'];
+        $totalChars = $dashboardStats['totalChars'];
+        $totalBans = $dashboardStats['totalBans'];
+        $onlineUsers = $dashboardStats['onlineUsers'];
+        $recentPurchases = $dashboardStats['recentPurchases'];
+        $serverStatus = $dashboardStats['serverStatus'];
+        $dailyStats = $dashboardStats['dailyStats'];
 
         // Обработка фильтров
         $searchUsername = $request->input('search_username', '');
@@ -440,6 +453,9 @@ class AdminController extends Controller
                     'last_updated' => now(),
                 ]);
 
+            // Синхронизация роли в user_roles
+            $this->syncUserRole($id, $request->role);
+
             // Обновление в account
             DB::connection('mysql_auth')->table('account')
                 ->where('id', $id)
@@ -454,6 +470,25 @@ class AdminController extends Controller
             \Log::error('User update error: ' . $e->getMessage());
             return redirect()->route('admin.user.details', $id)
                 ->with('error', 'Ошибка при обновлении пользователя');
+        }
+    }
+
+    /**
+     * Синхронизация роли пользователя между user_currencies и user_roles
+     */
+    private function syncUserRole($accountId, $role)
+    {
+        // Удаляем существующие роли пользователя
+        \App\Models\UserRole::where('account_id', $accountId)->delete();
+        
+        // Если роль не 'player', добавляем в user_roles
+        if (in_array($role, ['admin', 'moderator'])) {
+            $roleId = $role === 'admin' ? 1 : 2; // admin = 1, moderator = 2
+            
+            \App\Models\UserRole::create([
+                'account_id' => $accountId,
+                'role_id' => $roleId
+            ]);
         }
     }
 

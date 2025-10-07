@@ -17,4 +17,5 @@ return [
     'tokens' => 'Tokens',
     'account_settings' => 'Account Settings',
     'admin_panel' => 'Admin Panel',
+    'moderator_panel' => 'Moderator Panel',
 ];

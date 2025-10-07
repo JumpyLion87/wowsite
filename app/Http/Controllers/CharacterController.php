@@ -45,21 +45,21 @@ class CharacterController extends Controller
             $equippedItems = $cachedData['items'];
             $totalKills = $cachedData['total_kills'];
         } else {
-            // Fetch character data
+            // Fetch character data with optimized queries
             $character = Character::where('guid', $guid)->first();
         
-        if (!$character) {
+            if (!$character) {
                 return redirect()->route('home')->with('error', __('character.error_character_not_found', ['guid' => $guid]));
             }
 
             // Fetch stats data
             $stats = CharacterStats::where('guid', $guid)->first();
 
-            // Fetch arena team data
-            $pvpTeams = $this->getArenaTeams($guid);
+            // Fetch arena team data with optimized query
+            $pvpTeams = $this->getArenaTeamsOptimized($guid);
 
-            // Fetch equipped items
-            $equippedItems = $this->getEquippedItems($guid);
+            // Fetch equipped items with optimized query
+            $equippedItems = $this->getEquippedItemsOptimized($guid);
 
             // Get total kills
             $totalKills = $character->totalKills ?? 0;
@@ -305,5 +305,85 @@ class CharacterController extends Controller
         ];
         
         return $triggers[$trigger] ?? 'Unknown';
+    }
+
+    /**
+     * Get arena teams for character (optimized version)
+     */
+    private function getArenaTeamsOptimized($guid)
+    {
+        // Single optimized query with all necessary data
+        $teams = DB::connection('mysql_char')
+            ->table('arena_team_member as atm')
+            ->join('arena_team as at', 'atm.arenaTeamId', '=', 'at.arenaTeamId')
+            ->where('atm.guid', $guid)
+            ->select('at.arenaTeamId', 'at.name', 'at.type', 'at.rating')
+            ->get();
+
+        if ($teams->isEmpty()) {
+            return collect();
+        }
+
+        // Get all team members in one query
+        $teamIds = $teams->pluck('arenaTeamId')->toArray();
+        $allMembers = DB::connection('mysql_char')
+            ->table('arena_team_member as atm')
+            ->join('characters as c', 'atm.guid', '=', 'c.guid')
+            ->whereIn('atm.arenaTeamId', $teamIds)
+            ->select('atm.arenaTeamId', 'c.guid', 'c.name', 'c.race', 'c.class', 'c.gender')
+            ->get()
+            ->groupBy('arenaTeamId');
+
+        // Attach members to teams
+        foreach ($teams as $team) {
+            $team->members = $allMembers->get($team->arenaTeamId, collect())
+                ->map(function ($member) {
+                    $member->faction = $this->getFactionByRace($member->race);
+                    $member->faction_icon = $this->getFactionIconByRace($member->race);
+                    return $member;
+                });
+        }
+
+        return $teams;
+    }
+
+    /**
+     * Get equipped items for character (optimized version)
+     */
+    private function getEquippedItemsOptimized($guid)
+    {
+        // Single query to get all equipped items with their data
+        $items = DB::connection('mysql_char')
+            ->table('character_inventory as ci')
+            ->join('item_instance as ii', 'ci.item', '=', 'ii.guid')
+            ->join('item_template as it', 'ii.itemEntry', '=', 'it.entry')
+            ->leftJoin('itemdisplayinfo_dbc as idi', 'it.displayid', '=', 'idi.ID')
+            ->where('ci.guid', $guid)
+            ->where('ci.bag', 0)
+            ->whereIn('ci.slot', [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18])
+            ->select([
+                'ci.slot',
+                'it.entry', 'it.name', 'it.Quality', 'it.ItemLevel', 'it.RequiredLevel', 'it.SellPrice',
+                'it.MaxDurability', 'it.delay', 'it.bonding', 'it.class', 'it.subclass', 'it.InventoryType',
+                'it.dmg_min1', 'it.dmg_max1', 'it.armor', 'it.holy_res', 'it.fire_res', 'it.nature_res',
+                'it.frost_res', 'it.shadow_res', 'it.arcane_res', 'it.stat_type1', 'it.stat_value1',
+                'it.stat_type2', 'it.stat_value2', 'it.stat_type3', 'it.stat_value3', 'it.stat_type4',
+                'it.stat_value4', 'it.stat_type5', 'it.stat_value5', 'it.stat_type6', 'it.stat_value6',
+                'it.stat_type7', 'it.stat_value7', 'it.stat_type8', 'it.stat_value8', 'it.stat_type9',
+                'it.stat_type9', 'it.stat_value9', 'it.stat_type10', 'it.stat_value10', 'it.socketColor_1',
+                'it.socketColor_2', 'it.socketColor_3', 'it.socketBonus', 'it.spellid_1',
+                'it.spelltrigger_1', 'it.spellid_2', 'it.spelltrigger_2', 'it.spellid_3',
+                'it.spelltrigger_3', 'it.spellid_4', 'it.spelltrigger_4', 'it.spellid_5',
+                'it.spelltrigger_5', 'it.description', 'it.AllowableClass', 'it.displayid',
+                'idi.InventoryIcon_1 as icon'
+            ])
+            ->get()
+            ->keyBy('slot');
+
+        // Process items and add tooltip data
+        return $items->map(function ($item) {
+            $item->tooltip = $this->itemTooltipService->generateTooltip($item);
+            return $item;
+        });
     }
 }
