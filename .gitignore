@@ -13,6 +13,7 @@
 /.zed
 /auth.json
 /docs
+/database/migrations_backup_20251007_204108
 /node_modules
 /public/build
 /public/hot
