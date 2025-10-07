@@ -71,4 +71,20 @@ return [
     'email_activation_success' => 'Your account has been successfully activated!',
     'email_activation_confirmation_body' => 'You can now log in to the game and start your adventure!',
     'email_login_instructions' => 'Use your credentials to log in to the system.',
+    
+    // Password reset
+    'forgot_password_title' => 'Password Recovery',
+    'password_reset_subject' => 'Password Reset',
+    'password_reset_greeting' => 'Hello, :username!',
+    'password_reset_message' => 'You have requested a password reset for your account.',
+    'password_reset_alternative' => 'If the button doesn\'t work, copy and paste this link into your browser:',
+    'password_reset_expiry' => 'This link is valid for 60 minutes.',
+    'password_reset_security' => 'If you didn\'t request a password reset, simply ignore this email.',
+    'password_reset_footer' => 'This email was sent automatically, please do not reply.',
+    'all_rights_reserved' => 'All rights reserved.',
+    'send_reset_link' => 'Send Reset Link',
+    'back_to_login' => 'Back to Login',
+    'reset_password_title' => 'Reset Password',
+    'new_password' => 'New Password',
+    'password_reset_button' => 'Reset Password',
 ];

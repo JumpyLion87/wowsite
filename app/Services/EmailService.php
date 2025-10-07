@@ -76,4 +76,39 @@ class EmailService
             return false;
         }
     }
+    
+    /**
+     * Send password reset email
+     */
+    public static function sendPasswordResetEmail($username, $email, $resetUrl)
+    {
+        try {
+            $data = [
+                'username' => $username,
+                'email' => $email,
+                'resetUrl' => $resetUrl,
+                'siteName' => config('app.name', 'WoW Server'),
+            ];
+            
+            Mail::send('emails.password-reset', $data, function ($message) use ($email, $username) {
+                $message->to($email, $username)
+                        ->subject(__('auth.password_reset_subject'));
+            });
+            
+            Log::info('Password reset email sent', [
+                'username' => $username,
+                'email' => $email,
+                'resetUrl' => $resetUrl
+            ]);
+            
+            return true;
+        } catch (\Exception $e) {
+            Log::error('Failed to send password reset email', [
+                'error' => $e->getMessage(),
+                'username' => $username,
+                'email' => $email
+            ]);
+            return false;
+        }
+    }
 }

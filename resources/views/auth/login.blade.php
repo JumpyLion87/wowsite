@@ -55,6 +55,9 @@
                     </span>
                 </button>
             </form>
+            <div class="text-center mt-3">
+                <a href="{{ route('password.request') }}">{{ __('auth.forgot_password_title') }}</a>
+            </div>
         </div>
         
         <div class="card-footer text-center py-3">

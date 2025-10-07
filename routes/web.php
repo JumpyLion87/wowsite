@@ -20,12 +20,22 @@ use App\Http\Controllers\VoteController;
 Route::get('/', [HomeController::class, 'index'])->name('home')->middleware(\App\Http\Middleware\Localization::class);
 
 // Authentication routes
-Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware(\App\Http\Middleware\Localization::class);
-Route::post('/login', [LoginController::class, 'login']);
+Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login')->middleware(['guest', \App\Http\Middleware\Localization::class]);
+Route::post('/login', [LoginController::class, 'login'])->middleware('guest');
 
 // Registration routes
-Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register')->middleware(\App\Http\Middleware\Localization::class);
-Route::post('/register', [RegisterController::class, 'register']);
+Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register')->middleware(['guest', \App\Http\Middleware\Localization::class]);
+Route::post('/register', [RegisterController::class, 'register'])->middleware('guest');
+
+// Password reset routes
+Route::get('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'showLinkRequestForm'])
+    ->name('password.request')->middleware(['guest', \App\Http\Middleware\Localization::class]);
+Route::post('/forgot-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'sendResetLinkEmail'])
+    ->name('password.email')->middleware('guest');
+Route::get('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'showResetForm'])
+    ->name('password.reset')->middleware(['guest', \App\Http\Middleware\Localization::class]);
+Route::post('/reset-password', [\App\Http\Controllers\Auth\PasswordResetController::class, 'reset'])
+    ->name('password.update')->middleware('guest');
 
 // Activation routes
 Route::get('/activate', [App\Http\Controllers\ActivationController::class, 'showActivationForm'])->name('activate')->middleware(\App\Http\Middleware\Localization::class);

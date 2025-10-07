@@ -71,4 +71,20 @@ return [
     'email_activation_success' => 'Ваш аккаунт успешно активирован!',
     'email_activation_confirmation_body' => 'Теперь вы можете войти в игру и начать свое приключение!',
     'email_login_instructions' => 'Используйте свои учетные данные для входа в систему.',
+    
+    // Password reset
+    'forgot_password_title' => 'Восстановление пароля',
+    'password_reset_subject' => 'Восстановление пароля',
+    'password_reset_greeting' => 'Здравствуйте, :username!',
+    'password_reset_message' => 'Вы запросили восстановление пароля для вашего аккаунта.',
+    'password_reset_alternative' => 'Если кнопка не работает, скопируйте и вставьте эту ссылку в браузер:',
+    'password_reset_expiry' => 'Ссылка действительна в течение 60 минут.',
+    'password_reset_security' => 'Если вы не запрашивали восстановление пароля, просто проигнорируйте это письмо.',
+    'password_reset_footer' => 'Это письмо отправлено автоматически, не отвечайте на него.',
+    'all_rights_reserved' => 'Все права защищены.',
+    'send_reset_link' => 'Отправить ссылку',
+    'back_to_login' => 'Вернуться к входу',
+    'reset_password_title' => 'Сброс пароля',
+    'new_password' => 'Новый пароль',
+    'password_reset_button' => 'Сбросить пароль',
 ];
