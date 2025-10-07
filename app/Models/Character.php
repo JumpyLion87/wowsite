@@ -253,8 +253,8 @@ class Character extends Model
         }
     }
 
-     /**
-    * Get recently created characters
+    /**
+     * Get recently created characters
      */
     public function getRecentlyCreated($limit = 10)
     {
@@ -347,7 +347,7 @@ class Character extends Model
     {
         try {
             return self::selectRaw("
-                CASE 
+                CASE
                     WHEN race IN (1, 3, 4, 7, 11, 22, 25, 29) THEN 'Alliance'
                     WHEN race IN (2, 5, 6, 8, 9, 10, 26) THEN 'Horde'
                     ELSE 'Neutral'
@@ -370,7 +370,7 @@ class Character extends Model
     {
         try {
             return self::selectRaw("
-                CASE 
+                CASE
                     WHEN level BETWEEN 1 AND 10 THEN '1-10'
                     WHEN level BETWEEN 11 AND 20 THEN '11-20'
                     WHEN level BETWEEN 21 AND 30 THEN '21-30'
