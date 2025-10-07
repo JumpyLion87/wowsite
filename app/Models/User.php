@@ -273,4 +273,67 @@ class User extends Authenticatable
         
         return $gmLevel > 0 || in_array($role, ['admin', 'moderator']);
     }
+
+    /**
+     * Роли пользователя
+     */
+    public function roles()
+    {
+        return $this->belongsToMany(Role::class, 'user_roles', 'account_id', 'role_id')
+            ->using(\App\Models\UserRole::class);
+    }
+
+    /**
+     * Проверить, есть ли у пользователя роль
+     */
+    public function hasRole($role)
+    {
+        if (is_string($role)) {
+            return $this->roles()->where('name', $role)->exists();
+        }
+        
+        return $this->roles()->where('id', $role->id)->exists();
+    }
+
+    /**
+     * Проверить, есть ли у пользователя разрешение
+     */
+    public function hasPermission($permission)
+    {
+        // Проверяем через старую систему ролей
+        $role = $this->getRole($this->id);
+        if ($role === 'admin') {
+            return true; // Админы имеют все права
+        }
+        
+        // Проверяем через роли
+        try {
+            $roles = $this->roles;
+            foreach ($roles as $role) {
+                if ($role->hasPermission($permission)) {
+                    return true;
+                }
+            }
+        } catch (\Exception $e) {
+            // Если не удается получить роли, используем старую систему
+        }
+        
+        return false;
+    }
+
+    /**
+     * Проверить, является ли пользователь модератором
+     */
+    public function isModerator()
+    {
+        return $this->hasRole('moderator') || $this->getRole($this->id) === 'moderator';
+    }
+
+    /**
+     * Проверить, является ли пользователь администратором
+     */
+    public function isAdministrator()
+    {
+        return $this->hasRole('admin') || $this->getRole($this->id) === 'admin';
+    }
 }

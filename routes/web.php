@@ -196,12 +196,24 @@ Route::middleware(['auth'])->group(function () {
          ->name('admin.soap.check');
     
     // Управление банами
-    Route::get('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'index'])->name('admin.bans.index');
-    Route::get('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'show'])->name('admin.bans.show');
-    Route::post('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'store'])->name('admin.bans.store');
-    Route::post('/admin/bans/{id}/unban', [\App\Http\Controllers\Admin\BanController::class, 'unban'])->name('admin.bans.unban');
-    Route::delete('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'destroy'])->name('admin.bans.destroy');
-    Route::post('/admin/bans/bulk', [\App\Http\Controllers\Admin\BanController::class, 'bulkAction'])->name('admin.bans.bulk');
+    Route::get('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'index'])
+        ->name('admin.bans.index')
+        ->middleware('permission:bans.view');
+    Route::get('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'show'])
+        ->name('admin.bans.show')
+        ->middleware('permission:bans.view');
+    Route::post('/admin/bans', [\App\Http\Controllers\Admin\BanController::class, 'store'])
+        ->name('admin.bans.store')
+        ->middleware('permission:bans.create');
+    Route::post('/admin/bans/{id}/unban', [\App\Http\Controllers\Admin\BanController::class, 'unban'])
+        ->name('admin.bans.unban')
+        ->middleware('permission:bans.unban');
+    Route::delete('/admin/bans/{id}', [\App\Http\Controllers\Admin\BanController::class, 'destroy'])
+        ->name('admin.bans.destroy')
+        ->middleware('permission:bans.delete');
+    Route::post('/admin/bans/bulk', [\App\Http\Controllers\Admin\BanController::class, 'bulkAction'])
+        ->name('admin.bans.bulk')
+        ->middleware('permission:bans.delete');
     // Временный маршрут для тестирования подключения к базе данных
     Route::get('/admin/test-db', function() {
         try {

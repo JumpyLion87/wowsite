@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use App\Helpers\PermissionHelper;
 
 class BanController extends Controller
 {
@@ -15,7 +16,7 @@ class BanController extends Controller
      */
     public function index(Request $request)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+        if (!Auth::check() || !PermissionHelper::hasPermission(Auth::id(), 'bans.view')) {
             return redirect('/login');
         }
 
@@ -203,7 +204,7 @@ class BanController extends Controller
      */
     public function show($id)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+        if (!Auth::check() || !PermissionHelper::hasPermission(Auth::id(), 'bans.view')) {
             return redirect('/login');
         }
 
@@ -327,7 +328,7 @@ class BanController extends Controller
      */
     public function store(Request $request)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+        if (!Auth::check() || !PermissionHelper::hasPermission(Auth::id(), 'bans.create')) {
             return redirect('/login');
         }
 
@@ -475,7 +476,7 @@ class BanController extends Controller
      */
     public function unban($id)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+        if (!Auth::check() || !PermissionHelper::hasPermission(Auth::id(), 'bans.unban')) {
             return redirect('/login');
         }
 
@@ -519,7 +520,7 @@ class BanController extends Controller
      */
     public function destroy($id)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+        if (!Auth::check() || !PermissionHelper::hasPermission(Auth::id(), 'bans.delete')) {
             return redirect('/login');
         }
 
@@ -579,7 +580,7 @@ class BanController extends Controller
      */
     public function bulkAction(Request $request)
     {
-        if (!Auth::check() || !Auth::user()->isAdmin(Auth::id())) {
+        if (!Auth::check() || !PermissionHelper::hasPermission(Auth::id(), 'bans.delete')) {
             return redirect('/login');
         }
 

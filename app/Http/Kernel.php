@@ -71,5 +71,8 @@ class Kernel extends HttpKernel
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'localization' => \App\Http\Middleware\Localization::class, // Алиас для middleware локализации
         'activated' => \App\Http\Middleware\CheckAccountActivation::class, // Алиас для middleware проверки активации
+        'admin' => \App\Http\Middleware\AdminMiddleware::class, // Алиас для middleware админа
+        'permission' => \App\Http\Middleware\CheckPermission::class, // Алиас для middleware проверки разрешений
+        'role' => \App\Http\Middleware\CheckRole::class, // Алиас для middleware проверки ролей
     ];
 }

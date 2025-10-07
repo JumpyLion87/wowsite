@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use App\Helpers\PermissionHelper;
 
 class AdminMiddleware
 {
@@ -20,12 +21,11 @@ class AdminMiddleware
             return redirect()->route('login')->with('error', 'Необходимо войти в систему');
         }
 
-        // Проверяем, что пользователь является администратором
-        // Пока используем простую проверку по ID, позже можно добавить поле is_admin
-        $adminIds = [1]; // ID администраторов
+        $userId = auth()->id();
         
-        if (!in_array(auth()->id(), $adminIds)) {
-            abort(403, 'Доступ запрещен. Требуются права администратора.');
+        // Проверяем, что пользователь имеет права администратора или модератора
+        if (!PermissionHelper::isAdminOrModerator($userId)) {
+            abort(403, 'Доступ запрещен. Требуются права администратора или модератора.');
         }
 
         return $next($request);
